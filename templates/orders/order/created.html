@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Заказ оформлен{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h1 class="mb-4">Спасибо за заказ!</h1>
+                    <p class="lead">Ваш заказ успешно оформлен. Номер вашего заказа: <strong>{{ order.id }}</strong></p>
+                    <p>На ваш email отправлено письмо с подтверждением заказа.</p>
+                    <div class="mt-5">
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">
+                            <i class="bi-house"></i> Вернуться в магазин
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Оформление заказа{% endblock %}
+
+{% block content %}
+<h1>Оформление заказа</h1>
+<div class="row">
+    <div class="col-md-8">
+        <form action="." method="post" class="order-form">
+            {{ form.as_p }}
+            <p><input type="submit" class="btn btn-success" value="Оформить заказ"></p>
+            {% csrf_token %}
+        </form>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Ваш заказ</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for item in cart %}
+                    <li>
+                        {{ item.quantity }}x {{ item.product.name }}
+                        <span class="float-end">{{ item.total_price }} ₽</span>
+                    </li>
+                    {% endfor %}
+                    {% if cart.coupon %}
+                    <li class="mt-2">
+                        "{{ cart.coupon.code }}" ({{ cart.coupon.discount }}% скидка)
+                        <span class="text-danger">- {{ cart.get_discount|floatformat:2 }} ₽</span>
+                    </li>
+                    {% endif %}
+                </ul>
+                <hr>
+                <p class="h5">
+                    Итого: <span class="float-end">{{ cart.get_total_price_after_discount|floatformat:2 }} ₽</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

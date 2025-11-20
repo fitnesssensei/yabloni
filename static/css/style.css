@@ -1,0 +1,74 @@
+/* Основные стили */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Карточки товаров */
+.product-card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .product-img {
+        height: 150px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Стили для корзины */
+.cart-item {
+    transition: background-color 0.3s;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}
+
+.quantity-input {
+    max-width: 80px;
+    text-align: center;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
