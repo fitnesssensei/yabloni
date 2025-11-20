@@ -1,0 +1,95 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Корзина и оформление заказа{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Оформление заказа</h1>
+    
+    {% if cart|length > 0 %}
+    <div class="row">
+        <!-- Левая колонка - Товары в корзине -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Ваш заказ</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Количество</th>
+                                    <th>Цена</th>
+                                    <th>Сумма</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>
+                                        <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex">
+                                            {{ item.update_quantity_form.quantity }}
+                                            {{ item.update_quantity_form.update }}
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Обновить</button>
+                                        </form>
+                                    </td>
+                                    <td>{{ item.price }} ₽</td>
+                                    <td>{{ item.total_price }} ₽</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'cart:cart_remove' item.product.id %}" class="text-danger">
+                                            <i class="bi bi-x-lg"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi-arrow-left"></i> Продолжить покупки
+                        </a>
+                        <div class="fs-5 fw-bold">
+                            Итого: {{ cart.get_total_price }} ₽
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка - Форма заказа -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Контактные данные</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="order-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ order_form.as_p }}
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi-check-lg"></i> Подтвердить заказ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Ваша корзина пуста.
+    </div>
+    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+        <i class="bi-arrow-left"></i> Вернуться в каталог
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
