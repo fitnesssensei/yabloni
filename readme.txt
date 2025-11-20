@@ -1,7 +1,7 @@
 зачем файл : context_processors.py
 проверь синтаксис и отступы !
 проверь файл : templates/base/header.html
-
+посмотри файлы catalog/views.py и catalog/urls.py
 
 ++++ команды ++++++
 

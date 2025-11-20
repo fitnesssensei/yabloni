@@ -138,6 +138,7 @@ TIME_ZONE = 'Europe/Moscow'
 
 # настройки для статических файлов
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 [os.path.join(BASE_DIR, 'templates')],
 
@@ -152,15 +153,3 @@ ORDER_STATUS_CHOICES = (
     ('completed', 'Завершен'),
     ('cancelled', 'Отменен'),
 )
-
-# Настройки статических файлов
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# Настройки медиа файлов
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-

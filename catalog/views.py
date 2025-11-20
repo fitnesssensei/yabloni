@@ -1,6 +1,8 @@
 
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
+from django.views.generic import ListView
+
 
 def product_list(request, category_slug=None):
     category = None
@@ -20,4 +22,13 @@ def product_list(request, category_slug=None):
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug, available=True)
     return render(request, 'catalog/product/detail.html', {'product': product})
-# Create your views here.
+
+class HomeView(ListView):
+    model = Product
+    template_name = 'home.html'
+    context_object_name = 'featured_products'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
