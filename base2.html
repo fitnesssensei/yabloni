@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru"> 
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин саженцев ЯБЛОНИ & ГРУШИ{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+</head>
+<body>
+    {% include 'base/header.html' %}
+    
+    <main class="container my-4">
+
+        {% block content %}
+            <div class="hero-section bg-light py-5 mb-5">
+                <div class="container text-center">
+                    <h1 class="display-4">Добро пожаловать в магазин "ЯБЛОНИ&ГРУШИ"</h1>
+                    <p class="lead">Авторские саженцы плодовых деревьев прямо в Москве</p>
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-success btn-lg">В каталог</a>
+                </div>
+            </div>
+
+            <section class="mb-5">
+                <div class="container">
+                    <h2 class="text-center mb-4">Популярные категории</h2>
+                    <div class="row">
+                        {% for category in categories %}
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    {% if category.image %}
+                                        <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" style="height: 250px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">{{ category.name }}</h5>
+                                        <p class="card-text">{{ category.description|truncatewords:20 }}</p>
+                                        <a href="{% url 'catalog:product_list_by_category' category.slug %}" class="btn btn-outline-success">Смотреть все</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5 bg-light py-5">
+                <div class="container">
+                    <h2 class="text-center mb-4">Хиты продаж</h2>
+                    <div class="row">
+                        {% for product in featured_products %}
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ product.name }}</h5>
+                                        <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                                        <p class="h5 text-success">{{ product.price }} ₽</p>
+                                        <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-flex add-to-cart-form" data-product-id="{{ product.id }}">
+                                            {{ cart_product_form.quantity }}
+                                            {{ cart_product_form.update }}
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success ms-2">В корзину</button>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary w-100">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-success">Весь каталог</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h2>О нашем питомнике</h2>  <!--О нашем питомнике-->
+                            <p>Мы занимаемся выращиванием саженцев плодовых деревьев уже более 10 лет. Наш питомник расположен в экологически чистом районе, что гарантирует высокое качество нашей продукции.</p>
+                            <p>Все саженцы выращены с заботой и любовью, проходят строгий контроль качества перед отправкой к нашим клиентам.</p>
+                            <!--<a href="#" class="btn btn-success">Узнать больше</a> закомментил эту строку--> 
+                        </div>
+                        <div class="col-md-6">
+                            <img src="{% static 'img/nursery.jpg' %}" alt="" class="img-fluid rounded">  <!--Наш питомник-->
+                        </div>
+                    </div>
+                </div>
+            </section> 
+
+            <section class="bg-light py-5">
+                <div class="container">
+                    <h2 class="text-center mb-4">Почему выбирают нас</h2>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-4">
+                            <div class="p-4 bg-white rounded shadow-sm h-100">
+                                <i class="bi bi-shield-check fs-1 text-success mb-3"></i>
+                                <h5>100% гарантия сорта</h5>
+                                <p></p>  <!--Гарантия. 100% гарантия сорта-->
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="p-4 bg-white rounded shadow-sm h-100">
+                                <!--<i class="bi bi-shield-check fs-1 text-success mb-3"></i>-->
+                                <img src="{% static 'img/tree.png' %}" class="img-fluid mb-3" style="max-height: 60px;">
+                                <h5>Зимняя прививка. Однолетние саженцы к осени до 1 метра</h5>
+                                <p></p>  <!--Зимняя прививка. Однолетние саженцы к осени до 1 метра-->
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="p-4 bg-white rounded shadow-sm h-100">
+                                <i class="bi bi-currency-exchange fs-1 text-success mb-3"></i>
+                                <h5>Фиксированная цена при заказе на зимнюю прививку</h5>  <!--гибкая система скидок-->
+                                <p></p>  <!--скидки оптовым покупателям и постоянным клиентам-->
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="p-4 bg-white rounded shadow-sm h-100">
+                                <i class="bi bi-truck fs-1 text-success mb-3"></i>
+                                <i class="bi bi-person-walking fs-1 text-success mb-3"></i>
+                                <h5>Самовывоз и доставка СДЭК</h5>  <!--поддержка 24/7-->
+                                <p></p>  <!--наши специалисты всегда готовы ответить на ваши вопросы-->
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% endblock %}
+    </main>
+
+    {% include 'base/footer.html' %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+
