@@ -139,8 +139,10 @@ TIME_ZONE = 'Europe/Moscow'
 # настройки для статических файлов
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-[os.path.join(BASE_DIR, 'templates')],
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    # os.path.join(BASE_DIR, 'templates')  # Раскомментируйте, если нужно добавить директорию с шаблонами
+]
 
 # настройки корзины
 CART_SESSION_ID = 'cart'

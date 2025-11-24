@@ -1,0 +1,87 @@
+/* Основные стили кнопок */
+.btn,
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.button {
+    background-color: #FFD700; /* Желтый цвет фона */
+    color: #000000; /* Черный цвет текста */
+    border: 2px solid #000000; /* Черная рамка */
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили при наведении */
+.btn:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+.button:hover {
+    background-color: #000000; /* Черный фон */
+    color: #FFD700; /* Желтый текст */
+    border-color: #FFD700; /* Желтая рамка */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Стили при нажатии */
+.btn:active,
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+.button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Дополнительные размеры кнопок */
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-width: 1px;
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 18px;
+    border-width: 2px;
+}
+
+/* Кнопка в отключенном состоянии */
+.btn:disabled,
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Стили для кнопок в админке */
+#content-main .button,
+.submit-row input,
+.object-tools a {
+    background-color: #FFD700 !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+}
+
+#content-main .button:hover,
+.submit-row input:hover,
+.object-tools a:hover {
+    background-color: #000000 !important;
+    color: #FFD700 !important;
+    border-color: #FFD700 !important;
+}
