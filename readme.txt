@@ -1,3 +1,7 @@
+# Устройство : macBook Pro c процессором M4 Pro 2024 года
+# Операционная система : macOS Tahoe 26.1
+# Браузер FireFox
+
 зачем файл : context_processors.py
 проверь синтаксис и отступы !
 проверь файл : templates/base/header.html
