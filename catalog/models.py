@@ -24,6 +24,10 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
+    # поле загрузки изображений 
+    main_image = models.ImageField(upload_to='products/%Y/%m/%d/', blank=True, verbose_name='Основное изображение')
+    is_featured = models.BooleanField('Хит продаж', default=False, help_text='Отметьте, чтобы показать этот товар в разделе Хиты продаж')
+   
     # добавил метод :
     def get_absolute_url(self):
         return reverse('catalog:product_detail', args=[self.id, self.slug])
