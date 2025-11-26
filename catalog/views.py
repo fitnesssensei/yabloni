@@ -2,7 +2,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
 from django.views.generic import ListView
-
+from cart.forms import CartAddProductForm
 
 def product_list(request, category_slug=None):
     category = None
@@ -31,4 +31,9 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['cart_product_form'] = CartAddProductForm()
         return context
+
+    def get_queryset(self):
+            # Возвращаем только товары, отмеченные как хиты продаж
+            return Product.objects.filter(is_featured=True, available=True)[:8]  # Ограничиваем количество
