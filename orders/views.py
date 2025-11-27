@@ -4,12 +4,16 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.http import HttpResponse
-from django.template.loader import render_to_string
 import weasyprint
 
 from .models import Order, OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart
+
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 def order_create(request):
     cart = Cart(request)
@@ -24,6 +28,31 @@ def order_create(request):
                     price=item['price'],
                     quantity=item['quantity']
                 )
+            # Отправка email
+            subject = f'Заказ №{order.id}'
+            html_message = render_to_string('orders/order/email.html', {'order': order})
+            plain_message = strip_tags(html_message)
+            from_email = '13fitnesssensei@gmail.com'
+            to = order.email
+
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    from_email,
+                    [to],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                print(f"Письмо отправлено на {to}")  # Логирование
+            except Exception as e:
+                print(f"Ошибка отправки письма: {e}")  # Логирование ошибки
+
+            # Отладочный принт
+            print("="*50)
+            print("Попытка отправить письмо на:", order.email)
+            print("="*50)
+
             # Очистка корзины
             cart.clear()
             # Сохранение заказа в сессии
@@ -33,6 +62,21 @@ def order_create(request):
     else:
         form = OrderCreateForm()
     return render(request, 'cart/detail.html', {'order_form': form})
+
+        # Тестовое письмо
+    try:
+        send_mail(
+            'Тестовое письмо',
+            'Это тестовое письмо из Django',
+            '13fitnesssensei@gmail.com',
+            ['13fitnesssensei@gmail.com'],
+            fail_silently=False,
+        )
+        print("Тестовое письмо отправлено!")
+    except Exception as e:
+        print("Ошибка при отправке письма:", str(e))
+    
+    return render(request, 'orders/order/created.html', {'order': order})
 
 
 @staff_member_required
