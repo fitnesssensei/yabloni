@@ -155,3 +155,40 @@ ORDER_STATUS_CHOICES = (
     ('completed', 'Завершен'),
     ('cancelled', 'Отменен'),
 )
+
+# Настройки электронной почты сайта
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # консольный вариант 
+# EMAIL_HOST = 'smtp.gmail.com'  # или другой SMTP-сервер
+# EMAIL_PORT = 587
+# EMAIL_USE_SSL = True  # было : EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = '13fitnesssensei@gmail.com'  # замените на ваш email
+# EMAIL_HOST_PASSWORD = 'mcapdjeeljfbskmj'  # пароль приложения, не от аккаунта!
+# DEFAULT_FROM_EMAIL = '13fitnesssensei@gmail.com'  # тот же email, что и EMAIL_HOST_USER
+
+# Логирование
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+}
+
+# Пароль приложения — это специальный пароль, который нужно создать в 
+# настройках вашего почтового аккаунта Yandex. Вот как это сделать:
+# Войдите в свой аккаунт Yandex
+# Перейдите в Настройки → Пароли и безопасность → Пароли приложений
+# Нажмите Создать пароль
+# Введите название приложения, например, "Django Shop"
+# Нажмите Создать
+# Скопируйте сгенерированный пароль (он покажется только один раз!)
+# После этого:
+# Вставьте этот пароль в EMAIL_HOST_PASSWORD
+# В EMAIL_HOST_USER укажите ваш полный email (например, mymail@yandex.ru)
+# В DEFAULT_FROM_EMAIL укажите тот же email
+# Важно: Никогда не используйте пароль от почты 
+# напрямую — только сгенерированный пароль приложения!

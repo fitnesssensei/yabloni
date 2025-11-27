@@ -4,6 +4,8 @@ from catalog.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
 from orders.forms import OrderCreateForm
+# добавьте импорт модели
+from orders.models import OrderItem
 
 
 @require_POST

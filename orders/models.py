@@ -8,6 +8,8 @@ class Order(models.Model):
     first_name = models.CharField('Имя', max_length=50)
     last_name = models.CharField('Фамилия', max_length=50)
     email = models.EmailField('Email')
+    # добавил поле телефон
+    phone = models.CharField('Телефон', max_length=20)
     address = models.CharField('Адрес', max_length=250)
     postal_code = models.CharField('Почтовый индекс', max_length=20)
     city = models.CharField('Город', max_length=100)
