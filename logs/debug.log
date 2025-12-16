@@ -1,0 +1,8 @@
+INFO 2025-11-27 13:16:24,652 autoreload Watching for file changes with StatReloader
+INFO 2025-11-27 13:16:31,020 basehttp "POST /cart/ HTTP/1.1" 200 4443
+INFO 2025-11-27 13:16:33,229 basehttp "GET / HTTP/1.1" 200 12130
+WARNING 2025-11-27 13:16:33,258 basehttp "GET /static/img/nursery.jpg HTTP/1.1" 404 1859
+INFO 2025-11-27 13:16:36,604 basehttp "POST /cart/add/1/ HTTP/1.1" 302 0
+INFO 2025-11-27 13:16:36,634 basehttp "GET /cart/ HTTP/1.1" 200 9388
+INFO 2025-11-27 13:16:50,898 basehttp "POST /cart/ HTTP/1.1" 200 4443
+INFO 2025-11-27 13:18:11,475 autoreload /Users/rustamismagilov/Desktop/Андрюха /yabloni/config/settings.py changed, reloading.

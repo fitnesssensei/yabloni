@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
@@ -157,14 +158,17 @@ ORDER_STATUS_CHOICES = (
 )
 
 # Настройки электронной почты сайта
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # консольный вариант 
-# EMAIL_HOST = 'smtp.gmail.com'  # или другой SMTP-сервер
-# EMAIL_PORT = 587
-# EMAIL_USE_SSL = True  # было : EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = '13fitnesssensei@gmail.com'  # замените на ваш email
-# EMAIL_HOST_PASSWORD = 'mcapdjeeljfbskmj'  # пароль приложения, не от аккаунта!
-# DEFAULT_FROM_EMAIL = '13fitnesssensei@gmail.com'  # тот же email, что и EMAIL_HOST_USER
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # консольный вариант 
+EMAIL_HOST = 'smtp.gmail.com'  # или другой SMTP-сервер
+EMAIL_PORT = 587
+# было : 
+EMAIL_USE_TLS = True
+# стало : 
+#EMAIL_USE_SSL = True
+EMAIL_HOST_USER = '13fitnesssensei@gmail.com'  # замените на ваш email
+EMAIL_HOST_PASSWORD = 'mcapdjeeljfbskmj'  # пароль приложения, не от аккаунта!
+DEFAULT_FROM_EMAIL = '13fitnesssensei@gmail.com'  # тот же email, что и EMAIL_HOST_USER
 
 # Логирование
 LOGGING = {

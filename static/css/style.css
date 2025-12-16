@@ -9,6 +9,12 @@ main {
     flex: 1;
 }
 
+/* Стили для навигации */
+.navbar-nav .nav-link.active {
+    font-weight: 500;
+    border-bottom: 2px solid white;
+}
+
 /* Карточки товаров */
 .product-card {
     transition: transform 0.3s;

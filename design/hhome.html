@@ -1,0 +1,668 @@
+{% load static %}
+<!-- ============================================================
+    ОСНОВНАЯ СТРУКТУРА САЙТА
+    ============================================================ -->
+<!DOCTYPE html>
+<html lang="ru">
+<head> 
+    <!-- Мета-теги и кодировка -->
+    <!-- Основные мета-теги -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Питомник растений "Яблони"</title>
+    <!-- Подключение CSS-библиотек -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Основные стили сайта -->
+    <link rel="stylesheet" href="sstyle.css">
+        }
+        
+        /* Стили карточек преимуществ */
+        .feature-box {
+            padding: 30px;                              /* Внутренние отступы */
+            border-radius: 8px;                         /* Закругление углов */
+            background: white;                          /* Фон карточки */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);   /* Тень карточки */
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Стили иконок в карточках преимуществ */
+        .feature-icon {
+            font-size: 2.5rem;              /* Размер иконки */
+            color: var(--primary-color);    /* Цвет иконки (основной зеленый) */
+            margin-bottom: 15px;            /* Отступ снизу */
+        }
+        
+        /* Стили основной кнопки */
+        .btn-primary {
+            background-color: var(--primary-color);    /* Цвет фона */
+            border-color: var(--primary-color);       /* Цвет границы */
+            padding: 10px 25px;                       /* Внутренние отступы */
+            border-radius: 50px;                      /* Закругление углов */
+        }
+        
+        .btn-primary:hover {
+            background-color: #1b5e20;
+            border-color: #1b5e20;
+        }
+        
+        /* Стили заголовков разделов */
+        .section-title {
+            position: relative;       /* Для позиционирования псевдоэлемента */
+            margin-bottom: 50px;      /* Отступ снизу */
+            text-align: center;       /* Выравнивание по центру */
+        }
+        
+        /* Декоративная линия под заголовком раздела */
+        .section-title:after {
+            content: '';                            /* Обязательное свойство для псевдоэлемента */
+            display: block;                         /* Блочный элемент */
+            width: 80px;                            /* Шрина линии */
+            height: 3px;                            /* Толщина линии */
+            background: var(--primary-color);       /* Цвет линии */
+            margin: 15px auto 0;                    /* Внешние отступы (сверху 15px, по центру) */
+        }
+        
+        /* Стили карточек товаров */
+        .product-card {
+            border: none;                                       /* Убираем стандартную рамку */
+            border-radius: 10px;                                /* Закругляем углы */
+            overflow: hidden;                                   /* Скрываем выходящее за границы */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);           /* Тень карточки */
+            transition: all 0.3s ease;                          /* Плавные анимации */
+            margin-bottom: 30px;                                /* Отступ снизу */
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Стили изображений товаров */
+        .product-img {
+            height: 200px;             /* Фиксированная высота изображения */
+            object-fit: cover;         /* Масштабирование с сохранением пропорций */
+        }
+        
+        /* Стили подвала сайта */
+        .footer {
+            background-color: #2c3e50;  /* Темно-синий цвет фона */
+            color: white;              /* Цвет текста */
+            padding: 50px 0 20px;      /* Внутренние отступы (сверху 50px, снизу 20px) */
+        }
+        
+        /* Стили иконок социальных сетей */
+        .social-icons a {
+            color: white;               /* Цвет иконок */
+            font-size: 1.5rem;          /* Размер иконок */
+            margin-right: 15px;         /* Отступ справа */
+            transition: color 0.3s ease; /* Плавное изменение цвета при наведении */
+        }
+        
+        /* Эффект при наведении на иконки соцсетей */
+        .social-icons a:hover {
+            color: var(--accent-color);  /* Изменение цвета при наведении */
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================================
+     ПОДКЛЮЧЕНИЕ ШАПКИ ИЗ ВНЕШНЕГО ФАЙЛА
+     ============================================================ -->
+{% include 'hheader.html' %}
+    <!-- ============================================================
+         ГЕРОЙ-СЕКЦИЯ (ГЛАВНЫЙ БАННЕР)
+         ============================================================ -->
+    <section class="hero-section" aria-label="Главный баннер">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">Выращиваем здоровые и крепкие саженцы</h1>
+            <p class="lead mb-4">Более 100 сортов плодовых деревьев и кустарников для вашего сада</p>
+            <a href="#catalog" class="btn btn-light btn-lg" role="button">В каталог</a>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ПРЕИМУЩЕСТВА
+         ============================================================ -->
+    <section class="py-5 bg-light" id="features" aria-labelledby="features-heading">
+        <div class="container">
+            <h2 class="text-center mb-5" id="features-heading">Почему выбирают нас</h2>
+            <div class="row g-4">
+                <!-- Карточка преимущества 1 -->
+                <div class="col-md-4">
+                    <div class="feature-box text-center">
+                        <!-- Иконка преимущества -->
+                        <div class="feature-icon">
+                            <i class="fas fa-truck" aria-hidden="true"></i>
+                            <span class="visually-hidden">Быстрая доставка</span>
+                        </div>
+                        <!-- Заголовок и описание преимущества -->
+                        <h3>Быстрая доставка</h3>
+                        <p>Доставляем саженцы по всей России надежными транспортными компаниями</p>
+                    </div>
+                </div>
+                <!-- Карточка преимущества 2 -->
+                <div class="col-md-4">
+                    <div class="feature-box text-center">
+                        <!-- Иконка преимущества -->
+                        <div class="feature-icon">
+                            <i class="fas fa-seedling" aria-hidden="true"></i>
+                            <span class="visually-hidden">Качество</span>
+                        </div>
+                        <!-- Заголовок и описание преимущества -->
+                        <h3>Качественный посадочный материал</h3>
+                        <p>Все растения выращены с заботой и проходят строгий контроль качества</p>
+                    </div>
+                </div>
+                <!-- Карточка преимущества 3 -->
+                <div class="col-md-4">
+                    <div class="feature-box text-center">
+                        <!-- Иконка преимущества -->
+                        <div class="feature-icon">
+                            <i class="fas fa-headset" aria-hidden="true"></i>
+                            <span class="visually-hidden">Консультация</span>
+                        </div>
+                        <!-- Заголовок и описание преимущества -->
+                        <h3>Консультация специалиста</h3>
+                        <p>Наши агрономы помогут с выбором и дадут рекомендации по уходу</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ПОПУЛЯРНЫЕ ТОВАРЫ
+         ============================================================ -->
+    <section class="py-5" id="catalog">
+        <div class="container">
+            <h2 class="section-title">Популярные товары</h2>
+            <div class="row">
+                <!-- Карточка товара 1 -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <article class="card product-card h-100">
+                        <!-- Изображение товара -->
+                        <img src="media/products/apple-tree.jpg" class="card-img-top product-img" 
+                             alt="Яблоня сорта Антоновка" loading="lazy">
+                        
+                        <!-- Тело карточки -->
+                        <div class="card-body d-flex flex-column">
+                            <!-- Название товара -->
+                            <h3 class="h5 card-title">Яблоня "Антоновка"</h3>
+                            
+                            <!-- Описание товара -->
+                            <p class="card-text flex-grow-1">
+                                Популярный сорт с ароматными плодами. Высота саженца 1,2-1,5 м.
+                            </p>
+                            
+                            <!-- Цена и кнопка -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0">1 200 ₽</span>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        aria-label="Добавить Яблоню Антоновка в корзину">
+                                    В корзину
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <!-- Карточка товара 2 -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <article class="card product-card h-100">
+                        <!-- Изображение товара -->
+                        <img src="media/products/pear-tree.jpg" class="card-img-top product-img" 
+                             alt="Груша сорта Лада" loading="lazy">
+                        
+                        <!-- Тело карточки -->
+                        <div class="card-body d-flex flex-column">
+                            <!-- Название товара -->
+                            <h3 class="h5 card-title">Груша "Лада"</h3>
+                            
+                            <!-- Описание товара -->
+                            <p class="card-text flex-grow-1">
+                                Скороплодный сорт с сочными и сладкими плодами.
+                            </p>
+                            
+                            <!-- Цена и кнопка -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0">1 500 ₽</span>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        aria-label="Добавить Грушу Лада в корзину">
+                                    В корзину
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <!-- Карточка товара 3 -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <article class="card product-card h-100">
+                        <!-- Изображение товара -->
+                        <img src="media/products/cherry-tree.jpg" class="card-img-top product-img" 
+                             alt="Вишня сорта Шоколадница" loading="lazy">
+                        
+                        <!-- Тело карточки -->
+                        <div class="card-body d-flex flex-column">
+                            <!-- Название товара -->
+                            <h3 class="h5 card-title">Вишня "Шоколадница"</h3>
+                            
+                            <!-- Описание товара -->
+                            <p class="card-text flex-grow-1">
+                                Зимостойкий сорт с темно-бордовыми сладкими ягодами.
+                            </p>
+                            
+                            <!-- Цена и кнопка -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0">1 000 ₽</span>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        aria-label="Добавить Вишню Шоколадница в корзину">
+                                    В корзину
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <!-- Карточка товара 4 -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <article class="card product-card h-100">
+                        <!-- Изображение товара -->
+                        <img src="media/products/plum-tree.jpg" class="card-img-top product-img" 
+                             alt="Слива сорта Стенли" loading="lazy">
+                        
+                        <!-- Тело карточки -->
+                        <div class="card-body d-flex flex-column">
+                            <!-- Название товара -->
+                            <h3 class="h5 card-title">Слива "Стенли"</h3>
+                            
+                            <!-- Описание товара -->
+                            <p class="card-text flex-grow-1">
+                                Крупноплодный сорт с отличными вкусовыми качествами.
+                            </p>
+                            
+                            <!-- Цена и кнопка -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0">1 300 ₽</span>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        aria-label="Добавить Сливу Стенли в корзину">
+                                    В корзину
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <!-- Кнопка перехода в полный каталог -->
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-primary" role="button" aria-label="Перейти в полный каталог товаров">
+                    Смотреть все товары
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         О НАС
+         ============================================================ -->
+    <section class="py-5 bg-light" id="about" aria-labelledby="about-heading">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Изображение раздела -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="media/about-us.jpg" alt="Наш питомник растений" class="img-fluid rounded shadow" 
+                         loading="lazy">
+                </div>
+                
+                <!-- Текстовый контент -->
+                <div class="col-lg-6">
+                    <h2 class="section-title text-start" id="about-heading">О нашем питомнике</h2>
+                    
+                    <!-- Основной текст -->
+                    <div class="mb-4">
+                        <p>Наш питомник занимается выращиванием саженцев плодовых деревьев и кустарников уже более 15 лет. Мы гордимся тем, что предлагаем нашим клиентам только качественный посадочный материал, выращенный с соблюдением всех агротехнических норм.</p>
+                        <p>В нашем ассортименте представлены как традиционные, так и редкие сорта плодовых культур, адаптированные к различным климатическим условиям.</p>
+                    </div>
+                    
+                    <!-- Список преимуществ -->
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                            <span>Собственное производство</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                            <span>Гарантия приживаемости</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                            <span>Профессиональные консультации</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                            <span>Доставка по всей России</span>
+                        </li>
+                    </ul>
+                    
+                    <!-- Кнопка для перехода на страницу "О нас" -->
+                    <a href="#" class="btn btn-outline-primary mt-3" role="button">
+                        Подробнее о нас
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ОТЗЫВЫ КЛИЕНТОВ
+         ============================================================ -->
+    <section class="py-5" id="testimonials" aria-labelledby="testimonials-heading">
+        <div class="container">
+            <h2 class="section-title" id="testimonials-heading">Отзывы наших клиентов</h2>
+            <div class="row">
+                <!-- Карточка отзыва 1 -->
+                <div class="col-md-4 mb-4">
+                    <article class="card h-100">
+                        <div class="card-body">
+                            <!-- Заголовок отзыва с рейтингом -->
+                            <header class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="fas fa-user-circle fa-3x text-muted" aria-hidden="true"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-1">Анна С.</h3>
+                                    <div class="text-warning mb-2" aria-label="Рейтинг: 5 из 5">
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <span class="visually-hidden">5 звёзд</span>
+                                    </div>
+                                </div>
+                            </header>
+                            <!-- Текст отзыва -->
+                            <blockquote class="card-text">
+                                <p>Заказывала яблони и груши. Растения пришли в отличном состоянии, хорошо упакованные. Уже на второй год получили первый урожай. Спасибо!</p>
+                            </blockquote>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="fas fa-user-circle fa-3x text-muted"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">Дмитрий П.</h5>
+                                    <div class="text-warning mb-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Быстрая доставка, хорошая упаковка. Растения прижились хорошо. Консультант помог с выбором сортов для нашего региона.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="fas fa-user-circle fa-3x text-muted"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">Елена В.</h5>
+                                    <div class="text-warning mb-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Покупаю саженцы уже не в первый раз. Всегда отличное качество и большой выбор. Рекомендую этого продавца!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         КОНТАКТЫ
+         ============================================================ -->
+    <section class="py-5 bg-light" id="contacts" aria-labelledby="contacts-heading">
+        <div class="container">
+            <div class="row">
+                <!-- Контактная информация -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="section-title text-start" id="contacts-heading">Контакты</h2>
+                    <p class="mb-4">Мы всегда рады ответить на ваши вопросы и помочь с выбором саженцев.</p>
+                    
+                    <!-- Адрес -->
+                    <div class="mb-4">
+                        <h3 class="h5">
+                            <i class="fas fa-map-marker-alt text-primary me-2" aria-hidden="true"></i>
+                            <span>Адрес</span>
+                        </h3>
+                        <address>
+                            <p class="mb-0">г. Москва, ул. Садовая, д. 42</p>
+                            <a href="https://yandex.ru/maps/" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                                <small>Посмотреть на карте</small>
+                            </a>
+                        </address>
+                    </div>
+                    
+                    <!-- Телефон -->
+                    <div class="mb-4">
+                        <h3 class="h5">
+                            <i class="fas fa-phone-alt text-primary me-2" aria-hidden="true"></i>
+                            <span>Телефон</span>
+                        </h3>
+                        <p class="mb-0">
+                            <a href="tel:+74951234567" class="text-decoration-none">+7 (495) 123-45-67</a>
+                        </p>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <h3 class="h5">
+                            <i class="fas fa-envelope text-primary me-2" aria-hidden="true"></i>
+                            <span>Email</span>
+                        </h3>
+                        <p class="mb-0">
+                            <a href="mailto:info@yabloni.ru" class="text-decoration-none">info@yabloni.ru</a>
+                        </p>
+                    </div>
+                    
+                    <!-- Режим работы -->
+                    <div class="mb-4">
+                        <h3 class="h5">
+                            <i class="fas fa-clock text-primary me-2" aria-hidden="true"></i>
+                            <span>Режим работы</span>
+                        </h3>
+                        <dl class="mb-0">
+                            <dt class="d-inline">Пн-Пт:</dt>
+                            <dd class="d-inline ms-1">9:00 - 18:00</dd><br>
+                            <dt class="d-inline">Сб:</dt>
+                            <dd class="d-inline ms-1">10:00 - 15:00</dd><br>
+                            <dt class="d-inline">Вс:</dt>
+                            <dd class="d-inline ms-1">выходной</dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <!-- Форма обратной связи -->
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h3 class="h5 card-title mb-4">Напишите нам</h3>
+                            
+                            <!-- Форма для отправки сообщения -->
+                            <form id="contact-form" novalidate>
+                                <!-- Поле для имени -->
+                                <div class="mb-3">
+                                    <label for="name" class="form-label visually-hidden">Ваше имя</label>
+                                    <input type="text" class="form-control" id="name" name="name" 
+                                           placeholder="Ваше имя" required
+                                           aria-required="true">
+                                    <div class="invalid-feedback">Пожалуйста, укажите ваше имя</div>
+                                </div>
+                                
+                                <!-- Поле для email -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label visually-hidden">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                           placeholder="Email" required
+                                           aria-required="true">
+                                    <div class="invalid-feedback">Пожалуйста, укажите корректный email</div>
+                                </div>
+                                
+                                <!-- Поле для телефона -->
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label visually-hidden">Телефон</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone"
+                                           placeholder="Телефон"
+                                           pattern="[0-9+\-\s()]+"
+                                           aria-describedby="phoneHelp">
+                                    <div id="phoneHelp" class="form-text">Необязательное поле</div>
+                                </div>
+                                
+                                <!-- Поле для сообщения -->
+                                <div class="mb-4">
+                                    <label for="message" class="form-label visually-hidden">Ваше сообщение</label>
+                                    <textarea class="form-control" id="message" name="message" 
+                                              rows="4" placeholder="Ваше сообщение" 
+                                              required aria-required="true"></textarea>
+                                    <div class="invalid-feedback">Пожалуйста, введите ваше сообщение</div>
+                                </div>
+                                
+                                <!-- Кнопка отправки формы -->
+                                <button type="submit" class="btn btn-primary w-100" 
+                                        aria-label="Отправить сообщение">
+                                    Отправить сообщение
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ПОДКЛЮЧЕНИЕ ФУТЕРА ИЗ ВНЕШНЕГО ФАЙЛА
+         ============================================================ -->
+    {% include 'ffooter.html' %}
+    
+    <!-- Скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Активация всплывающих подсказок
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Валидация формы обратной связи
+        (function() {
+            'use strict';
+            
+            // Получаем форму, к которой нужно применить валидацию
+            var form = document.getElementById('contact-form');
+            
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            }
+            
+            // Инициализация модального окна
+            var myModal = new bootstrap.Modal(document.getElementById('contactModal'), {
+                keyboard: false
+            });
+            
+            // Обработчик успешной отправки формы
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Здесь может быть код для отправки данных формы
+                console.log('Форма отправлена!');
+                
+                // Показываем модальное окно с благодарностью
+                myModal.show();
+                
+                // Очищаем форму
+                form.reset();
+                form.classList.remove('was-validated');
+                
+                // Показываем модальное окно с благодарностью
+                var thanksModal = new bootstrap.Modal(document.getElementById('thanksModal'));
+                thanksModal.show();
+            });
+        });
+        
+        // Плавная прокрутка для якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // Учитываем высоту фиксированной навигации
+                        behavior: 'smooth'
+                    });
+                    
+                    // Обновляем URL без перезагрузки страницы
+                    if (history.pushState) {
+                        history.pushState(null, null, targetId);
+                    } else {
+                        location.hash = targetId;
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <!-- Модальное окно благодарности -->
+    <div class="modal fade" id="thanksModal" tabindex="-1" aria-labelledby="thanksModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="thanksModalLabel">Спасибо за обращение!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4>Ваше сообщение отправлено</h4>
+                    <p class="mb-0">Наш менеджер свяжется с вами в ближайшее время.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отлично</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
