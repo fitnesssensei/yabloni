@@ -1,8 +1,6 @@
-/* Основные стили */
+ /* Основной цвет фона сайта */
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    background-color: #c0d95d !important;
 }
 
 main {
@@ -287,4 +285,9 @@ main {
 
 .read-more:hover {
     text-decoration: underline;
+}
+
+/* Стили для подвала */
+.custom-footer {
+    background-color: #c0d95d !important;
 }
