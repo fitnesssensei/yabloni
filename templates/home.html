@@ -122,6 +122,28 @@
         </a>
     </div>
 
+    <!-- Блок карусель "Хит продаж" -->
+    <section class="hits-carousel">
+        <div class="hits-container">
+            <button class="carousel-btn prev" onclick="scrollHits(-1)">❮</button>
+            <div class="hits-slider" id="hitsSlider">
+                {% for product in featured_products %}
+                <div class="hit-card">
+                    {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="hit-card-body">
+                        <h5>{{ product.name }}</h5>
+                        <p>{{ product.price }} ₽</p>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-success">Подробнее</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-btn next" onclick="scrollHits(1)">❯</button>
+        </div>
+    </section>
+
     <section class="mb-5">
         <div class="container">
             <h2 class="text-center mb-4">Наши категории</h2>
@@ -231,4 +253,39 @@
             </div>
         </div>
     </section>
+
+    <!-- скрипт для работы карусели "хит продаж"-->
+    <script>
+        function scrollHits(direction) {
+            const container = document.getElementById('hitsSlider');
+            const cardWidth = container.querySelector('.hit-card').offsetWidth + 20; // Ширина карточки + отступ
+            container.scrollBy({
+                left: direction * cardWidth * 4, // Прокрутка на 4 карточки
+                behavior: 'smooth'
+            });
+        }
+
+    // Автоматическая прокрутка (опционально)
+    let autoScroll;
+    const startAutoScroll = () => {
+        autoScroll = setInterval(() => {
+            const container = document.getElementById('hitsSlider');
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            
+            if (container.scrollLeft >= maxScroll - 10) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: 300, behavior: 'smooth' });
+            }
+        }, 3000);
+    };
+
+    // Остановка автопрокрутки при наведении
+    const slider = document.getElementById('hitsSlider');
+    if (slider) {
+        slider.addEventListener('mouseenter', () => clearInterval(autoScroll));
+        slider.addEventListener('mouseleave', startAutoScroll);
+        startAutoScroll();
+    }
+</script>
 {% endblock %}
