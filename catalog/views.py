@@ -35,6 +35,11 @@ class HomeView(ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['cart_product_form'] = CartAddProductForm()
+        # Добавляем новинки в контекст
+        context['new_products'] = Product.objects.filter(
+            is_new=True, 
+            available=True
+        ).order_by('-created')[:4]  # Берем 8 последних новинок
         return context
 
     def get_queryset(self):

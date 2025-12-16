@@ -49,6 +49,33 @@
         </div>
     </div>
 
+    <!--блок Новинки-->
+    <section class="new-products py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Новинки</h2>
+            <div class="row">
+                {% for product in new_products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.price }} ₽</p>
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p>Скоро появятся новинки!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>    
+
     <section class="mb-5">
         <div class="container">
             <h2 class="text-center mb-4">Наши категории</h2>
@@ -104,6 +131,32 @@
             </div>
         </div>
     </section>
+        <!--блок Новинки
+    <section class="new-products py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Новинки</h2>
+            <div class="row">
+                {% for product in new_products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.price }} ₽</p>
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p>Скоро появятся новинки!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>-->
 
     <section class="mb-5">
         <div class="container">
