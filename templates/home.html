@@ -47,11 +47,11 @@
                             background-color: #000; /* Черный фон при наведении */
                             border-color: #000; /* Черная рамка при наведении */
                         }
-
+                        /* стили надписи Новинки */
                         .rotated-title {
                             position: absolute;
                             left: 30px;  /* Увеличьте это значение, чтобы отодвинуть надпись от края */
-                            top: 50%;
+                            top: 65%;
                             -webkit-transform: translateY(-50%) rotate(-90deg);
                             -ms-transform: translateY(-50%) rotate(-90deg);
                             transform: translateY(-50%) rotate(-90deg);
@@ -64,21 +64,7 @@
                             color: #000;
                             z-index: 10;
                         }
-                        /* стили блока Новинки 2шт 
-                        .rotated-title {
-                            position: absolute;
-                            left: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            font-size: 24px;
-                            font-weight: bold;
-                            writing-mode: vertical-rl;
-                            text-orientation: mixed;
-                            transform: rotate(180deg);
-                            color: #000;
-                            z-index: 10;
-                        }*/
-
+                    
                         .new-products {
                             position: relative;
                             overflow: hidden;
@@ -133,15 +119,18 @@
         
             <div class="row ms-5">
                 {% for product in new_products %}
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100">
-                        {% if product.main_image %}
-                        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.price }} ₽</p>
-                            <!--<a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a> -->
+                <div class="col-md-3 mb-4 d-flex justify-content-center">
+                    <div class="card">
+                        <div class="card-img-wrapper">
+                            {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <p class="card-text mb-0 small">{{ product.category.name }}</p>
+                                <h5 class="card-title mb-1">{{ product.name }}</h5>
+                                <!--<p class="card-text mb-0 small">{{ product.category.name }}</p>-->
+                                <!--<p class="card-text mb-0">{{ product.price }} ₽</p>-->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +172,7 @@
                     <div class="hit-card-body">
                         <h5>{{ product.name }}</h5>
                         <p>{{ product.price }} ₽</p>
-                        <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-success">Подробнее</a>
+                        <!--<a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-success">Подробнее</a>-->
                     </div>
                 </div>
                 {% endfor %}
