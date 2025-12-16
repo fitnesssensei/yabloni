@@ -1,7 +1,10 @@
 
-from django.shortcuts import render, get_object_or_404
-from .models import Category, Product
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from django.views.generic import ListView
+from .models import Category, Product
 from cart.forms import CartAddProductForm
 
 def product_list(request, category_slug=None):
@@ -37,3 +40,19 @@ class HomeView(ListView):
     def get_queryset(self):
             # Возвращаем только товары, отмеченные как хиты продаж
             return Product.objects.filter(is_featured=True, available=True)[:8]  # Ограничиваем количество
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Автоматический вход после регистрации
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            messages.success(request, 'Регистрация прошла успешно!')
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

@@ -1,0 +1,88 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Блог о садоводстве | Название сайта{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Наш блог</h1>
+    
+    <div class="row">
+        <!-- Боковая панель с категориями -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Категории</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active">Все статьи</a>
+                    <a href="#" class="list-group-item list-group-item-action">Уход за яблонями</a>
+                    <a href="#" class="list-group-item list-group-item-action">Сорта яблок</a>
+                    <a href="#" class="list-group-item list-group-item-action">Советы садоводам</a>
+                    <a href="#" class="list-group-item list-group-item-action">Сезонные работы</a>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Популярные теги</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-secondary">яблони</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">обрезка</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">посадка</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">удобрения</a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">болезни</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="col-md-8">
+            <!-- Статья 1 -->
+            <div class="card mb-4">
+                <img src="https://via.placeholder.com/800x400" class="card-img-top" alt="Уход за яблонями весной">
+                <div class="card-body">
+                    <div class="mb-2 text-muted">
+                        <span class="me-3"><i class="bi bi-calendar3 me-1"></i> 15 декабря 2025</span>
+                        <span><i class="bi bi-person me-1"></i> Администратор</span>
+                    </div>
+                    <h2 class="card-title h4">Как правильно ухаживать за яблонями весной</h2>
+                    <p class="card-text">Весенний уход за яблоней – залог хорошего урожая. В этой статье мы расскажем о всех необходимых процедурах...</p>
+                    <a href="#" class="btn btn-success">Читать далее</a>
+                </div>
+            </div>
+
+            <!-- Статья 2 -->
+            <div class="card mb-4">
+                <img src="https://via.placeholder.com/800x400" class="card-img-top" alt="Лучшие сорта яблонь">
+                <div class="card-body">
+                    <div class="mb-2 text-muted">
+                        <span class="me-3"><i class="bi bi-calendar3 me-1"></i> 1 декабря 2025</span>
+                        <span><i class="bi bi-person me-1"></i> Администратор</span>
+                    </div>
+                    <h2 class="card-title h4">Топ-10 лучших сортов яблонь для вашего сада</h2>
+                    <p class="card-text">Выбор сорта яблони – ответственное дело. Мы подготовили для вас обзор самых популярных и урожайных сортов...</p>
+                    <a href="#" class="btn btn-success">Читать далее</a>
+                </div>
+            </div>
+
+            <!-- Пагинация -->
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Назад</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Вперед</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
