@@ -43,10 +43,10 @@ urlpatterns = [
     path('catalog/', include('catalog.urls', namespace='catalog')),
     
     # Статические страницы
-    path('nursery/', TemplateView.as_view(template_name='nursery.html'), name='nursery'),
-    path('blog/', TemplateView.as_view(template_name='blog.html'), name='blog'),
-    path('search/', TemplateView.as_view(template_name='search.html'), name='search'),
-    path('account/', TemplateView.as_view(template_name='account.html'), name='account'),
+    path('nursery/', TemplateView.as_view(template_name='header/nursery.html'), name='nursery'),
+    path('blog/', TemplateView.as_view(template_name='header/blog.html'), name='blog'),
+    path('search/', TemplateView.as_view(template_name='header/search.html'), name='search'),
+    path('account/', TemplateView.as_view(template_name='header/account.html'), name='account'),
     
     # Главная страница
     path('', HomeView.as_view(), name='home'),
