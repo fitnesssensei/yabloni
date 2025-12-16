@@ -15,9 +15,9 @@
 
                     <!--кнопки каталога над текстом-->
                     <div class="d-flex justify-content-center gap-3 mt-3">
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Яблони</a>
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Груши</a>
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Черешни</a>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Яблони</a>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Груши</a>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Черешни</a>
                     </div>
 
                     <!--стили-->
@@ -34,6 +34,18 @@
                             font-size: 1.5rem;
                             font-weight: 100;
                             color: #2c3e50;
+                        }
+                        /* стили кнопок рядом с лого 2шт */
+                        .btn-outline-dark {
+                            color: #000; /* Черный текст */
+                            background-color: #fff; /* Белый фон */
+                            border: 1px solid #000; /* Черная рамка */
+                        }
+
+                        .btn-outline-dark:hover {
+                            color: #fff; /* Белый текст при наведении */
+                            background-color: #000; /* Черный фон при наведении */
+                            border-color: #000; /* Черная рамка при наведении */
                         }
                         /* стили кнопок на гл странице 3шт */
                         .category-buttons {
