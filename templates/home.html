@@ -47,6 +47,42 @@
                             background-color: #000; /* Черный фон при наведении */
                             border-color: #000; /* Черная рамка при наведении */
                         }
+
+                        .rotated-title {
+                            position: absolute;
+                            left: 30px;  /* Увеличьте это значение, чтобы отодвинуть надпись от края */
+                            top: 50%;
+                            -webkit-transform: translateY(-50%) rotate(-90deg);
+                            -ms-transform: translateY(-50%) rotate(-90deg);
+                            transform: translateY(-50%) rotate(-90deg);
+                            -webkit-transform-origin: left center;
+                            -ms-transform-origin: left center;
+                            transform-origin: left center;
+                            font-size: 30px; /* размер шрифта */
+                            font-weight: bold;
+                            white-space: nowrap;
+                            color: #000;
+                            z-index: 10;
+                        }
+                        /* стили блока Новинки 2шт 
+                        .rotated-title {
+                            position: absolute;
+                            left: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: 24px;
+                            font-weight: bold;
+                            writing-mode: vertical-rl;
+                            text-orientation: mixed;
+                            transform: rotate(180deg);
+                            color: #000;
+                            z-index: 10;
+                        }*/
+
+                        .new-products {
+                            position: relative;
+                            overflow: hidden;
+                        }
                         /* стили кнопок на гл странице 3шт */
                         .category-buttons {
                             display: flex;
@@ -92,10 +128,10 @@
     </div>
 
     <!--блок Новинки-->
-    <section class="new-products py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center mb-4">Новинки</h2>
-            <div class="row">
+    <section class="new-products py-5 bg-light position-relative">
+        <div class="rotated-title">Новинки</div>
+        
+            <div class="row ms-5">
                 {% for product in new_products %}
                 <div class="col-md-3 mb-4">
                     <div class="card h-100">
@@ -105,7 +141,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.price }} ₽</p>
-                            <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                            <!--<a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a> -->
                         </div>
                     </div>
                 </div>
