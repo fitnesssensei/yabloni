@@ -61,3 +61,11 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+def home(request):
+    featured_products = Product.objects.filter(is_featured=True, available=True)[:10]  # Ограничиваем количество
+    return render(request, 'home.html', {
+        'featured_products': featured_products,
+        # ... другие переменные контекста
+    })
