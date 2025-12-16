@@ -22,6 +22,24 @@ main {
     height: 100%;
 }
 
+/* стили раздела Новинки 3 шт */
+.new-products .card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.new-products .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.new-products .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);

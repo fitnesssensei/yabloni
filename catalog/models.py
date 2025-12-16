@@ -23,6 +23,8 @@ class Product(models.Model):
     available = models.BooleanField(default=True, verbose_name='В наличии')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    is_new = models.BooleanField('Новинка', default=False, 
+        help_text='Отметьте, чтобы показать этот товар в разделе Новинки')
     
     # поле загрузки изображений 
     main_image = models.ImageField(upload_to='products/%Y/%m/%d/', blank=True, verbose_name='Основное изображение')
