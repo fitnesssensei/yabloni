@@ -3,31 +3,77 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-success">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'img/logo.png' %}" alt="Логотип" style="height: 400px;">
-            </a>
-            <!--<a class="navbar-brand" href="{% url 'catalog:product_list' %}">Саженцы</a>-->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'catalog:product_list' %}">Каталог</a>
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="bi bi-house-door me-1"></i>Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'catalog:product_list' %}">
+                            <i class="bi bi-grid me-1"></i>Каталог
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal">
+                            <i class="bi bi-search me-1"></i>Поиск
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'nursery' %}">
+                            <i class="bi bi-tree me-1"></i>Питомник
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog' %}">
+                            <i class="bi bi-journal-text me-1"></i>Блог
+                        </a>
                     </li>
                 </ul>
-                <!-- корзина отображает кол-во товаров в корзине -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cart:cart_detail' %}">
-                        Корзина
-                        {% with total_items=cart|length %}
-                            {% if total_items > 0 %}
-                                <span class="badge bg-danger">{{ total_items }}</span>
-                            {% endif %}
-                        {% endwith %}
-                    </a>
-                </li>
+                
+                <ul class="navbar-nav">
+                    <!--Корзина-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart:cart_detail' %}">
+                            <i class="bi bi-cart3 me-1"></i>Корзина
+                            {% with total_items=cart|length %}
+                                {% if total_items > 0 %}
+                                    <span class="badge bg-danger">{{ total_items }}</span>
+                                {% endif %}
+                            {% endwith %}
+                        </a>
+                    </li>
+                    <!--Аккаунт-->
+                    <li class="nav-item me-3">
+                        <a class="nav-link" href="{% url 'account' %}">
+                            <i class="bi bi-person me-1"></i>Аккаунт
+                        </a>
+                    </li>
+                    
+                </ul>
             </div>
         </div>
     </nav>
 </header>
+
+<!-- Модальное окно поиска -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Поиск по сайту</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="d-flex" action="{% url 'search' %}" method="get">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Введите запрос..." aria-label="Search">
+                    <button class="btn btn-success" type="submit">Найти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,13 +1,50 @@
 {% extends 'base/base.html' %}
 {% load static %}
-
+ 
 {% block content %}
     <div class="hero-section bg-light py-5 mb-5">
         <div class="container text-center">
             
-            <h1 class="display-4">Добро пожаловать в магазин "ЯБЛОНИ&ГРУШИ"</h1>
-            <p class="lead">Авторские саженцы плодовых деревьев прямо в Москве</p>
-            <a href="{% url 'catalog:product_list' %}" class="btn btn-success btn-lg">В каталог</a>
+            <!-- Логотип с текстом -->
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <img src="{% static 'img/logo.png' %}" alt="Логотип" class="img-fluid" style="max-height: 400px; width: auto;">
+                </div>
+                <div class="col-md-8 text-start mt-4">
+
+                    <!--кнопки каталога над текстом-->
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Яблони</a>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Груши</a>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-success">Черешни</a>
+                    </div>
+
+                    <!--стили текста рядом с лого-->
+                    <style>
+                        .welcome-text {
+                            font-family: 'Roboto', sans-serif;
+                            line-height: 1.6;
+                        }
+                        .welcome-text .lead {
+                            margin-bottom: 1rem;
+                        }
+                        .welcome-text .lead:first-child {
+                            font-size: 1.5rem;
+                            font-weight: 100;
+                            color: #2c3e50;
+                        }
+                    </style>
+                    
+                    <!--Текст рядом с лого-->
+                    <div class="welcome-text">
+                        <p class="lead">Добро пожаловать в интернет-магазин!</p> 
+                        <p>Широкий ассортимент саженцев плодовых деревьев с доставкой по Москве и Московской области.</p>
+                        <p>Мы занимаемся выращиванием саженцев плодовых деревьев уже более 10 лет.</p>
+                        <p>Наш питомник расположен в экологически чистом районе, что гарантирует высокое качество нашей продукции.
+                           Все саженцы выращены с заботой и любовью, проходят строгий контроль качества перед отправкой к клиентам.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

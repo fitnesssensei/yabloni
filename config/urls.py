@@ -32,4 +32,11 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('', include('catalog.urls', namespace='catalog')),
     
+    # Добавляем URL для поиска, Питомник, Блог, аккаунт
+    path('nursery/', TemplateView.as_view(template_name='nursery.html'), name='nursery'),
+    path('blog/', TemplateView.as_view(template_name='blog.html'), name='blog'),
+    path('search/', TemplateView.as_view(template_name='search.html'), name='search'),
+    path('account/', TemplateView.as_view(template_name='account.html'), name='account'),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
