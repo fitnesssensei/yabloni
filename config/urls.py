@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from catalog.views import HomeView, register
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
@@ -41,6 +42,7 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
     path('catalog/', include('catalog.urls', namespace='catalog')),
+    path('legal/', TemplateView.as_view(template_name='legal/legal_info.html'), name='legal_info'),
     
     # Статические страницы
     path('nursery/', TemplateView.as_view(template_name='header/nursery.html'), name='nursery'),
