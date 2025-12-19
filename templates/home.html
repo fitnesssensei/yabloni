@@ -15,9 +15,9 @@
 
                     <!--кнопки каталога над текстом-->
                     <div class="d-flex justify-content-center gap-3 mt-3">
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Яблони</a>
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Груши</a>
-                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark">Черешни</a>
+                        <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="btn btn-outline-dark">Яблони</a>
+                        <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="btn btn-outline-dark">Груши</a>
+                        <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="btn btn-outline-dark">Черешни</a>
                     </div>
 
                     <!--стили-->
