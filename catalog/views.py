@@ -4,8 +4,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.views.generic import ListView
+from django.db.models import Q  # Импортируем Q для сложных запросов
 from .models import Category, Product
 from cart.forms import CartAddProductForm
+
 
 def product_list(request, category_slug=None):
     category = None
@@ -69,3 +71,62 @@ def home(request):
         'featured_products': featured_products,
         # ... другие переменные контекста
     })
+
+
+#def product_search(request):
+    """
+    Обработчик поисковых запросов.
+    Ищет товары по названию, категории и описанию.
+    """
+    query = request.GET.get('q', '').strip()  # Получаем поисковый запрос из GET-параметра 'q'
+    
+    # Если запрос пустой, показываем все доступные товары
+    if not query:
+        products = Product.objects.filter(available=True)
+    else:
+        # Ищем по названию (регистронезависимый поиск)
+        products = Product.objects.filter(
+            models.Q(name__icontains=query) |  # поиск в названии
+            models.Q(description__icontains=query) |  # поиск в описании
+            models.Q(category__name__icontains=query),  # поиск по названию категории
+            available=True  # только доступные товары
+        ).distinct()  # убираем дубликаты
+    
+    # Получаем все категории для отображения в сайдбаре
+    categories = Category.objects.all()
+    
+    # Создаем контекст для шаблона
+    context = {
+        'products': products,
+        'categories': categories,
+        'query': query,
+        'cart_product_form': CartAddProductForm(),  # форма для добавления в корзину
+    }
+    
+    # Рендерим шаблон с результатами поиска
+    return render(request, 'catalog/product/search_results.html', context)
+
+
+def product_search(request):
+    query = request.GET.get('q', '').strip()
+    
+    if not query:
+        products = Product.objects.filter(available=True)
+    else:
+        products = Product.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__name__icontains=query),
+            available=True
+        ).distinct()
+    
+    categories = Category.objects.all()
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'query': query,
+        'cart_product_form': CartAddProductForm(),
+    }
+    
+    return render(request, 'catalog/product/search_results.html', context)
