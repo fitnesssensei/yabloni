@@ -120,19 +120,21 @@
             <div class="row ms-5">
                 {% for product in new_products %}
                 <div class="col-md-3 mb-4 d-flex justify-content-center">
-                    <div class="card">
-                        <div class="card-img-wrapper">
-                            {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <p class="card-text mb-0 small">{{ product.category.name }}</p>
-                                <h5 class="card-title mb-1">{{ product.name }}</h5>
-                                <!--<p class="card-text mb-0 small">{{ product.category.name }}</p>-->
-                                <!--<p class="card-text mb-0">{{ product.price }} ₽</p>-->
+                    <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
+                        <div class="card">
+                            <div class="card-img-wrapper">
+                                {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <p class="card-text mb-0 small">{{ product.category.name }}</p>
+                                    <h5 class="card-title mb-1">{{ product.name }}</h5>
+                                    <!--<p class="card-text mb-0 small">{{ product.category.name }}</p>-->
+                                    <!--<p class="card-text mb-0">{{ product.price }} ₽</p>-->
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% empty %}
                 <div class="col-12 text-center">
