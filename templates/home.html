@@ -167,16 +167,17 @@
             <button class="carousel-btn prev" onclick="scrollHits(-1)">❮</button>
             <div class="hits-slider" id="hitsSlider">
                 {% for product in featured_products %}
-                <div class="hit-card">
-                    {% if product.main_image %}
-                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
-                    {% endif %}
-                    <div class="hit-card-body">
-                        <h5>{{ product.name }}</h5>
-                        <p>{{ product.price }} ₽</p>
-                        <!--<a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-success">Подробнее</a>-->
+                <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
+                    <div class="hit-card">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <div class="hit-card-body">
+                            <h5>{{ product.name }}</h5>
+                            <p>{{ product.price }} ₽</p>
+                        </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             <button class="carousel-btn next" onclick="scrollHits(1)">❯</button>
