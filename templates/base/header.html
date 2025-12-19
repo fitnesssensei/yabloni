@@ -69,6 +69,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <form class="d-flex" action="{% url 'catalog:product_search' %}" method="get">
+                    <input class="form-control me-2" 
+                           type="search" 
+                           name="q" 
+                           placeholder="Введите название, категорию или описание"
+                           required
+                           aria-label="Поиск">
+                    <button class="btn btn-success" type="submit">Найти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно поиска 
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Поиск по сайту</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 <form class="d-flex" action="{% url 'search' %}" method="get">
                     <input class="form-control me-2" type="search" name="q" placeholder="Введите запрос..." aria-label="Search">
                     <button class="btn btn-success" type="submit">Найти</button>
@@ -76,4 +99,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
