@@ -39,7 +39,7 @@
                     <!--Корзина-->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'cart:cart_detail' %}">
-                            <i class="bi bi-cart3 me-1"></i>Корзина
+                            <i class="bi bi-basket2 me-1"></i>Корзина
                             {% with total_items=cart|length %}
                                 {% if total_items > 0 %}
                                     <span class="badge bg-danger">{{ total_items }}</span>
