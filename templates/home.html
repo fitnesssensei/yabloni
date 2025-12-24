@@ -188,13 +188,11 @@
     <section class="blog-section">
         <div class="blog-container">
             <div class="blog-header">
-                <h2>Наш блог</h2>
+                <h2>БЛОГ</h2>
                 <p>Полезные статьи и советы по уходу за садом</p>
             </div>
-            <div class="row justify-content-center">
-                
-                <!-- Статья 1 -->
-                <div class="col-md-8 col-lg-4">
+            <div class="blog-content" style="position: relative;">
+                <div class="blog-cards">
                     <article class="blog-card">
 
                         <!-- Содержимое статьи -->
@@ -210,6 +208,9 @@
                         </div>
                     </article>
                 </div>
+                <!-- Изображение прижато к правому краю -->
+                <img src="{% static 'img/fish.jpeg' %}" alt="Рыбка"
+                    style="position: absolute; right: 0; top: 0; width: 300px; height: 300px; object-fit: cover; border-radius: 8px; z-index: 1;">
             </div>
         </div>
     </section>

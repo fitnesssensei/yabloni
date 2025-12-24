@@ -60,3 +60,7 @@ touch templates/cart/detail.html
 миграции:
 python manage.py makemigrations
 python manage.py migrate
+
+тоннель : 
+во втором терминале после запуска сервера в первом : 
+lt --port 8000
