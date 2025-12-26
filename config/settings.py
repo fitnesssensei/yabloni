@@ -46,7 +46,6 @@ ALLOWED_HOSTS = []
 
 
 # приложения
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'blog',
     'catalog.apps.CatalogConfig',
     'crispy_forms',
     'crispy_bootstrap5',

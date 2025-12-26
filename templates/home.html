@@ -3,7 +3,7 @@
 {% load static %}
  
 {% block content %}
-    <div class="hero-section bg-light py-5 mb-5">
+    <div class="hero-section bg-light pt-3 pb-3 mb-3">
         <div class="container text-center">
             
             <!-- Логотип с текстом -->
@@ -101,11 +101,11 @@
                     </style>
                     
                     <!--Текст рядом с лого-->
-                    <div class="welcome-text">
-                        <p class="lead">Добро пожаловать в интернет-магазин!</p> 
-                        <p>Широкий ассортимент саженцев плодовых деревьев с доставкой по Москве и Московской области.</p>
-                        <p>Мы занимаемся выращиванием саженцев плодовых деревьев уже более 10 лет.</p>
-                        <p>Наш питомник расположен в экологически чистом районе, что гарантирует высокое качество нашей продукции.
+                    <div class="welcome-text mt-2">
+                        <p class="lead mb-2">Добро пожаловать в интернет-магазин!</p> 
+                        <p class="mb-2">Широкий ассортимент саженцев плодовых деревьев с доставкой по Москве и Московской области.</p>
+                        <p class="mb-2">Мы занимаемся выращиванием саженцев плодовых деревьев уже более 10 лет.</p>
+                        <p class="mb-2">Наш питомник расположен в экологически чистом районе, что гарантирует высокое качество нашей продукции.
                            Все саженцы выращены с заботой и любовью, проходят строгий контроль качества перед отправкой к клиентам.</p>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
     </div>
 
     <!--блок Новинки-->
-    <section class="new-products py-5 bg-light position-relative">
+    <section class="new-products py-3 bg-light position-relative">
         <div class="rotated-title">Новинки</div>
         
             <div class="row ms-5">
@@ -185,33 +185,57 @@
     </section>
 
     <!-- Блок Блог -->
-    <section class="blog-section">
-        <div class="blog-container">
-            <div class="blog-header">
+    <section class="blog-section py-3">
+        <div class="container">
+            <div class="text-center mb-5">
                 <h2>БЛОГ</h2>
-                <p>Полезные статьи и советы по уходу за садом</p>
+                <p class="lead">Полезные статьи и советы по уходу за садом</p>
             </div>
-            <div class="blog-content" style="position: relative;">
-                <div class="blog-cards">
-                    <article class="blog-card">
-
-                        <!-- Содержимое статьи -->
-                        <img src="{% static 'img/blog1.jpg' %}" alt="Уход за яблонями">
-                        <div class="blog-card-content">
-                            <h3>Как правильно ухаживать за яблонями весной</h3>
-                            <p>Весенний уход за яблонями - залог хорошего урожая. Узнайте, как правильно обрезать, подкармливать и защищать ваши деревья.</p>
-                            <div class="blog-meta">
-                                <span>15 декабря 2025</span>
-                                <span>5 мин чтения</span>
-                            </div>
-                            <a href="#" class="read-more">Читать далее →</a>
+            
+            <div class="row">
+                {% for post in blog_posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">Нет изображения</span>
                         </div>
-                    </article>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text flex-grow-1">{{ post.content|truncatewords:20 }}</p>
+                            <div class="mt-auto">
+                                <div class="text-muted small mb-2">
+                                    <i class="bi bi-calendar3 me-1"></i> {{ post.created_at|date:"d.m.Y" }}
+                                    {% if post.updated_at > post.created_at %}
+                                    <span class="ms-2" title="Обновлено {{ post.updated_at|date:'d.m.Y' }}">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'blog:blog_detail' post.slug %}" class="btn btn-outline-primary w-100">
+                                    Читать далее
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Изображение прижато к правому краю -->
-                <img src="{% static 'img/fish.jpeg' %}" alt="Рыбка"
-                    style="position: absolute; right: 0; top: 0; width: 300px; height: 300px; object-fit: cover; border-radius: 8px; z-index: 1;">
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Скоро здесь появятся интересные статьи</p>
+                </div>
+                {% endfor %}
             </div>
+            
+            {% if blog_posts %}
+            <div class="text-center mt-4">
+                <a href="{% url 'blog:blog_list' %}" class="btn btn-outline-secondary">
+                    Все статьи блога <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            {% endif %}
         </div>
     </section>
 
@@ -288,7 +312,7 @@
     </section> -->
      
     <!-- блок "Почему выбирают нас"-->
-    <section class="bg-light py-5">
+    <section class="bg-light py-3">
         <div class="container">
             <h2 class="text-center mb-4">Почему выбирают нас</h2>
             <div class="row text-center">

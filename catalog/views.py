@@ -7,6 +7,7 @@ from django.views.generic import ListView
 from django.db.models import Q  # Импортируем Q для сложных запросов
 from .models import Category, Product
 from cart.forms import CartAddProductForm
+from blog.models import BlogPost  # Импортируем модель BlogPost
 
 
 def product_list(request, category_slug=None):
@@ -41,7 +42,13 @@ class HomeView(ListView):
         context['new_products'] = Product.objects.filter(
             is_new=True, 
             available=True
-        ).order_by('-created')[:4]  # Берем 8 последних новинок
+        ).order_by('-created')[:4]  # Берем 4 последние новинки
+        
+        # Добавляем последние опубликованные статьи блога
+        context['blog_posts'] = BlogPost.objects.filter(
+            is_published=True
+        ).order_by('-created_at')[:3]  # Берем 3 последние статьи
+        
         return context
 
     def get_queryset(self):
