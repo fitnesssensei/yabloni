@@ -233,7 +233,7 @@ main {
     }
 }
 
-/* ////// Блок блога 14шт//////*/
+/* ////// Блок блога 20шт//////*/
 .blog-section {
     padding: 4rem 0;
     background-color: #fff;
@@ -254,6 +254,52 @@ main {
     font-size: 2rem;
     color: #2c3e50;
     margin-bottom: 1rem;
+}
+
+/* Стили для карточек блога 6 шт*/
+.blog-section .card {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.blog-section .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.blog-section .card-img-top {
+    height: 150px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.blog-section .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+}
+
+.blog-section .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.blog-section .card-text {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 .blog-header p {
