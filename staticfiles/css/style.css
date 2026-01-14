@@ -1,61 +1,121 @@
-/* ============================================================
-   ОСНОВНЫЕ СТИЛИ САЙТА
-   ============================================================ */
-
-/* Цветовая схема */ 
-:root {
-    --primary-color: #2e7d32;      /* Основной зеленый цвет */
-    --secondary-color: #f5f5f5;    /* Светло-серый фон */
-    --accent-color: #ff8f00;       /* Оранжевый акцентный цвет */
-}
-
-/* Базовые стили страницы */
+ /* Основной цвет фона сайта */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
+    background-color: #c0d95d !important;
 }
 
-/* Стили для шапки */
-.header {
-    transition: all 0.3s ease;
+main {
+    flex: 1;
 }
 
-/* Стили для кнопок */
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+/* Стили для навигации */
+.navbar-nav .nav-link.active {
+    font-weight: 500;
+    border-bottom: 2px solid white;
 }
 
-.btn-primary:hover {
-    background-color: #1b5e20;
-    border-color: #1b5e20;
-}
-
-/* Стили для карточек товаров */
-.card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Карточки товаров */
+.product-card {
+    transition: transform 0.3s;
     margin-bottom: 20px;
+    height: 100%;
 }
 
-.card:hover {
+/* стили раздела Новинки 3 шт */
+.new-products .card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+    aspect-ratio: 1/1;
+    max-width: 100%;
+}
+
+.new-products .card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.new-products .card-img-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+}
+
+.new-products .card-img-top {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.new-products .card-body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 0 0 50% 50%;
+}
+
+
+.product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-/* Стили для секций */
-section {
-    padding: 80px 0;
+.product-img {
+    height: 200px;
+    object-fit: cover;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    section {
-        padding: 40px 0;
+    .product-img {
+        height: 150px;
     }
     
-    .display-4 {
-        font-size: 2rem;
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Стили для корзины */
+.cart-item {
+    transition: background-color 0.3s;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}
+
+.quantity-input {
+    max-width: 80px;
+    text-align: center;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
     }
 }
 
@@ -66,186 +126,212 @@ section {
 }
 
 .fade-in {
-    animation: fadeIn 1s ease-in;
+    animation: fadeIn 0.5s ease-in;
 }
 
-/* Кастомные стили для формы обратной связи */
-.contact-form .form-control {
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    margin-bottom: 15px;
+/* /////////// Карусель "Хит продаж" ///////// */
+.hits-carousel {
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+    position: relative;
 }
 
-.contact-form textarea.form-control {
-    min-height: 150px;
-    resize: vertical;
+.hits-header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-/* Стили для футера */
-.footer {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 40px 0 20px;
+.hits-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    overflow: hidden;
 }
 
-.footer a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: color 0.3s ease;
+.hits-slider {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc(25% - 15px); /* 4 колонки с отступом */
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 0;
+    scrollbar-width: none; /* Скрываем скроллбар в Firefox */
 }
 
-.footer a:hover {
-    color: white;
-    text-decoration: underline;
+.hits-slider::-webkit-scrollbar {
+    display: none; /* Скрываем скроллбар в Chrome/Safari */
 }
 
-/* Стили для иконок социальных сетей */
-.social-icons a {
-    display: inline-flex;
+.hit-card {
+    scroll-snap-align: start;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+    width: 100%;
+    margin: 0;
+}
+
+.hit-card:hover {
+    transform: translateY(-5px);
+}
+
+.hit-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.hit-card-body {
+    padding: 15px;
+    text-align: center;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #333;
     transition: all 0.3s ease;
 }
 
-.social-icons a:hover {
-    background-color: var(--accent-color);
-    color: white;
-    transform: translateY(-3px);
+.carousel-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-50%) scale(1.1);
 }
 
-/* Кастомные стили для отзывов */
-.testimonial-card {
-    border-left: 4px solid var(--primary-color);
-    padding-left: 20px;
-    margin-bottom: 30px;
+.carousel-btn.prev {
+    left: 10px;
 }
 
-.testimonial-author {
-    font-weight: 600;
-    margin-top: 15px;
-    color: var(--primary-color);
+.carousel-btn.next {
+    right: 10px;
 }
 
-/* Стили для хлебных крошек */
-.breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 20px;
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .hits-slider {
+        grid-auto-columns: calc(33.333% - 13.33px); /* 3 колонки на планшетах */
+    }
+}
+@media (max-width: 768px) {
+    .hits-slider {
+        grid-auto-columns: calc(50% - 10px); /* 2 колонки на мобильных */
+    }
+}
+@media (max-width: 480px) {
+    .hits-slider {
+        grid-auto-columns: 100%; /* 1 колонка на очень маленьких экранах */
+    }
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
-    content: ">";
+/* ////// Блок блога 20шт//////*/
+.blog-section {
+    padding: 4rem 0;
+    background-color: #fff;
 }
 
-/* Стили для модальных окон */
-.modal-content {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+.blog-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
 }
 
-.modal-header {
-    border-bottom: 1px solid #eee;
-    padding: 20px;
+.blog-header {
+    text-align: center;
+    margin-bottom: 3rem;
 }
 
-.modal-footer {
-    border-top: 1px solid #eee;
-    padding: 20px;
+.blog-header h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
 }
 
-/* Кастомные стили для кнопок */
-.btn-outline-primary {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.btn-outline-primary:hover {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-/* Дополнительные утилитные классы */
-.rounded-lg {
-    border-radius: 10px;
-}
-
-.shadow-sm {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
-}
-
-/* Адаптивные изображения */
-.img-fluid {
+/* Стили для карточек блога 6 шт*/
+.blog-section .card {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     max-width: 100%;
-    height: auto;
 }
 
-/* Стили для блока преимуществ */
-.feature-box {
-    text-align: center;
-    padding: 30px 20px;
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
-    height: 100%;
-}
-
-.feature-box:hover {
+.blog-section .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.feature-box i {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
+.blog-section .card-img-top {
+    height: 150px;
+    object-fit: cover;
+    width: 100%;
 }
 
-/* Стили иконок в карточках преимуществ */
-.feature-icon {
-    font-size: 2.5rem;              /* Размер иконки */
-    color: var(--primary-color);    /* Цвет иконки (основной зеленый) */
-    margin-bottom: 15px;            /* Отступ снизу */
+.blog-section .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
 }
 
-/* Стили для счетчиков */
-.counter-box {
-    text-align: center;
-    padding: 30px 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+.blog-section .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
-.counter {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin: 15px 0;
-    display: block;
+.blog-section .card-text {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
-/* Стили для блога/новостей */
+.blog-header p {
+    color: #6c757d;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .blog-card {
+    background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .blog-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .blog-card img {
@@ -254,299 +340,73 @@ section {
     object-fit: cover;
 }
 
-.blog-content {
-    padding: 20px;
+.blog-card-content {
+    padding: 1.5rem;
 }
 
-.blog-date {
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.blog-title {
+.blog-card h3 {
     font-size: 1.25rem;
-    margin-bottom: 10px;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
 }
 
-.blog-excerpt {
+.blog-card p {
     color: #6c757d;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
+    line-height: 1.6;
 }
 
-/* Стили для подписки на рассылку */
-.newsletter {
-    background-color: var(--secondary-color);
-    padding: 50px 0;
-    text-align: center;
-}
-
-.newsletter-form {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.newsletter-form .form-control {
-    height: 50px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    box-shadow: none;
-}
-
-.newsletter-form .btn {
-    border-radius: 0 5px 5px 0;
-    height: 50px;
-    padding: 0 30px;
-}
-
-/* Стили для кнопки наверх */
-.back-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 50%;
+.blog-meta {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
-}
-
-.back-to-top.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.back-to-top:hover {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-/* Анимация появления элементов при скролле */
-.animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.animate-on-scroll.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Кастомные стили для полей формы */
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-}
-
-/* Кастомные стили для чекбоксов и радиокнопок */
-.form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-/* Стили для алертов */
-.alert-primary {
-    background-color: rgba(46, 125, 50, 0.15);
-    border-color: rgba(46, 125, 50, 0.3);
-    color: #1b5e20;
-}
-
-/* Стили для таблиц */
-.table thead th {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: #1b5e20;
-}
-
-/* Стили для пагинации */
-.page-link {
-    color: var(--primary-color);
-}
-
-.page-item.active .page-link {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-/* Стили для аккордеона */
-.accordion-button:not(.collapsed) {
-    background-color: rgba(46, 125, 50, 0.1);
-    color: var(--primary-color);
-}
-
-.accordion-button:focus {
-    box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-    border-color: var(--primary-color);
-}
-
-/* Стили для вкладок */
-.nav-tabs .nav-link.active {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-}
-
-.nav-tabs .nav-link:hover {
-    border-color: transparent;
-    color: var(--primary-color);
-}
-
-/* Стили для выпадающих меню */
-.dropdown-item:active, .dropdown-item.active {
-    background-color: var(--primary-color);
-}
-
-/* Стили для прогресс-баров */
-.progress {
-    height: 8px;
-    border-radius: 4px;
-}
-
-.progress-bar {
-    background-color: var(--primary-color);
-}
-
-/* Стили для карусели */
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background-size: 50%;
-}
-
-/* Стили для тултипов */
-.tooltip-inner {
-    background-color: var(--primary-color);
-}
-
-.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
-.bs-tooltip-top .tooltip-arrow::before {
-    border-top-color: var(--primary-color);
-}
-
-/* Стили для попапов */
-.popover {
-    border-color: var(--primary-color);
-}
-
-.popover-header {
-    background-color: var(--primary-color);
-    color: white;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-
-.bs-popover-auto[data-popper-placement^=top]>.popover-arrow::after,
-.bs-popover-top>.popover-arrow::after {
-    border-top-color: var(--primary-color);
-}
-
-/* Кастомные стили для списков */
-.list-group-item.active {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-/* Стили для баджев */
-.badge-primary {
-    background-color: var(--primary-color);
-}
-
-/* Стили для хлебных крошек */
-.breadcrumb-item a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.breadcrumb-item.active {
+    justify-content: space-between;
     color: #6c757d;
+    font-size: 0.875rem;
 }
 
-/* Стили для навигации по страницам */
-.pagination .page-link {
-    color: var(--primary-color);
+.read-more {
+    display: inline-block;
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1rem;
 }
 
-.pagination .page-item.active .page-link {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+.read-more:hover {
+    text-decoration: underline;
 }
 
-/* Стили для кастомных чекбоксов и радиокнопок */
-.form-check-input:checked[type=checkbox] {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+/* Стили для подвала */
+.custom-footer {
+    background-color: #c0d95d !important;
 }
 
-/* Стили для кастомных переключателей */
-.form-switch .form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+/* Контейнерные ограничения для больших экранов */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
 }
 
-/* Стили для кастомного выбора файла */
-.form-control[type=file]::file-selector-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.375rem 0.75rem;
-    margin-right: 0.75rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
+/* Улучшение для полноэкранного режима */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .new-products .card {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .blog-section .card {
+        width: 320px;
+        height: 320px;
+    }
 }
 
-/* Стили для кастомного диапазона */
-.form-range::-webkit-slider-thumb {
-    background: var(--primary-color);
-}
-
-.form-range::-moz-range-thumb {
-    background: var(--primary-color);
-}
-
-.form-range:focus::-webkit-slider-thumb {
-    box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-}
-
-/* Стили для кастомного выбора цвета */
-.form-control-color {
-    width: 3rem;
-    height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem;
-}
-
-/* Стили для кастомного выбора даты и времени */
-.form-control[type=date],
-.form-control[type=time],
-.form-control[type=datetime-local],
-.form-control[type=month] {
-    line-height: 1.5;
-}
-
-/* Стили для кастомного выбора цвета фокуса */
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-}
-
-/* Стили для кастомного выбора цвета фокуса для инпутов с валидацией */
-.form-control.is-valid:focus,
-.was-validated .form-control:valid:focus {
-    border-color: #198754;
-    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
-}
-
-.form-control.is-invalid:focus,
-.was-validated .form-control:invalid:focus {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+/* Исправление для очень широких экранов */
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1600px;
+    }
 }
