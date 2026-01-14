@@ -34,8 +34,10 @@
                 {% for product in products %}
                 <div class="col-md-4 mb-4">
                     <div class="card product-card">
-                        <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                        {% with main_image=product.get_main_image %}
+                        <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                             class="card-img-top product-img" alt="{{ product.name }}">
+                        {% endwith %}
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description|truncatewords:15 }}</p>

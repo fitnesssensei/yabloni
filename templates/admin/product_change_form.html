@@ -1,0 +1,122 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.multiupload-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border: 1px solid #dee2e6;
+}
+.multiupload-section h3 {
+    margin-top: 0;
+    color: #495057;
+}
+.multiupload-button {
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.multiupload-button:hover {
+    background: #218838;
+}
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+.image-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}
+
+{% block after_field_sets %}
+{% if original %}
+<div class="multiupload-section">
+    <h3>📸 Массовая загрузка изображений (до 5 шт.)</h3>
+    <form method="post" enctype="multipart/form-data" style="margin-bottom: 15px;">
+        {% csrf_token %}
+        <input type="hidden" name="multiupload" value="1">
+        <div class="form-row">
+            <div>
+                <label for="id_images">Выберите изображения:</label>
+                <input type="file" name="images" id="id_images" multiple accept="image/*" 
+                       class="vFileInputField" style="margin: 10px 0;">
+                <small class="help">Можно выбрать до 5 изображений одновременно. Первое изображение будет основным.</small>
+            </div>
+        </div>
+        <div class="image-preview" id="imagePreview"></div>
+        <button type="submit" class="multiupload-button">Загрузить изображения</button>
+    </form>
+    
+    {% if original.images.exists %}
+    <h4>Текущие изображения ({{ original.images.count }} шт.):</h4>
+    <div class="image-preview">
+        {% for img in original.images.all %}
+        <div style="text-align: center;">
+            <img src="{{ img.image.url }}" alt="{{ img.product.name }}">
+            <div style="font-size: 12px;">
+                {% if img.is_main %}<strong>Основное</strong>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('id_images');
+    const preview = document.getElementById('imagePreview');
+    
+    if (fileInput && preview) {
+        fileInput.addEventListener('change', function(e) {
+            preview.innerHTML = '';
+            const files = Array.from(e.target.files);
+            
+            if (files.length > 5) {
+                alert('Можно загрузить не более 5 изображений!');
+                fileInput.value = '';
+                return;
+            }
+            
+            files.forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.style.textAlign = 'center';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px;">
+                            <div style="font-size: 12px; margin-top: 5px;">
+                                ${index === 0 ? '<strong>Основное</strong>' : ''}
+                            </div>
+                        `;
+                        preview.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

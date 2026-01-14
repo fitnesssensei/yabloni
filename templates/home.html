@@ -123,9 +123,9 @@
                     <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
                         <div class="card">
                             <div class="card-img-wrapper">
-                                {% if product.main_image %}
-                                <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
-                                {% endif %}
+                                {% with main_image=product.get_main_image %}
+                                <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
+                                {% endwith %}
                                 <div class="card-body">
                                     <p class="card-text mb-0 small">{{ product.category.name }}</p>
                                     <h5 class="card-title mb-1">{{ product.name }}</h5>
@@ -169,9 +169,9 @@
                 {% for product in featured_products %}
                 <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
                     <div class="hit-card">
-                        {% if product.main_image %}
-                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
-                        {% endif %}
+                        {% with main_image=product.get_main_image %}
+                        <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" alt="{{ product.name }}">
+                        {% endwith %}
                         <div class="hit-card-body">
                             <h5>{{ product.name }}</h5>
                             <p>{{ product.price }} ₽</p>

@@ -19,16 +19,20 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     description = models.TextField(blank=True, verbose_name='Описание')
-    image = models.ImageField(upload_to='products/', blank=True, verbose_name='Изображение')
     available = models.BooleanField(default=True, verbose_name='В наличии')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_new = models.BooleanField('Новинка', default=False, 
         help_text='Отметьте, чтобы показать этот товар в разделе Новинки')
-    
-    # поле загрузки изображений 
-    main_image = models.ImageField(upload_to='products/%Y/%m/%d/', blank=True, verbose_name='Основное изображение')
     is_featured = models.BooleanField('Хит продаж', default=False, help_text='Отметьте, чтобы показать этот товар в разделе Хиты продаж')
+   
+    def get_main_image(self):
+        """Возвращает основное изображение товара или первое доступное"""
+        main_image = self.images.filter(is_main=True).first()
+        if main_image:
+            return main_image.image
+        first_image = self.images.first()
+        return first_image.image if first_image else None
    
     # добавил метод :
     def get_absolute_url(self):
@@ -36,3 +40,18 @@ class Product(models.Model):
     # был только метод :
     def __str__(self):
         return self.name
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Изображение')
+    is_main = models.BooleanField(default=False, verbose_name='Основное изображение')
+    created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Изображение товара'
+        verbose_name_plural = 'Изображения товаров'
+        ordering = ['-is_main', 'created']
+    
+    def __str__(self):
+        return f'Изображение для {self.product.name}'
