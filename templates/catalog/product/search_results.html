@@ -46,10 +46,12 @@
                     <div class="card product-card h-100">
                         <!-- Изображение товара -->
                         <div class="text-center p-2">
-                            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                            {% with main_image=product.get_main_image %}
+                            <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                                  class="card-img-top product-img" 
                                  alt="{{ product.name }}"
                                  style="max-height: 200px; width: auto;">
+                            {% endwith %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ product.name }}</h5>

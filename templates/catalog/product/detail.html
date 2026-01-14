@@ -4,12 +4,46 @@
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
+
 <!-- Страница детали товара -->
-<div class="container my-5">
-    <div class="row">
+<div class="container my-3 bg-white p-4 rounded shadow-sm">
+    <!-- Навигационные кнопки -->
+    <div class="col-12 mb-4">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark rounded-0 px-4">Смотреть весь каталог</a>
+            <a href="{% url 'catalog:product_list' %}?category=яблони" class="btn btn-outline-dark rounded-0 px-4">Яблони</a>
+            <a href="{% url 'catalog:product_list' %}?category=груши" class="btn btn-outline-dark rounded-0 px-4">Груши</a>
+            <a href="{% url 'catalog:product_list' %}?category=черешни" class="btn btn-outline-dark rounded-0 px-4">Черешни</a>
+        </div>
+    </div>
+    
+    <div class="row align-items-start">
+
         <div class="col-md-6">
-            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
-                 class="img-fluid rounded" alt="{{ product.name }}">
+            <!-- Галерея изображений -->
+            <div class="product-gallery h-100 d-flex flex-column">
+                <!-- Основное изображение -->
+                <div class="main-image mb-3">
+                    {% with main_image=product.get_main_image %}
+                    <img id="mainImage" 
+                         src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                         class="img-fluid rounded" alt="{{ product.name }}">
+                    {% endwith %}
+                </div>
+                
+                <!-- Миниатюры -->
+                {% if product.images.exists %}
+                <div class="thumbnails d-flex gap-2 flex-wrap">
+                    {% for img in product.images.all %}
+                    <img src="{{ img.image.url }}" 
+                         class="thumbnail {% if img.is_main %}active{% endif %}" 
+                         alt="{{ product.name }}"
+                         data-src="{{ img.image.url }}"
+                         style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid {% if img.is_main %}#28a745{% else %}#dee2e6{% endif %}; border-radius: 4px;">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
         </div>
         <div class="col-md-6">
             <h1>{{ product.name }}</h1>
@@ -41,8 +75,10 @@
         <div class="col-md-3 col-6">
             <div class="card h-100">
                 <a href="{{ p.get_absolute_url }}">
-                    <img src="{% if p.image %}{{ p.image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                    {% with main_image=p.get_main_image %}
+                    <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                          class="card-img-top" alt="{{ p.name }}">
+                    {% endwith %}
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ p.name }}</h5>
@@ -55,4 +91,61 @@
     </div>
 </div>
 {% endif %}
+
+<!-- JavaScript для галереи изображений -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mainImage = document.getElementById('mainImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    
+    if (thumbnails.length > 0) {
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                // Меняем основное изображение
+                const newSrc = this.getAttribute('data-src');
+                mainImage.src = newSrc;
+                
+                // Обновляем активную миниатюру
+                thumbnails.forEach(thumb => {
+                    thumb.style.border = '2px solid #dee2e6';
+                });
+                this.style.border = '2px solid #28a745';
+            });
+            
+            // Добавляем эффект наведения
+            thumbnail.addEventListener('mouseenter', function() {
+                if (this.style.border !== '2px solid #28a745') {
+                    this.style.border = '2px solid #6c757d';
+                }
+            });
+            
+            thumbnail.addEventListener('mouseleave', function() {
+                if (this.style.border !== '2px solid #28a745') {
+                    this.style.border = '2px solid #dee2e6';
+                }
+            });
+        });
+    }
+});
+</script>
+
+<style>
+.thumbnail {
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.main-image img {
+    transition: opacity 0.3s ease;
+}
+
+.product-gallery {
+    position: relative;
+}
+</style>
+
 {% endblock %}
