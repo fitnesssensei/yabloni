@@ -59,15 +59,6 @@ def cart_detail(request):
     else:
         order_form = OrderCreateForm()
     
-    # Добавляем форму обновления количества для каждого товара
-    for item in cart:
-        item['update_quantity_form'] = CartAddProductForm(
-            initial={
-                'quantity': item['quantity'],
-                'update': True
-            }
-        )
-    
     return render(
         request,
         'cart/detail.html',

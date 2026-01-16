@@ -80,38 +80,6 @@ def home(request):
     })
 
 
-#def product_search(request):
-    """
-    Обработчик поисковых запросов.
-    Ищет товары по названию, категории и описанию.
-    """
-    query = request.GET.get('q', '').strip()  # Получаем поисковый запрос из GET-параметра 'q'
-    
-    # Если запрос пустой, показываем все доступные товары
-    if not query:
-        products = Product.objects.filter(available=True)
-    else:
-        # Ищем по названию (регистронезависимый поиск)
-        products = Product.objects.filter(
-            models.Q(name__icontains=query) |  # поиск в названии
-            models.Q(description__icontains=query) |  # поиск в описании
-            models.Q(category__name__icontains=query),  # поиск по названию категории
-            available=True  # только доступные товары
-        ).distinct()  # убираем дубликаты
-    
-    # Получаем все категории для отображения в сайдбаре
-    categories = Category.objects.all()
-    
-    # Создаем контекст для шаблона
-    context = {
-        'products': products,
-        'categories': categories,
-        'query': query,
-        'cart_product_form': CartAddProductForm(),  # форма для добавления в корзину
-    }
-    
-    # Рендерим шаблон с результатами поиска
-    return render(request, 'catalog/product/search_results.html', context)
 
 
 def product_search(request):

@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4">Оформление заказа</h1>
+    <h1 class="mb-4">Ваша корзина</h1>
     
     {% if cart|length > 0 %}
     <div class="row">
@@ -13,43 +13,77 @@
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">Ваш заказ</h5>
+                    <h5 class="mb-0"></h5> <!-- ваш заказ-->
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Товар</th>
-                                    <th>Количество</th>
-                                    <th>Цена</th>
-                                    <th>Сумма</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in cart %}
-                                <tr>
-                                    <td>{{ item.product.name }}</td>
-                                    <td>
-                                        <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex">
-                                            {{ item.update_quantity_form.quantity }}
-                                            {{ item.update_quantity_form.update }}
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Обновить</button>
-                                        </form>
-                                    </td>
-                                    <td>{{ item.price }} ₽</td>
-                                    <td>{{ item.total_price }} ₽</td>
-                                    <td class="text-end">
-                                        <a href="{% url 'cart:cart_remove' item.product.id %}" class="text-danger">
-                                            <i class="bi bi-x-lg"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="row g-3">
+                        {% for item in cart %}
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Изображение товара -->
+                                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                                            {% if item.product.get_main_image %}
+                                                <img src="{{ item.product.get_main_image.url }}" 
+                                                     alt="{{ item.product.name }}" 
+                                                     class="img-fluid rounded" 
+                                                     style="max-width: 100px; height: 100px; object-fit: cover;">
+                                            {% else %}
+                                                <img src="{% static 'img/no-image.jpg' %}" 
+                                                     alt="Нет изображения" 
+                                                     class="img-fluid rounded" 
+                                                     style="max-width: 100px; height: 100px; object-fit: cover;">
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Информация о товаре -->
+                                        <div class="col-md-4">
+                                            <h5 class="card-title mb-1">{{ item.product.name }}</h5>
+                                            <p class="text-muted mb-0">{{ item.price }} ₽ за единицу</p>
+                                        </div>
+                                        
+                                        <!-- Управление количеством -->
+                                        <div class="col-md-3">
+                                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                                <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}">
+                                                    <input type="hidden" name="update" value="True">
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary" 
+                                                            {% if item.quantity <= 1 %}disabled{% endif %}>
+                                                        <i class="bi bi-dash"></i>
+                                                    </button>
+                                                </form>
+                                                
+                                                <span class="mx-3 fw-bold">{{ item.quantity }}</span>
+                                                
+                                                <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}">
+                                                    <input type="hidden" name="update" value="True">
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                        <i class="bi bi-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Сумма и удаление -->
+                                        <div class="col-md-3 text-end">
+                                            <div class="d-flex flex-column align-items-md-end">
+                                                <h6 class="mb-2">{{ item.total_price }} ₽</h6>
+                                                <a href="{% url 'cart:cart_remove' item.product.id %}" 
+                                                   class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i> Удалить
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
@@ -72,11 +106,74 @@
                 <div class="card-body">
                     <form method="post" class="order-form">
                         {% csrf_token %}
+                        
+                        <!-- Покупатель -->
                         <div class="mb-3">
-                            {{ order_form.as_p }}
+                            <label for="{{ order_form.full_name.id_for_label }}" class="form-label">Покупатель</label>
+                            {{ order_form.full_name }}
+                            {% if order_form.full_name.errors %}
+                                <div class="text-danger small">
+                                    {{ order_form.full_name.errors }}
+                                </div>
+                            {% endif %}
                         </div>
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="{{ order_form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ order_form.email }}
+                            {% if order_form.email.errors %}
+                                <div class="text-danger small">
+                                    {{ order_form.email.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Телефон -->
+                        <div class="mb-3">
+                            <label for="{{ order_form.phone.id_for_label }}" class="form-label">Телефон</label>
+                            {{ order_form.phone }}
+                            {% if order_form.phone.errors %}
+                                <div class="text-danger small">
+                                    {{ order_form.phone.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Адрес -->
+                        <div class="mb-3">
+                            <label class="form-label">Адрес</label>
+                            <div class="mb-2">
+                                <small class="text-muted">Страна, край, район</small>
+                                {{ order_form.region }}
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Город, почтовый индекс</small>
+                                <div class="row g-2">
+                                    <div class="col-8">
+                                        {{ order_form.city }}
+                                    </div>
+                                    <div class="col-4">
+                                        {{ order_form.postal_code }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Улица, дом, этаж, квартира</small>
+                                {{ order_form.address }}
+                            </div>
+                            {% if order_form.region.errors or order_form.city.errors or order_form.postal_code.errors or order_form.address.errors %}
+                                <div class="text-danger small">
+                                    {{ order_form.region.errors }}
+                                    {{ order_form.city.errors }}
+                                    {{ order_form.postal_code.errors }}
+                                    {{ order_form.address.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
                         <button type="submit" class="btn btn-success w-100">
-                            <i class="bi-check-lg"></i> Подтвердить заказ
+                            <i class="bi-check-lg"></i> Оформить заказ
                         </button>
                     </form>
                 </div>
