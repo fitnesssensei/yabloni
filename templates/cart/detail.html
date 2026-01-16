@@ -89,6 +89,9 @@
                         <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
                             <i class="bi-arrow-left"></i> Продолжить покупки
                         </a>
+                        <button type="submit" class="btn btn-success w-90">
+                            <i class="bi-check-lg"></i> Оформить заказ
+                        </button>
                         <div class="fs-5 fw-bold">
                             Итого: {{ cart.get_total_price }} ₽
                         </div>
@@ -171,10 +174,6 @@
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <button type="submit" class="btn btn-success w-100">
-                            <i class="bi-check-lg"></i> Оформить заказ
-                        </button>
                     </form>
                 </div>
             </div>
