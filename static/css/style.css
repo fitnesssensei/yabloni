@@ -106,6 +106,34 @@ main {
     text-align: center;
 }
 
+/* Стили для разделения корзины 60/40 */
+.cart-container {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.cart-items-section {
+    flex: 0 0 60%;
+    max-width: 60%;
+}
+
+.cart-order-section {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+@media (max-width: 991px) {
+    .cart-container {
+        flex-direction: column;
+    }
+    
+    .cart-items-section,
+    .cart-order-section {
+        flex: 1;
+        max-width: 100%;
+    }
+}
+
 /* Адаптивные стили */
 @media (max-width: 768px) {
     .table-responsive {
@@ -299,6 +327,7 @@ main {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
