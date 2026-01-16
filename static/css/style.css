@@ -1,6 +1,6 @@
  /* Основной цвет фона сайта */
 body {
-    background-color: #c0d95d !important;
+    background-color: white !important;
 }
 
 main {
@@ -120,6 +120,35 @@ main {
 .cart-order-section {
     flex: 0 0 40%;
     max-width: 40%;
+}
+
+/* Убираем ВСЕ рамки и разделители у карточек в корзине */
+.cart-items-section .card,
+.cart-items-section .card-header,
+.cart-items-section .card-body,
+.cart-order-section .card,
+.cart-order-section .card-header,
+.cart-order-section .card-body {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.cart-items-section .card .card {
+    margin-bottom: 1rem !important;
+}
+
+.cart-items-section .card .card:hover {
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Убираем скругления у изображений */
+.cart-items-section .rounded {
+    border-radius: 0 !important;
 }
 
 @media (max-width: 991px) {
@@ -397,5 +426,5 @@ main {
 
 /* Стили для подвала */
 .custom-footer {
-    background-color: #c0d95d !important;
+    background-color: #9dab8a !important;
 }

@@ -1,6 +1,14 @@
 <!-- главная страница -->
  {% extends 'base/base.html' %}
 {% load static %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #9dab8a !important;
+    }
+</style>
+{% endblock %}
  
 {% block content %}
     <div class="hero-section bg-light pt-3 pb-3 mb-3">
