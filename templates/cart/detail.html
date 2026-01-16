@@ -8,9 +8,9 @@
     <h1 class="mb-4">Ваша корзина</h1>
     
     {% if cart|length > 0 %}
-    <div class="row">
-        <!-- Левая колонка - Товары в корзине -->
-        <div class="col-md-8">
+    <div class="cart-container">
+        <!-- Левая колонка - Товары в корзине (60%) -->
+        <div class="cart-items-section">
             <div class="card mb-4">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"></h5> <!-- ваш заказ-->
@@ -97,8 +97,8 @@
             </div>
         </div>
 
-        <!-- Правая колонка - Форма заказа -->
-        <div class="col-md-4">
+        <!-- Правая колонка - Форма заказа (40%) -->
+        <div class="cart-order-section">
             <div class="card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Контактные данные</h5>
