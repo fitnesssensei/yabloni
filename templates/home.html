@@ -178,8 +178,10 @@
                         <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" alt="{{ product.name }}">
                         {% endwith %}
                         <div class="hit-card-body">
-                            <h5>{{ product.name }}</h5>
-                            <p>{{ product.price }} ₽</p>
+                            <div class="hit-card-info">
+                                <h5>{{ product.name }}</h5>
+                                <p>{{ product.price }} ₽</p>
+                            </div>
                         </div>
                     </div>
                 </a>
