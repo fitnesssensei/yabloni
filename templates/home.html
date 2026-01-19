@@ -57,20 +57,13 @@
                         }
                         /* стили надписи Новинки */
                         .rotated-title {
-                            position: absolute;
-                            left: 30px;  /* Увеличьте это значение, чтобы отодвинуть надпись от края */
-                            top: 65%;
-                            -webkit-transform: translateY(-50%) rotate(-90deg);
-                            -ms-transform: translateY(-50%) rotate(-90deg);
-                            transform: translateY(-50%) rotate(-90deg);
-                            -webkit-transform-origin: left center;
-                            -ms-transform-origin: left center;
-                            transform-origin: left center;
-                            font-size: 30px; /* размер шрифта */
+                            text-align: left;
+                            font-size: 30px;
                             font-weight: bold;
-                            white-space: nowrap;
                             color: #000;
-                            z-index: 10;
+                            margin: 0;
+                            padding: 0 0 0 85px;
+                            width: 100%;
                         }
                     
                         .new-products {
@@ -122,10 +115,14 @@
     </div>
 
     <!--блок Новинки-->
-    <section class="new-products py-3 bg-light position-relative">
-        <div class="rotated-title">Новинки</div>
-        
-            <div class="row ms-5">
+    <section class="new-products pt-0 pb-3" style="background-color: #9dab8a;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="rotated-title">Новинки</div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
                 {% for product in new_products %}
                 <div class="col-md-3 mb-4 d-flex justify-content-center">
                     <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
