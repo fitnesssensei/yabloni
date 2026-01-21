@@ -122,14 +122,10 @@
         <div class="col-md-3">
             <p class="h3 text-success my-4">{{ product.price }} ₽</p>
             
-            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="row g-3">
+            <form action="{% url 'cart:cart_add' product.id %}" method="post">
                 {% csrf_token %}
-                <div class="col-auto">
-                    <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 80px;">
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-success">добавить в корзину</button>
-                </div>
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-success btn-sm">В корзину</button>
             </form>
         </div>
     </div>
