@@ -4,49 +4,65 @@
 {% block title %}{% if category %}{{ category.name }}{% else %}Каталог{% endif %}{% endblock %}
 
 {% block content %}
+<style>
+.product-card {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+.product-img {
+    height: 150px;
+    object-fit: cover;
+}
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.btn-success {
+    width: 150px !important;
+}
+.product-card .d-flex {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+.card-text {
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+.card-title {
+    text-align: center;
+}
+</style>
 <div class="container">
     <h1 class="my-4">{% if category %}{{ category.name }}{% else %}Все саженцы{% endif %}</h1>
     
 <div class="row">
-    <div class="col-md-3">
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Категории</h5>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="{% url 'catalog:product_list' %}" 
-                   class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
-                    Все категории
-                </a>
-                {% for c in categories %}
-                <a href="{{ c.get_absolute_url }}" 
-                   class="list-group-item list-group-item-action {% if category.slug == c.slug %}active{% endif %}">
-                    {{ c.name }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="col-md-9">
+    <div class="col-md-12">
 
         <!-- Список товаров -->
             <div class="row">
                 {% for product in products %}
-                <div class="col-md-4 mb-4">
-                    <div class="card product-card">
-                        {% with main_image=product.get_main_image %}
-                        <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
-                            class="card-img-top product-img" alt="{{ product.name }}">
-                        {% endwith %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0">{{ product.price }} ₽</span>
-                                <a href="{{ product.get_absolute_url }}" class="btn btn-success">Подробнее</a>
+                <div class="col-md-3 mb-4">
+                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                        <div class="card product-card">
+                            {% with main_image=product.get_main_image %}
+                            <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                                class="card-img-top product-img" alt="{{ product.name }}">
+                            {% endwith %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <div class="text-center">
+                                    <span class="h5 mb-0">{{ product.price }} ₽</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button class="btn btn-success">Подробнее</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% empty %}
         
