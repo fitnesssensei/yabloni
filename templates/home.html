@@ -19,10 +19,10 @@
                 <div class="col-md-4">
                     <img src="{% static 'img/logo.png' %}" alt="Логотип" class="img-fluid" style="max-height: 400px; width: auto;">
                 </div>
-                <div class="col-md-8 text-start mt-4">
+                <div class="col-md-8 text-start">
 
                     <!--кнопки каталога над текстом-->
-                    <div class="d-flex justify-content-center gap-3 mt-3">
+                    <div class="d-flex justify-content-start gap-3 mt-0 mb-5">
                         <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="btn btn-outline-dark">Яблони</a>
                         <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="btn btn-outline-dark">Груши</a>
                         <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="btn btn-outline-dark">Черешни</a>
@@ -48,6 +48,10 @@
                             color: #000; /* Черный текст */
                             background-color: #fff; /* Белый фон */
                             border: 1px solid #000; /* Черная рамка */
+                            border-radius: 0px; /* Убрать скругления */
+                            font-size: 1.2rem; /* Увеличить размер шрифта */
+                            padding: 8px 50px; /* Увеличить только ширину */
+                            font-weight: 500; /* Сделать шрифт пожирнее */
                         }
 
                         .btn-outline-dark:hover {
@@ -82,7 +86,7 @@
                             padding: 12px 25px;
                             font-size: 1.1rem;
                             font-weight: 500;
-                            border-radius: 8px;
+                            border-radius: 0px;
                             transition: all 0.3s ease;
                             text-decoration: none;
                             text-align: center;
@@ -90,7 +94,7 @@
                             /* Общие стили для всех кнопок */
                             background-color: white;
                             color: black;
-                            border: 2px solid black;
+                            border: 1px solid black;
                         }
                         .category-btn:hover {
                             background-color: black;
