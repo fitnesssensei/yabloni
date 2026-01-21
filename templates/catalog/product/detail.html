@@ -11,9 +11,9 @@
     <div class="col-12 mb-4">
         <div class="d-flex flex-wrap gap-2">
             <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-dark rounded-0 px-4">Смотреть весь каталог</a>
-            <a href="{% url 'catalog:product_list' %}?category=яблони" class="btn btn-outline-dark rounded-0 px-4">Яблони</a>
-            <a href="{% url 'catalog:product_list' %}?category=груши" class="btn btn-outline-dark rounded-0 px-4">Груши</a>
-            <a href="{% url 'catalog:product_list' %}?category=черешни" class="btn btn-outline-dark rounded-0 px-4">Черешни</a>
+            <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="btn btn-outline-dark rounded-0 px-4">Яблони</a>
+            <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="btn btn-outline-dark rounded-0 px-4">Груши</a>
+            <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="btn btn-outline-dark rounded-0 px-4">Черешни</a>
         </div>
     </div>
     
