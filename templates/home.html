@@ -151,19 +151,23 @@
     </section>
 
     <!-- Блок кнопок категорий -->
-    <div class="category-buttons">
-        <a href="{% url 'catalog:product_list' %}" class="category-btn btn-catalog">
-            Смотреть весь каталог
-        </a>
-        <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="category-btn btn-category">
-            Яблони
-        </a>
-        <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="category-btn btn-category">
-            Груши
-        </a>
-        <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="category-btn btn-category">
-            Черешни
-        </a>
+    <div class="py-4" style="background-color: white;">
+        <div class="container">
+            <div class="category-buttons">
+                <a href="{% url 'catalog:product_list' %}" class="category-btn btn-catalog">
+                    Смотреть весь каталог
+                </a>
+                <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="category-btn btn-category">
+                    Яблони
+                </a>
+                <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="category-btn btn-category">
+                    Груши
+                </a>
+                <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="category-btn btn-category">
+                    Черешни
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Блок карусель "Хит продаж" -->
