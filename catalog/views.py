@@ -7,7 +7,7 @@ from django.views.generic import ListView
 from django.db.models import Q  # Импортируем Q для сложных запросов
 from .models import Category, Product
 from cart.forms import CartAddProductForm
-from blog.models import BlogPost  # Импортируем модель BlogPost
+from blog.models import BlogPost, News  # Импортируем модели BlogPost и News
 
 
 def product_list(request, category_slug=None):
@@ -48,6 +48,32 @@ class HomeView(ListView):
         context['blog_posts'] = BlogPost.objects.filter(
             is_published=True
         ).order_by('-created_at')[:3]  # Берем 3 последние статьи
+        
+        # Добавляем последние опубликованные новости
+        news_items = News.objects.filter(is_published=True).order_by('-created_at')[:3]
+        # Обрабатываем контент новостей для отображения списков
+        processed_news = []
+        for news_item in news_items:
+            content_list = []
+            if ';' in news_item.content:
+                for point in news_item.content.split(';'):
+                    clean_point = point.strip()
+                    if clean_point.startswith('•'):
+                        clean_point = clean_point[1:].strip()
+                    if clean_point:
+                        content_list.append(clean_point)
+            
+            processed_news.append({
+                'id': news_item.id,
+                'title': news_item.title,
+                'content': news_item.content,
+                'created_at': news_item.created_at,
+                'updated_at': news_item.updated_at,
+                'image': news_item.image,
+                'is_list': ';' in news_item.content,
+                'content_list': content_list
+            })
+        context['news'] = processed_news
         
         return context
 
