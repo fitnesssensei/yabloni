@@ -35,8 +35,59 @@
 .card-title {
     text-align: center;
 }
+
+/* Стили кнопок категорий как на главной странице */
+.category-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.category-btn {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 0px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    min-width: 200px;
+    /* Общие стили для всех кнопок */
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+}
+.category-btn:hover {
+    background-color: black;
+    color: white;
+    border-color: black;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .category-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .category-btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px 20px;
+        min-width: auto;
+    }
+}
 </style>
 <div class="container">
+    <!-- Кнопки категорий -->
+    <div class="category-buttons py-4 mb-3">
+        <a href="{% url 'catalog:product_list' %}" class="category-btn btn-catalog">Все саженцы</a>
+        <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="category-btn btn-category">Яблони</a>
+        <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="category-btn btn-category">Груши</a>
+        <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="category-btn btn-category">Черешни</a>
+    </div>
+    
     <h1 class="my-4">{% if category %}{{ category.name }}{% else %}Все саженцы{% endif %}</h1>
     
 <div class="row">
