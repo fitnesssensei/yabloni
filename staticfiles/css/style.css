@@ -1,6 +1,6 @@
  /* Основной цвет фона сайта */
 body {
-    background-color: #ffffff !important;
+    background-color: white !important;
 }
 
 main {
@@ -58,16 +58,21 @@ main {
     object-position: center;
 }
 
-.new-products .card-body {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 0;
+/* Стили для подписей товаров под карточками в разделе "новинки" */
+.new-products .product-caption {
     text-align: center;
-    border-radius: 0 0 50% 50%;
+    margin-top: 15px;
+}
+
+.new-products .product-caption p {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.new-products .product-caption h6 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0;
 }
 
 
@@ -104,6 +109,92 @@ main {
 .quantity-input {
     max-width: 80px;
     text-align: center;
+}
+
+/* Стили для разделения корзины 60/40 */
+.cart-container {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.cart-items-section {
+    flex: 0 0 60%;
+    max-width: 60%;
+}
+
+.cart-order-section {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+/* Убираем ВСЕ рамки и разделители у карточек в корзине */
+.cart-items-section .card,
+.cart-items-section .card-header,
+.cart-items-section .card-body,
+.cart-order-section .card,
+.cart-order-section .card-header,
+.cart-order-section .card-body {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.cart-items-section .card .card {
+    margin-bottom: 1rem !important;
+}
+
+.cart-items-section .card .card:hover {
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Убираем скругления у изображений */
+.cart-items-section .rounded {
+    border-radius: 0 !important;
+}
+
+/* Кнопка "Оформить заказ" */
+.btn-success {
+    background-color: #ff8b00 !important;
+    border-color: #ff8b00 !important;
+    width: 30% !important;
+}
+
+.btn-success:hover {
+    background-color: #e67a00 !important;
+    border-color: #e67a00 !important;
+}
+
+/* Кнопка "Продолжить покупки" */
+.btn-outline-secondary {
+    width: 30% !important;
+}
+
+/* Кнопки + и - в корзине */
+.cart-items-section .btn-outline-secondary {
+    width: auto !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 4px !important;
+}
+
+.cart-items-section .btn-outline-secondary:hover {
+    background-color: #f8f9fa !important;
+    border-color: #adb5bd !important;
+}
+
+@media (max-width: 991px) {
+    .cart-container {
+        flex-direction: column;
+    }
+    
+    .cart-items-section,
+    .cart-order-section {
+        flex: 1;
+        max-width: 100%;
+    }
 }
 
 /* Адаптивные стили */
@@ -186,7 +277,35 @@ main {
 
 .hit-card-body {
     padding: 15px;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.hit-card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    padding: 10px 0;
+    text-align: left;
+}
+
+.hit-card h5 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+}
+
+.hit-card p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: left;
 }
 
 .carousel-btn {
@@ -198,7 +317,7 @@ main {
     background: white;
     border: none;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: none;
     cursor: pointer;
     z-index: 10;
     display: flex;
@@ -206,14 +325,20 @@ main {
     justify-content: center;
     font-size: 1.2rem;
     color: #333;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    border: 2px solid #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .carousel-btn.prev {
-    left: 0;
+    left: 20px;
 }
 
 .carousel-btn.next {
-    right: 0;
+    right: 20px;
 }
 
 /* Адаптивность */
@@ -299,6 +424,7 @@ main {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
@@ -368,5 +494,5 @@ main {
 
 /* Стили для подвала */
 .custom-footer {
-    background-color: #f8f9fa !important;
+    background-color: #9dab8a !important;
 }
