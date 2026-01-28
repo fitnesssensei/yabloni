@@ -32,7 +32,7 @@ def order_create(request):
             subject = f'Заказ №{order.id}'
             html_message = render_to_string('orders/order/email.html', {'order': order})
             plain_message = strip_tags(html_message)
-            from_email = '13fitnesssensei@gmail.com'
+            from_email = settings.DEFAULT_FROM_EMAIL
             to = order.email
 
             try:
@@ -62,21 +62,6 @@ def order_create(request):
     else:
         form = OrderCreateForm()
     return render(request, 'cart/detail.html', {'order_form': form})
-
-        # Тестовое письмо
-    try:
-        send_mail(
-            'Тестовое письмо',
-            'Это тестовое письмо из Django',
-            '13fitnesssensei@gmail.com',
-            ['13fitnesssensei@gmail.com'],
-            fail_silently=False,
-        )
-        print("Тестовое письмо отправлено!")
-    except Exception as e:
-        print("Ошибка при отправке письма:", str(e))
-    
-    return render(request, 'orders/order/created.html', {'order': order})
 
 
 @staff_member_required

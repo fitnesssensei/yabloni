@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ №{{ order.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5e2e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .order-info {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #2c5e2e;
+        }
+        .product-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            text-align: right;
+            margin-top: 20px;
+            color: #2c5e2e;
+        }
+        .footer {
+            background-color: #2c5e2e;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 0 0 5px 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌳 Яблони и Груши</h1>
+        <h2>Подтверждение заказа №{{ order.id }}</h2>
+    </div>
+
+    <div class="content">
+        <p>Уважаемый(ая) {{ order.first_name }} {{ order.last_name }},</p>
+        <p>Благодарим вас за заказ в нашем интернет-магазине саженцев! Ваш заказ успешно принят и находится в обработке.</p>
+
+        <div class="order-info">
+            <h3>Информация о заказе:</h3>
+            <p><strong>Номер заказа:</strong> {{ order.id }}</p>
+            <p><strong>Дата оформления:</strong> {{ order.created|date:"d.m.Y H:i" }}</p>
+            <p><strong>Email:</strong> {{ order.email }}</p>
+            <p><strong>Телефон:</strong> {{ order.phone }}</p>
+            <p><strong>Адрес доставки:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</p>
+        </div>
+
+        <h3>Состав заказа:</h3>
+        {% for item in order.items.all %}
+        <div class="product-item">
+            <p><strong>{{ item.product.name }}</strong></p>
+            <p>Количество: {{ item.quantity }} шт. × {{ item.price }} руб. = {{ item.get_cost }} руб.</p>
+        </div>
+        {% endfor %}
+
+        <div class="total">
+            Итого: {{ order.get_total_cost }} руб.
+        </div>
+
+        <h3>Дальнейшие действия:</h3>
+        <ul>
+            <li>Наш менеджер свяжется с вами в течение рабочего дня для подтверждения заказа</li>
+            <li>Доставка осуществляется в течение 3-7 рабочих дней</li>
+            <li>Оплата возможна при получении</li>
+        </ul>
+
+        <p>Если у вас есть вопросы, вы можете связаться с нами:</p>
+        <ul>
+            <li>📧 Email: yabloni-grushi@yandex.ru</li>
+            <li>📱 Телефон: (указать в настройках)</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 Яблони и Груши - Интернет-магазин саженцев</p>
+        <p>🌳 Качественные саженцы с доставкой по всей России</p>
+    </div>
+</body>
+</html>
