@@ -1,0 +1,32 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div style="background: #f8f9fa; padding: 15px; margin-bottom: 20px; border-radius: 5px; border-left: 4px solid #007cba;">
+    <h3 style="margin-top: 0; color: #007cba;">📊 Статистика заказов</h3>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-width: 150px;">
+            <div style="font-size: 24px; font-weight: bold; color: #007cba;">{{ total_orders }}</div>
+            <div style="color: #666;">Всего заказов</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-width: 150px;">
+            <div style="font-size: 24px; font-weight: bold; color: #ff9800;">{{ new_orders }}</div>
+            <div style="color: #666;">Новых заказов</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-width: 150px;">
+            <div style="font-size: 24px; font-weight: bold; color: #2196f3;">{{ processing_orders }}</div>
+            <div style="color: #666;">В обработке</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-width: 150px;">
+            <div style="font-size: 24px; font-weight: bold; color: #4caf50;">{{ total_revenue }}</div>
+            <div style="color: #666;">Общая выручка</div>
+        </div>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}
