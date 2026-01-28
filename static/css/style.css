@@ -61,16 +61,16 @@ main {
 /* Стили для подписей товаров под карточками в разделе "новинки" */
 .new-products .product-caption {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .new-products .product-caption p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-bottom: 5px;
 }
 
 .new-products .product-caption h6 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 0;
 }
