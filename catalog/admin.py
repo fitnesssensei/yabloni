@@ -41,6 +41,12 @@ class ProductAdmin(admin.ModelAdmin):
     
     def response_add(self, request, obj):
         # Обработка мультизагрузки после создания товара
+        if 'multiupload' in request.POST:
+            form = ProductImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save_files(obj)
+                self.message_user(request, 'Изображения успешно загружены!')
+                return redirect(reverse('admin:catalog_product_change', args=[obj.pk]))
         return super().response_add(request, obj)
     
     def response_change(self, request, obj):
@@ -52,18 +58,4 @@ class ProductAdmin(admin.ModelAdmin):
                 self.message_user(request, 'Изображения успешно загружены!')
                 return redirect(reverse('admin:catalog_product_change', args=[obj.pk]))
         return super().response_change(request, obj)
-
-
-@admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ['product', 'image_thumbnail', 'is_main', 'created']
-    list_filter = ['is_main', 'created']
-    list_editable = ['is_main']
-    ordering = ['-is_main', '-created']
-    
-    def image_thumbnail(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" width="50" height="50" />', obj.image.url)
-        return "Нет изображения"
-    image_thumbnail.short_description = 'Превью'
 # Register your models here.

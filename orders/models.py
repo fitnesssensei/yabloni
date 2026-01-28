@@ -4,6 +4,13 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator, RegexValidator
 from django.core.exceptions import ValidationError
 
+class OrderStatus(models.TextChoices):
+    NEW = 'new', 'Новый'
+    PROCESSING = 'processing', 'В обработке'
+    SHIPPED = 'shipped', 'Отправлен'
+    DELIVERED = 'delivered', 'Доставлен'
+    CANCELLED = 'cancelled', 'Отменен'
+
 # Валидатор для российских телефонных номеров
 phone_validator = RegexValidator(
     regex=r'^(\+7|8)?[\s\-]?\(?[0-9]{3}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$',
@@ -41,6 +48,12 @@ class Order(models.Model):
     region = models.CharField('Страна, край, район', max_length=200, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        'Статус', 
+        max_length=20, 
+        choices=OrderStatus.choices, 
+        default=OrderStatus.NEW
+    )
     paid = models.BooleanField('Оплачен', default=False)
     
     class Meta:
@@ -59,7 +72,10 @@ class Order(models.Model):
         return full_name
     
     def get_total_cost(self):
-        return sum(item.get_cost() for item in self.items.all())
+        total = 0
+        for item in self.items.all():
+            total += item.get_cost()
+        return total
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
@@ -71,5 +87,7 @@ class OrderItem(models.Model):
         return str(self.id)
     
     def get_cost(self):
+        if self.price is None or self.quantity is None:
+            return 0
         return self.price * self.quantity
 # Create your models here.

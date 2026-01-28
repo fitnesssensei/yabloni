@@ -44,7 +44,6 @@
 {% endblock %}
 
 {% block after_field_sets %}
-{% if original %}
 <div class="multiupload-section">
     <h3>📸 Массовая загрузка изображений (до 5 шт.)</h3>
     <form method="post" enctype="multipart/form-data" style="margin-bottom: 15px;">
@@ -62,7 +61,7 @@
         <button type="submit" class="multiupload-button">Загрузить изображения</button>
     </form>
     
-    {% if original.images.exists %}
+    {% if original and original.images.exists %}
     <h4>Текущие изображения ({{ original.images.count }} шт.):</h4>
     <div class="image-preview">
         {% for img in original.images.all %}
@@ -76,7 +75,6 @@
     </div>
     {% endif %}
 </div>
-{% endif %}
 {{ block.super }}
 {% endblock %}
 
