@@ -96,6 +96,7 @@
                             margin: 0;
                             padding: 0 0 0 85px;
                             width: 100%;
+                            margin-bottom: 20px;
                         }
                     
                         .new-products {
@@ -156,22 +157,20 @@
             </div>
             <div class="row justify-content-center">
                 {% for product in new_products %}
-                <div class="col-md-3 mb-4 d-flex justify-content-center">
+                <div class="col-md-3 mb-4 d-flex flex-column align-items-center">
                     <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
                         <div class="card">
                             <div class="card-img-wrapper">
                                 {% with main_image=product.get_main_image %}
                                 <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
                                 {% endwith %}
-                                <div class="card-body">
-                                    <p class="card-text mb-0 small">{{ product.category.name }}</p>
-                                    <h5 class="card-title mb-1">{{ product.name }}</h5>
-                                    <!--<p class="card-text mb-0 small">{{ product.category.name }}</p>-->
-                                    <!--<p class="card-text mb-0">{{ product.price }} ₽</p>-->
-                                </div>
                             </div>
                         </div>
                     </a>
+                    <div class="product-caption text-center mt-2">
+                        <p class="mb-0 small text-muted">{{ product.category.name }}</p>
+                        <h6 class="mb-0">{{ product.name }}</h6>
+                    </div>
                 </div>
                 {% empty %}
                 <div class="col-12 text-center">
