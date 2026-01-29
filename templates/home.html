@@ -318,12 +318,12 @@
                 <div class="col-md-4 mb-4 ps-0 pe-0">
                     <div class="card h-100 border-0 shadow-sm rounded-0">
                         <div class="card-body p-4 pt-2">
-                            <h3 class="card-title h4 mb-3">Блог</h3>
+                            <h3 class="card-title h4 mb-0" style="font-size: 2rem; font-weight: bold; margin-top: 20px; margin-bottom: -15px; text-align: center;">Блог</h3>
                             
                             <!-- Блок Блог -->
-                            <div class="blog-section">
+                            <div class="blog-section" style="margin-top: -20px;">
                                 {% for post in blog_posts %}
-                                <div class="mb-4">
+                                <div class="mb-0">
                                     <div class="card h-100">
                                         {% if post.image %}
                                         <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 150px; object-fit: cover;">
