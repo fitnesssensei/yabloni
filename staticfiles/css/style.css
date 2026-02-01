@@ -207,6 +207,15 @@ main {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
     }
+    
+    /* Исправляем ширину кнопок на мобильных устройствах */
+    .cart-order-section .btn-success {
+        width: 100% !important;
+    }
+    
+    .cart-items-section .btn-outline-secondary {
+        width: auto !important;
+    }
 }
 
 /* Анимации */
@@ -334,11 +343,11 @@ main {
 }
 
 .carousel-btn.prev {
-    left: 20px;
+    left: 12px;
 }
 
 .carousel-btn.next {
-    right: 20px;
+    right: 12px;
 }
 
 /* Адаптивность */

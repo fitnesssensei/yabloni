@@ -185,6 +185,15 @@ main {
     border-color: #adb5bd !important;
 }
 
+/* Кнопка "Оформить заказ" в одну строку для всех устройств */
+.cart-order-section .btn-success,
+.cart-order-section .d-grid .btn {
+    white-space: nowrap !important;
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+}
+
 @media (max-width: 991px) {
     .cart-container {
         flex-direction: column;
@@ -194,6 +203,15 @@ main {
     .cart-order-section {
         flex: 1;
         max-width: 100%;
+    }
+    
+    /* Кнопка "Оформить заказ" в одну строку на мобильных */
+    .cart-order-section .btn-success,
+    .cart-order-section .d-grid .btn {
+        white-space: nowrap !important;
+        width: 100% !important;
+        text-align: center !important;
+        display: block !important;
     }
 }
 

@@ -9,7 +9,8 @@ Django-based e-commerce платформа для продажи саженце�
 ## 🛠 Технологический стек
 
 ### требования к ИИ агенту (это очень важно !!!)
-- отвечай только на русском языке
+- отвечай только на русском языке !
+- отвечать всегда кратко !
 - если что то не понятно переспроси 
 - отвечай кратко и лаконично
 - 
@@ -443,8 +444,8 @@ ngrok http 8000
 - **PythonAnywhere**: простое развертывание
 - **AWS EC2**: гибкая настройка
 
-### Переменные окружения для production
-```env
+### Переменные окружения для production 
+.env
 SECRET_KEY=your-very-secret-key-here
 DEBUG=False
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
@@ -452,9 +453,10 @@ DB_NAME=production_db
 DB_USER=production_user
 DB_PASSWORD=strong_password
 DB_HOST=localhost
-EMAIL_HOST_USER=your-production-email@gmail.com
+
+### Email Yandex
+EMAIL_HOST_USER=tatarhyonok1@yandex.ru
 EMAIL_HOST_PASSWORD=production-app-password
-```
 
 ## 🧪 Тестирование
 
