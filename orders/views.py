@@ -18,6 +18,10 @@ from django.utils.html import strip_tags
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
+        print(f"\n{'='*50}")
+        print(f"📥 POST запрос получен!")
+        print(f"   Данные: {request.POST}")
+        print(f"{'='*50}\n")
         form = OrderCreateForm(request.POST)
         if form.is_valid():
             order = form.save()
@@ -28,15 +32,38 @@ def order_create(request):
                     price=item['price'],
                     quantity=item['quantity']
                 )
+            
+            # Отладка настроек email
+            print("="*50)
+            print("EMAIL НАСТРОЙКИ:")
+            print(f"  EMAIL_HOST: {settings.EMAIL_HOST}")
+            print(f"  EMAIL_PORT: {settings.EMAIL_PORT}")
+            print(f"  EMAIL_USE_SSL: {settings.EMAIL_USE_SSL}")
+            print(f"  EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
+            print(f"  EMAIL_HOST_PASSWORD: {'*' * len(settings.EMAIL_HOST_PASSWORD) if settings.EMAIL_HOST_PASSWORD else 'НЕ УСТАНОВЛЕН'}")
+            print(f"  DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+            print("="*50)
+            
             # Отправка email
             subject = f'Заказ №{order.id}'
-            html_message = render_to_string('orders/order/email.html', {'order': order})
+            try:
+                html_message = render_to_string('orders/order/email.html', {'order': order})
+                print(f"✅ Шаблон отрендерен успешно")
+            except Exception as e:
+                print(f"❌ Ошибка рендеринга шаблона: {e}")
+                html_message = f"Заказ №{order.id} оформлен"
+            
             plain_message = strip_tags(html_message)
             from_email = settings.DEFAULT_FROM_EMAIL
             to = order.email
 
+            print(f"📧 Попытка отправить письмо:")
+            print(f"   От: {from_email}")
+            print(f"   Кому: {to}")
+            print(f"   Тема: {subject}")
+
             try:
-                send_mail(
+                result = send_mail(
                     subject,
                     plain_message,
                     from_email,
@@ -44,20 +71,16 @@ def order_create(request):
                     html_message=html_message,
                     fail_silently=False,
                 )
-                print(f"Письмо отправлено на {to}")  # Логирование
+                print(f"✅ Письмо отправлено! Результат: {result}")
             except Exception as e:
-                print(f"Ошибка отправки письма: {e}")  # Логирование ошибки
-
-            # Отладочный принт
-            print("="*50)
-            print("Попытка отправить письмо на:", order.email)
-            print("="*50)
+                print(f"❌ Ошибка отправки письма: {e}")
+                import traceback
+                traceback.print_exc()
 
             # Очистка корзины
             cart.clear()
             # Сохранение заказа в сессии
             request.session['order_id'] = order.id
-            # представление создания заказа
             return render(request, 'orders/order/created.html', {'order': order})
     else:
         form = OrderCreateForm()

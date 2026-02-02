@@ -62,8 +62,11 @@ source venv/bin/activate
 запуск сервера:
 python manage.py runserver
 
+Жесткий откат : 
+git reset --hard « …»
+
 пароль приложения для почты :
-qequnpvmqovvzqlg
+jgpxnfjvoopzsdqc
 
 создание папки:
 mkdir -p templates/cart

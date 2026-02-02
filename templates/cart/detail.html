@@ -104,7 +104,7 @@
                     <h5 class="mb-0">Контактные данные</h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" class="order-form">
+                    <form method="post" action="{% url 'orders:order_create' %}" class="order-form">
                         {% csrf_token %}
                         
                         <!-- Покупатель -->
