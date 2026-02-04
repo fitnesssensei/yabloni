@@ -13,7 +13,7 @@ class OrderCreateForm(forms.ModelForm):
     
     class Meta:
         model = Order
-        fields = ['full_name', 'email', 'phone', 'region', 'city', 'postal_code', 'address']
+        fields = ['full_name', 'email', 'phone', 'region', 'city', 'postal_code', 'address', 'comments']
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -40,6 +40,11 @@ class OrderCreateForm(forms.ModelForm):
             'region': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Страна, край, район'
+            }),
+            'comments': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Комментарий к заказу (необязательно)',
+                'rows': 4
             }),
         }
     

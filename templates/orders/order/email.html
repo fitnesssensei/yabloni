@@ -9,100 +9,131 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
         .header {
-            background-color: #2c5e2e;
-            color: white;
-            padding: 20px;
             text-align: center;
-            border-radius: 5px 5px 0 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
         }
-        .content {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border: 1px solid #ddd;
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
         }
         .order-info {
-            background-color: white;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 4px solid #2c5e2e;
+            margin-bottom: 30px;
+        }
+        .order-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .order-info strong {
+            display: inline-block;
+            width: 150px;
+        }
+        .instructions {
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #333;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
         }
         .product-item {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #ddd;
             padding: 10px 0;
         }
         .product-item:last-child {
             border-bottom: none;
         }
-        .total {
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .product-details {
+            font-size: 14px;
+            color: #666;
+        }
+        .total-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .total-line {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .grand-total {
             font-weight: bold;
             font-size: 18px;
-            text-align: right;
-            margin-top: 20px;
-            color: #2c5e2e;
+            color: #333;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
         }
         .footer {
-            background-color: #2c5e2e;
-            color: white;
-            padding: 15px;
+            margin-top: 40px;
             text-align: center;
-            border-radius: 0 0 5px 5px;
             font-size: 14px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🌳 Яблони и Груши</h1>
-        <h2>Подтверждение заказа №{{ order.id }}</h2>
+        <h1>Яблони и Груши - саженцы</h1>
     </div>
 
-    <div class="content">
-        <p>Уважаемый(ая) {{ order.first_name }} {{ order.last_name }},</p>
-        <p>Благодарим вас за заказ в нашем интернет-магазине саженцев! Ваш заказ успешно принят и находится в обработке.</p>
+    <div class="order-info">
+        <p><strong>№ заказа:</strong> {{ order.id }}</p>
+        <p><strong>Дата добавления:</strong> {{ order.created|date:"d.m.Y" }}</p>
+        <p><strong>Телефон:</strong> {{ order.phone }}</p>
+        <p><strong>E-mail:</strong> {{ order.email }}</p>
+        <p>{{ order.get_full_name }}</p>
+        <p>{{ order.address }}</p>
+        <p>{{ order.postal_code }}</p>
+        <p>{{ order.region|default:"Российская Федерация" }}</p>
+    </div>
 
-        <div class="order-info">
-            <h3>Информация о заказе:</h3>
-            <p><strong>Номер заказа:</strong> {{ order.id }}</p>
-            <p><strong>Дата оформления:</strong> {{ order.created|date:"d.m.Y H:i" }}</p>
-            <p><strong>Email:</strong> {{ order.email }}</p>
-            <p><strong>Телефон:</strong> {{ order.phone }}</p>
-            <p><strong>Адрес доставки:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</p>
+    <div class="instructions">
+        <h3>Инструкции</h3>
+        <p>Заказ принят, ожидает оплаты. Все саженцы в наличии, замена сортов без согласования не производится.</p>
+        <p>Оплата на карту СберБанк xxxx xxx xxxxx xxxx на имя Андрей Александрович М.</p>
+        <p>Обязательно сообщите мне о внесенной оплате на электронную почту (нажав «Ответить» на это письмо). Без этого сообщения я не смогу опознать ваш платеж и приступить к сборке. Срок оплаты заказа - 3 дня.</p>
+        
+        {% if order.comments %}
+        <h3>Комментарий к Вашему заказу:</h3>
+        <p>{{ order.comments }}</p>
+        {% endif %}
+    </div>
+
+    <h3>Состав заказа:</h3>
+    {% for item in order.items.all %}
+    <div class="product-item">
+        <div class="product-name">{{ item.product.name }}, {{ item.quantity }} шт.</div>
+        <div class="product-details">
+            {{ item.price|floatformat:0 }}р.<br>
+            {{ item.quantity }}<br>
+            {{ item.get_cost|floatformat:0 }}р.
         </div>
+    </div>
+    {% endfor %}
 
-        <h3>Состав заказа:</h3>
-        {% for item in order.items.all %}
-        <div class="product-item">
-            <p><strong>{{ item.product.name }}</strong></p>
-            <p>Количество: {{ item.quantity }} шт. × {{ item.price }} руб. = {{ item.get_cost }} руб.</p>
-        </div>
-        {% endfor %}
-
-        <div class="total">
-            Итого: {{ order.get_total_cost }} руб.
-        </div>
-
-        <h3>Дальнейшие действия:</h3>
-        <ul>
-            <li>Наш менеджер свяжется с вами в течение рабочего дня для подтверждения заказа</li>
-            <li>Доставка осуществляется в течение 3-7 рабочих дней</li>
-            <li>Оплата возможна при получении</li>
-        </ul>
-
-        <p>Если у вас есть вопросы, вы можете связаться с нами:</p>
-        <ul>
-            <li>📧 Email: yabloni-grushi@yandex.ru</li>
-            <li>📱 Телефон: (указать в настройках)</li>
-        </ul>
+    <div class="total-section">
+        <div class="total-line">Итого: {{ order.get_total_cost|floatformat:0 }}р.</div>
+        <div class="total-line">Почта России, заказное письмо: 200р.</div>
+        <div class="grand-total">Всего: {{ order.get_total_cost|add:200|floatformat:0 }}р.</div>
     </div>
 
     <div class="footer">
-        <p>© 2026 Яблони и Груши - Интернет-магазин саженцев</p>
-        <p>🌳 Качественные саженцы с доставкой по всей России</p>
+        <p>Яблони и Груши © 2025-2026</p>
     </div>
 </body>
 </html>
