@@ -13,7 +13,7 @@ class OrderCreateForm(forms.ModelForm):
     
     class Meta:
         model = Order
-        fields = ['full_name', 'email', 'phone', 'region', 'city', 'postal_code', 'address', 'comments']
+        fields = ['full_name', 'email', 'phone', 'delivery_needed', 'region', 'city', 'postal_code', 'address', 'comments']
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -24,6 +24,10 @@ class OrderCreateForm(forms.ModelForm):
                 'placeholder': '+7 (XXX) XXX-XX-XX',
                 'pattern': r'^(\+7|8)?[\s\-]?\(?[0-9]{3}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$',
                 'title': 'Формат: +7 (XXX) XXX-XX-XX или 8XXXXXXXXXX'
+            }),
+            'delivery_needed': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'width: 20px; height: 20px;'
             }),
             'address': forms.TextInput(attrs={
                 'class': 'form-control',

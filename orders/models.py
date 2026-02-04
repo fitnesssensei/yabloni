@@ -55,6 +55,7 @@ class Order(models.Model):
         default=OrderStatus.NEW
     )
     paid = models.BooleanField('Оплачен', default=False)
+    delivery_needed = models.BooleanField('Нужна доставка', default=False)
     comments = models.TextField('Комментарий к заказу', blank=True)
     
     class Meta:

@@ -96,6 +96,7 @@
         <p><strong>Дата добавления:</strong> {{ order.created|date:"d.m.Y" }}</p>
         <p><strong>Телефон:</strong> {{ order.phone }}</p>
         <p><strong>E-mail:</strong> {{ order.email }}</p>
+        <p><strong>Доставка:</strong> {% if order.delivery_needed %}Нужна{% else %}Не нужна{% endif %}</p>
         <p>{{ order.get_full_name }}</p>
         <p>{{ order.address }}</p>
         <p>{{ order.postal_code }}</p>
