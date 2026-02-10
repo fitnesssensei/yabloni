@@ -36,19 +36,26 @@ function getCookie(name) {
     return null;
 }
 
-// Управление модальным окном согласия
+// Управление баннером согласия на cookies
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = new bootstrap.Modal(document.getElementById('personalDataModal'));
+    const cookieBanner = document.getElementById('cookieBanner');
     const acceptBtn = document.getElementById('acceptBtn');
+    const declineBtn = document.getElementById('declineBtn');
     
     // Проверяем, дали ли уже согласие
     if (!getCookie('consent')) {
-        modal.show();
+        cookieBanner.style.display = 'block';
     }
     
     // Обработчик кнопки "Принять"
     acceptBtn.addEventListener('click', function() {
         setCookie('consent', 'accepted', 365); // Сохраняем на 1 год
-        modal.hide();
+        cookieBanner.style.display = 'none';
+    });
+    
+    // Обработчик кнопки "Отклонить"
+    declineBtn.addEventListener('click', function() {
+        cookieBanner.style.display = 'none';
+        // Можно добавить логику для повторного показа через время
     });
 });
