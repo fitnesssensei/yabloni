@@ -58,6 +58,7 @@ class Order(models.Model):
     delivery_needed = models.BooleanField('Нужна доставка', default=False)
     comments = models.TextField('Комментарий к заказу', blank=True)
     
+    
     class Meta:
         ordering = ('-created',)
         verbose_name = 'Заказ'

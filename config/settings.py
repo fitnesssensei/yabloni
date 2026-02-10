@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'multiupload',
+    'core.apps.CoreConfig',
     'blog',
     'catalog.apps.CatalogConfig',
     'crispy_forms',

@@ -50,6 +50,7 @@ class OrderCreateForm(forms.ModelForm):
                 'placeholder': 'Комментарий к заказу (необязательно)',
                 'rows': 4
             }),
+            
         }
     
     def clean_phone(self):
@@ -86,7 +87,7 @@ class OrderCreateForm(forms.ModelForm):
         self.cleaned_data['_patronymic'] = ' '.join(parts[2:]) if len(parts) > 2 else ''
         
         return full_name
-    
+
     def save(self, commit=True):
         """Переопределяем сохранение для разделения ФИО"""
         instance = super().save(commit=False)
