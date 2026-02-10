@@ -30,85 +30,91 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
     <style>
-        /* Стили для модального окна согласия на обработку персональных данных */
-        #personalDataModal .modal-header {
-            background-color: #9dab8a; /* Цвет фона как у подвала */
-            color: white;
-            border-bottom: none;
-        }
-        
-        #personalDataModal .modal-header .btn-close {
-            filter: invert(1); /* Белый крестик */
-        }
-        
-        #personalDataModal .modal-body {
-            padding: 2rem;
-            line-height: 1.6;
+        /* Стили для баннера согласия на cookies */
+        .cookie-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
             color: #333;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none; /* Скрыт по умолчанию */
+            border-bottom: 1px solid #ddd;
         }
         
-        #personalDataModal .modal-body p {
-            margin-bottom: 1rem;
+        .cookie-banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        #personalDataModal .modal-body a {
-            color: #ff8b00; /* Оранжевый цвет ссылок */
+        .cookie-banner-text {
+            flex: 1;
+            margin-right: 1rem;
+        }
+        
+        .cookie-banner-text p {
+            margin: 0;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .cookie-banner-text a {
+            color: #ff8b00;
             text-decoration: none;
         }
         
-        #personalDataModal .modal-body a:hover {
+        .cookie-banner-text a:hover {
             text-decoration: underline;
         }
         
-        #personalDataModal .modal-footer {
-            border-top: none;
-            padding: 1rem 2rem;
-            justify-content: space-between;
+        .cookie-banner-buttons {
+            display: flex;
+            gap: 0.5rem;
         }
         
-        #personalDataModal .btn-primary {
-            background-color: #ff8b00; /* Оранжевый цвет кнопки "Принять" */
+        .cookie-banner .btn-primary {
+            background-color: #ff8b00;
             border-color: #ff8b00;
-            font-weight: 500;
-            padding: 0.5rem 2rem;
         }
         
-        #personalDataModal .btn-primary:hover {
-            background-color: #e67a00; /* Темнее при наведении */
+        .cookie-banner .btn-primary:hover {
+            background-color: #e67a00;
             border-color: #e67a00;
         }
         
-        #personalDataModal .btn-secondary {
+        .cookie-banner .btn-secondary {
             background-color: transparent;
             border-color: #6c757d;
             color: #6c757d;
-            font-weight: 500;
-            padding: 0.5rem 2rem;
         }
         
-        #personalDataModal .btn-secondary:hover {
+        .cookie-banner .btn-secondary:hover {
             background-color: #6c757d;
             border-color: #6c757d;
             color: white;
         }
         
         /* Адаптивность для мобильных */
-        @media (max-width: 576px) {
-            #personalDataModal .modal-dialog {
-                margin: 1rem;
-            }
-            
-            #personalDataModal .modal-body {
-                padding: 1.5rem;
-            }
-            
-            #personalDataModal .modal-footer {
+        @media (max-width: 768px) {
+            .cookie-banner-content {
                 flex-direction: column;
-                gap: 0.5rem;
+                text-align: center;
+                padding: 1rem;
             }
             
-            #personalDataModal .btn {
-                width: 100%;
+            .cookie-banner-text {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .cookie-banner-buttons {
+                justify-content: center;
             }
         }
     </style>
@@ -122,21 +128,15 @@
     
     {% include 'base/footer.html' %}
     
-    <!-- Модальное окно согласия на обработку персональных данных -->
-    <div class="modal fade" id="personalDataModal" tabindex="-1" aria-labelledby="personalDataModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="personalDataModalLabel">Обработка персональных данных</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Мы используем файлы cookie и обрабатываем персональные данные для улучшения работы сайта и предоставления услуг. Продолжая пользоваться сайтом, вы соглашаетесь с нашей <a href="#" target="_blank">Политикой обработки персональных данных</a>.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
-                    <button type="button" class="btn btn-primary" id="acceptBtn">Принять</button>
-                </div>
+    <!-- Баннер согласия на использование cookies -->
+    <div id="cookieBanner" class="cookie-banner">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <p>Используя сайт, вы даете согласие на обработку файлов cookies, которые обеспечивают правильную работу сайта, и соглашаетесь с <a href="{% static 'txt/Политика Конфиденциальности.docx' %}" target="_blank">Политикой конфиденциальности</a>.</p>
+            </div>
+            <div class="cookie-banner-buttons">
+                <button type="button" class="btn btn-secondary btn-sm" id="declineBtn">Отклонить</button>
+                <button type="button" class="btn btn-primary btn-sm" id="acceptBtn">Принять</button>
             </div>
         </div>
     </div>
