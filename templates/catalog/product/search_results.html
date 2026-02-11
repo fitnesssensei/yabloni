@@ -3,6 +3,8 @@
 
 {% block title %}Результаты поиска{% endblock %}
 
+{% block meta_description %}Результаты поиска по запросу '{{ query }}'. Найдено товаров: {{ products|length }}.{% endblock %}
+
 {% block content %}
 <div class="container">
     <h1 class="my-4">Результаты поиска</h1>
