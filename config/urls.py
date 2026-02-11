@@ -11,6 +11,12 @@ from django.views.generic import TemplateView
 from . import views
 
 
+# Настройка заголовка админ-панели
+admin.site.site_header = 'Яблони и Груши - Администрирование'
+admin.site.site_title = 'Администрирование сайта'
+admin.site.index_title = 'Добро пожаловать в панель управления'
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
