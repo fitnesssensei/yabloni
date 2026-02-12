@@ -66,7 +66,7 @@ python manage.py runserver
 git reset --hard « …»
 
 пароль приложения для почты :
-jgpxnfjvoopzsdqc
+saeftncoarafjaci
 
 создание папки:
 mkdir -p templates/cart
