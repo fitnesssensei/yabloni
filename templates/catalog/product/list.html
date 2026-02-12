@@ -85,9 +85,9 @@
     <!-- Кнопки категорий -->
     <div class="category-buttons py-4 mb-3">
         <a href="{% url 'catalog:product_list' %}" class="category-btn btn-catalog">Все саженцы</a>
-        <a href="{% url 'catalog:product_list_by_category' 'yabloni' %}" class="category-btn btn-category">Яблони</a>
-        <a href="{% url 'catalog:product_list_by_category' 'grushi' %}" class="category-btn btn-category">Груши</a>
-        <a href="{% url 'catalog:product_list_by_category' 'chereshni' %}" class="category-btn btn-category">Черешни</a>
+        {% for category in categories %}
+            <a href="{% url 'catalog:product_list_by_category' category.slug %}" class="category-btn btn-category">{{ category.name }}</a>
+        {% endfor %}
     </div>
     
     <h1 class="my-4">{% if category %}{{ category.name }}{% else %}Все саженцы{% endif %}</h1>
