@@ -17,10 +17,24 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
+class Subcategory(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Название подкатегории')
+    slug = models.SlugField(unique=True)
+    
+    class Meta:
+        verbose_name = 'Подкатегория'
+        verbose_name_plural = 'Подкатегории'
+    
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
     slug = models.SlugField(unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    subcategory = models.ForeignKey(Subcategory, on_delete=models.SET_NULL, blank=True, null=True, related_name='products', verbose_name='Подкатегория')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     description = models.TextField(blank=True, verbose_name='Описание')
     available = models.BooleanField(default=True, verbose_name='В наличии')
