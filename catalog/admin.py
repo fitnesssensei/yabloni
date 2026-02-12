@@ -21,9 +21,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'price', 'available', 'get_image_count', 'image_preview']
+    list_display = ['name', 'category', 'price', 'available', 'stock', 'get_image_count', 'image_preview']
     list_filter = ['available', 'category', 'is_new', 'is_featured']
-    list_editable = ['price', 'available']
+    list_editable = ['price', 'available', 'stock']
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
     change_form_template = 'admin/product_change_form.html'

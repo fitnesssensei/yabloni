@@ -84,7 +84,7 @@
                              class="thumbnail {% if img.is_main %}active{% endif %}" 
                              alt="{{ product.name }}"
                              data-src="{{ img.image.url }}"
-                             style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 2px solid {% if img.is_main %}#28a745{% else %}#dee2e6{% endif %}; border-radius: 4px;">
+                             style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 2px solid #dee2e6; border-radius: 4px;">
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -124,10 +124,20 @@
         <div class="col-md-3">
             <p class="h3 text-success my-4">{{ product.price }} ₽</p>
             
+            {% if product.stock > 0 %}
+                <p class="mb-3">Остаток: {{ product.stock }} шт.</p>
+            {% else %}
+                <p class="mb-3 text-danger">Нет в наличии</p>
+            {% endif %}
+            
             <form action="{% url 'cart:cart_add' product.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="quantity" value="1">
-                <button type="submit" class="btn btn-success btn-sm">В корзину</button>
+                {% if product.stock > 0 %}
+                    <button type="submit" class="btn btn-success btn-sm">В корзину</button>
+                {% else %}
+                    <button type="submit" class="btn btn-secondary btn-sm" disabled>Нет в наличии</button>
+                {% endif %}
             </form>
         </div>
     </div>
