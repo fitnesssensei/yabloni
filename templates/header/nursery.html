@@ -25,5 +25,49 @@
             </div>
         </div>
     </div>
+    
+    <!-- Раздел отзывов о магазине -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <h2 class="me-3 mb-0">Отзывы о нашем магазине</h2>
+                    <a href="{% url 'reviews:add_review' %}" class="btn btn-success btn-lg">Оставлю отзыв</a>
+                </div>
+            </div>
+            <div class="row">
+                {% for review in reviews %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rating">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% else %}
+                                            <i class="bi bi-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <span class="ms-2 fw-bold">{{ review.rating }}</span>
+                            </div>
+                            <p class="card-text">{{ review.comment }}</p>
+                            <div class="text-muted small">
+                                <strong>{{ review.name }}</strong><br>
+                                {{ review.created_at|date:"d.m.Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-center text-muted">Пока нет опубликованных отзывов. Будьте первым!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
