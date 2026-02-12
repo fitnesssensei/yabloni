@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, Subcategory
 from .forms import ProductImageForm
 
 
@@ -19,10 +19,16 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+@admin.register(Subcategory)
+class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug']
+    prepopulated_fields = {'slug': ('name',)}
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'price', 'available', 'stock', 'get_image_count', 'image_preview']
-    list_filter = ['available', 'category', 'is_new', 'is_featured']
+    list_display = ['name', 'category', 'subcategory', 'price', 'available', 'stock', 'get_image_count', 'image_preview']
+    list_filter = ['available', 'category', 'subcategory', 'is_new', 'is_featured']
     list_editable = ['price', 'available', 'stock']
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]

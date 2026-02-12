@@ -57,6 +57,9 @@
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ product.name }}</h5>
+                            {% if product.subcategory %}
+                            <span class="h4 text-success">{{ product.subcategory.name }}</span>
+                            {% endif %}
                             <p class="card-text text-muted small">{{ product.category.name }}</p>
                             <p class="card-text flex-grow-1">{{ product.description|truncatewords:15 }}</p>
                             <div class="mt-auto">
