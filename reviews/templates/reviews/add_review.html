@@ -1,0 +1,38 @@
+<!-- Шаблон для добавления отзыва -->
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center mb-4">Добавить отзыв</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'nursery' %}" class="btn btn-secondary">Вернуться к питомнику</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

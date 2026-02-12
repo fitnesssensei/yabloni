@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'cart.apps.CartConfig',
     'orders.apps.OrdersConfig',
+    'reviews',
     
 ]
 

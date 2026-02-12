@@ -33,10 +33,11 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
     path('catalog/', include('catalog.urls', namespace='catalog')),
+    path('reviews/', include('reviews.urls', namespace='reviews')),
     path('legal/', TemplateView.as_view(template_name='legal/legal_info.html'), name='legal_info'),
     
     # Статические страницы
-    path('nursery/', TemplateView.as_view(template_name='header/nursery.html'), name='nursery'),
+    path('nursery/', views.NurseryView.as_view(), name='nursery'),
     path('blog/', include('blog.urls', namespace='blog')),
     #path('blog/', TemplateView.as_view(template_name='header/blog.html'), name='blog'),
     path('search/', TemplateView.as_view(template_name='header/search.html'), name='search'),
