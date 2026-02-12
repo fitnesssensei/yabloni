@@ -6,6 +6,10 @@ class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     slug = models.SlugField(unique=True)
     
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории товаров'
+    
     # добавил метод :
     def get_absolute_url(self):
         return reverse('catalog:product_list_by_category', args=[self.slug])
@@ -26,6 +30,10 @@ class Product(models.Model):
         help_text='Отметьте, чтобы показать этот товар в разделе Новинки')
     is_featured = models.BooleanField('Хит продаж', default=False, help_text='Отметьте, чтобы показать этот товар в разделе Хиты продаж')
    
+    class Meta:
+        verbose_name = 'Товар'
+        verbose_name_plural = 'Товары'
+    
     def get_main_image(self):
         """Возвращает основное изображение товара или первое доступное"""
         main_image = self.images.filter(is_main=True).first()
