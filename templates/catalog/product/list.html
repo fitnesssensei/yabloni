@@ -1,9 +1,9 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}{% if category %}{{ category.name }}{% else %}Каталог{% endif %}{% endblock %}
+{% block title %}{% if category %}{% if subcategory %}{{ subcategory.name }} - {{ category.name }}{% else %}{{ category.name }}{% endif %}{% else %}Каталог{% endif %}{% endblock %}
 
-{% block meta_description %}{% if category %}{{ category.name }} - саженцы плодовых деревьев. Широкий ассортимент и высокое качество.{% else %}Каталог саженцев - Яблони, Груши, Черешни. Купить качественные саженцы.{% endif %}{% endblock %}
+{% block meta_description %}{% if category %}{% if subcategory %}{{ subcategory.name }} в категории {{ category.name }} - саженцы плодовых деревьев.{% else %}{{ category.name }} - саженцы плодовых деревьев. Широкий ассортимент и высокое качество.{% endif %}{% else %}Каталог саженцев - Яблони, Груши, Черешни. Купить качественные саженцы.{% endif %}{% endblock %}
 
 {% block content %}
 <style>
@@ -90,7 +90,16 @@
         {% endfor %}
     </div>
     
-    <h1 class="my-4">{% if category %}{{ category.name }}{% else %}Все саженцы{% endif %}</h1>
+    <div class="d-flex align-items-center mb-4">
+        <h1>{% if category %}{% if subcategory %}{{ subcategory.name }} в {{ category.name }}{% else %}{{ category.name }}{% endif %}{% else %}Все саженцы{% endif %}</h1>
+        {% if category %}
+        <div class="subcategory-buttons d-flex gap-2 ms-3">
+            {% for subcat in subcategories %}
+                <a href="{% url 'catalog:product_list_by_category_subcategory' category.slug subcat.slug %}" class="category-btn">{{ subcat.name }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
     
 <div class="row">
     <div class="col-md-12">

@@ -5,23 +5,31 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.views.generic import ListView
 from django.db.models import Q  # Импортируем Q для сложных запросов
-from .models import Category, Product
+from .models import Category, Product, Subcategory
 from cart.forms import CartAddProductForm
 from blog.models import BlogPost, News  # Импортируем модели BlogPost и News
 
 
-def product_list(request, category_slug=None):
+def product_list(request, category_slug=None, subcategory_slug=None):
     category = None
+    subcategory = None
     categories = Category.objects.all()
+    subcategories = Subcategory.objects.all()
     products = Product.objects.filter(available=True)
     
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
     
+    if subcategory_slug:
+        subcategory = get_object_or_404(Subcategory, slug=subcategory_slug)
+        products = products.filter(subcategory=subcategory)
+    
     return render(request, 'catalog/product/list.html', {
         'category': category,
+        'subcategory': subcategory,
         'categories': categories,
+        'subcategories': subcategories,
         'products': products
     })
 
