@@ -212,11 +212,6 @@
                             <div class="hit-card-info">
                                 <h5>{{ product.name }}</h5>
                                 <p>{{ product.price }} ₽</p>
-                                {% if product.stock > 0 %}
-                                    <p class="small text-muted mb-0">Остаток: {{ product.stock }} шт.</p>
-                                {% else %}
-                                    <p class="small text-danger mb-0">Нет в наличии</p>
-                                {% endif %}
                             </div>
                         </div>
                     </div>

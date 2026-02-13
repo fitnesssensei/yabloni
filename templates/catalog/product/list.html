@@ -118,15 +118,7 @@
                             <div class="card-body d-flex flex-column">
                                 <div class="text-center">
                                     <h5 class="card-title mb-2">{{ product.name }}</h5>
-                                    {% if product.subcategory %}
-                                    <span class="h4 text-success">{{ product.subcategory.name }}</span>
-                                    {% endif %}
                                     <span class="h5 mb-1">{{ product.price }} ₽</span><br>
-                                    {% if product.stock > 0 %}
-                                        <small class="text-muted">Остаток: {{ product.stock }} шт.</small><br>
-                                    {% else %}
-                                        <small class="text-danger">Нет в наличии</small><br>
-                                    {% endif %}
                                     <button class="btn btn-success mt-2">Подробнее</button>
                                 </div>
                             </div>
