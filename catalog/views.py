@@ -14,12 +14,16 @@ def product_list(request, category_slug=None, subcategory_slug=None):
     category = None
     subcategory = None
     categories = Category.objects.all()
-    subcategories = Subcategory.objects.all()
     products = Product.objects.filter(available=True)
     
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
-        products = products.filter(category=category)
+        category_products = products.filter(category=category)
+        # Получаем подкатегории, используемые в товарах этой категории
+        subcategories = Subcategory.objects.filter(products__in=category_products).distinct()
+        products = category_products
+    else:
+        subcategories = Subcategory.objects.none()  # Если нет категории, не показываем подкатегории
     
     if subcategory_slug:
         subcategory = get_object_or_404(Subcategory, slug=subcategory_slug)
