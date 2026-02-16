@@ -44,6 +44,10 @@ class Product(models.Model):
     is_new = models.BooleanField('Новинка', default=False, 
         help_text='Отметьте, чтобы показать этот товар в разделе Новинки')
     is_featured = models.BooleanField('Хит продаж', default=False, help_text='Отметьте, чтобы показать этот товар в разделе Хиты продаж')
+    enable_spring_button = models.BooleanField('Показывать кнопку "Заказать на весну"', default=True, 
+        help_text='Включить/выключить отображение кнопки "Заказать на весну" на странице этого товара')
+    enable_autumn_button = models.BooleanField('Показывать кнопку "Заказать на осень"', default=True, 
+        help_text='Включить/выключить отображение кнопки "Заказать на осень" на странице этого товара')
    
     class Meta:
         verbose_name = 'Товар'

@@ -133,6 +133,7 @@
                 <p class="mb-3 text-danger">Нет в наличии</p>
             {% endif %}
             
+            {% if product.enable_spring_button %}
             <form action="{% url 'cart:cart_add' product.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="quantity" value="1">
@@ -143,7 +144,9 @@
                     <button type="submit" class="btn btn-secondary btn-sm" disabled>Нет в наличии</button>
                 {% endif %}
             </form>
+            {% endif %}
             
+            {% if product.enable_autumn_button %}
             {% if product.stock > 0 %}
             <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mt-2">
                 {% csrf_token %}
@@ -151,6 +154,7 @@
                 <input type="hidden" name="season" value="осень">
                 <button type="submit" class="btn btn-sm" style="background-color: darkgreen; color: white;">Заказать на осень</button>
             </form>
+            {% endif %}
             {% endif %}
             
             <!-- Сроки отправки -->

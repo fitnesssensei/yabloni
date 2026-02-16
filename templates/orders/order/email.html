@@ -118,7 +118,7 @@
     <h3>Состав заказа:</h3>
     {% for item in order.items.all %}
     <div class="product-item">
-        <div class="product-name">{{ item.product.name }}, {{ item.quantity }} шт.</div>
+        <div class="product-name">{{ item.product.name }}, {{ item.quantity }} шт.{% if item.season %} ({{ item.season }}){% endif %}</div>
         <div class="product-details">
             {{ item.price|floatformat:0 }}р.<br>
             {{ item.quantity }}<br>

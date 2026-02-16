@@ -6,8 +6,8 @@ from .models import Order, OrderItem, OrderStatus
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    readonly_fields = ('product', 'price', 'get_cost')
-    fields = ('product', 'price', 'quantity', 'get_cost')
+    readonly_fields = ('product', 'price', 'season', 'get_cost')
+    fields = ('product', 'price', 'quantity', 'season', 'get_cost')
     
     def get_cost(self, obj):
         return obj.get_cost()
