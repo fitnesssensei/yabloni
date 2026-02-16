@@ -32,7 +32,8 @@ def order_create(request):
                     order=order,
                     product=item['product'],
                     price=item['price'],
-                    quantity=item['quantity']
+                    quantity=item['quantity'],
+                    season=item['season']
                 )
             
             # Получаем настройки email из админки

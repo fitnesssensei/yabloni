@@ -27,9 +27,9 @@ class SubcategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'subcategory', 'price', 'available', 'stock', 'get_image_count', 'image_preview']
-    list_filter = ['available', 'category', 'subcategory', 'is_new', 'is_featured']
-    list_editable = ['price', 'available', 'stock']
+    list_display = ['name', 'category', 'subcategory', 'price', 'available', 'stock', 'enable_spring_button', 'enable_autumn_button', 'get_image_count', 'image_preview']
+    list_filter = ['available', 'category', 'subcategory', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button']
+    list_editable = ['price', 'available', 'stock', 'enable_spring_button', 'enable_autumn_button']
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
     change_form_template = 'admin/product_change_form.html'

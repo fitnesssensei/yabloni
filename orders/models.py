@@ -85,6 +85,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey('catalog.Product', related_name='order_items', on_delete=models.CASCADE)
     price = models.DecimalField('Цена', max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     quantity = models.PositiveIntegerField('Количество', default=1)
+    season = models.CharField('Сезон', max_length=50, blank=True)
     
     def __str__(self):
         return str(self.id)

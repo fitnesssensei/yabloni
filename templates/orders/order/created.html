@@ -27,6 +27,7 @@
                                         <th>Изображение</th>
                                         <th>Количество</th>
                                         <th>Цена</th>
+                                        <th>Сезон</th>
                                         <th>Сумма</th>
                                     </tr>
                                 </thead>
@@ -49,17 +50,18 @@
                                         </td>
                                         <td>{{ item.quantity }}</td>
                                         <td>{{ item.price }} ₽</td>
+                                        <td>{% if item.season %}{{ item.season }}{% else %}-{% endif %}</td>
                                         <td>{{ item.get_cost }} ₽</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="4" class="text-end">Доставка:</th>
+                                        <th colspan="5" class="text-end">Доставка:</th>
                                         <th>{% if order.delivery_needed %}Нужна{% else %}Не нужна{% endif %}</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="4" class="text-end">Итого:</th>
+                                        <th colspan="5" class="text-end">Итого:</th>
                                         <th>{{ order.get_total_cost }} ₽</th>
                                     </tr>
                                     
