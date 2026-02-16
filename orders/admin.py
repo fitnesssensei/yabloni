@@ -33,7 +33,7 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('address', 'postal_code', 'city', 'region')
         }),
         ('Статус заказа', {
-            'fields': ('status', 'paid')
+            'fields': ('status', 'paid', 'comments')
         }),
         ('Служебная информация', {
             'fields': ('created', 'updated', 'get_total_cost'),

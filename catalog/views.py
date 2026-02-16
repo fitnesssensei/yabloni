@@ -8,6 +8,7 @@ from django.db.models import Q  # Импортируем Q для сложных
 from .models import Category, Product, Subcategory
 from cart.forms import CartAddProductForm
 from blog.models import BlogPost, News  # Импортируем модели BlogPost и News
+from core.models import HomeSettings  # Импортируем HomeSettings
 
 
 def product_list(request, category_slug=None, subcategory_slug=None):
@@ -86,6 +87,9 @@ class HomeView(ListView):
                 'content_list': content_list
             })
         context['news'] = processed_news
+        
+        # Добавляем настройки главной страницы
+        context['home_settings'] = HomeSettings.load()
         
         return context
 
