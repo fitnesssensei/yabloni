@@ -245,7 +245,7 @@
                         <!--Правый контейнер (картинка) -->
                             <!--<h3 class="card-title h4 mb-3">Правый контейнер</h3>
                             <p class="card-text">Содержимое правого контейнера. Здесь можно разместить дополнительную информацию о компании или преимуществах.</p>-->
-                            <img src="{% static 'img/risunok.jpg' %}" class="img-fluid rounded-0 mt-3" alt="Рисунок">
+                            <img src="{% if home_settings.main_page_image %}{{ home_settings.main_page_image.url }}{% else %}{% static 'img/risunok.jpg' %}{% endif %}" class="img-fluid rounded-0 mt-3" alt="Рисунок">
                         </div>
                     </div>
                 </div>

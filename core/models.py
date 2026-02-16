@@ -92,3 +92,22 @@ class EmailSettings(SingletonModel):
     def get_default_from_email(self):
         """Возвращает email отправителя"""
         return self.default_from_email or self.email_host_user
+
+
+class HomeSettings(SingletonModel):
+    """Настройки главной страницы"""
+    
+    main_page_image = models.ImageField(
+        'Изображение на главной странице',
+        upload_to='home/',
+        blank=True,
+        null=True,
+        help_text='Изображение, которое отображается в правом контейнере главной страницы'
+    )
+    
+    class Meta:
+        verbose_name = 'Настройки главной страницы'
+        verbose_name_plural = 'Настройки главной страницы'
+    
+    def __str__(self):
+        return "Настройки главной страницы"

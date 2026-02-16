@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.html import format_html
-from .models import EmailSettings
+from .models import EmailSettings, HomeSettings
 from .signals import send_test_email
 
 
@@ -55,6 +55,32 @@ class EmailSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         """Запрещаем добавление новых записей (только одна запись)"""
         if EmailSettings.objects.filter(pk=1).exists():
+            return False
+        return super().has_add_permission(request)
+    
+    def has_delete_permission(self, request, obj=None):
+        """Запрещаем удаление записи"""
+        return False
+
+
+@admin.register(HomeSettings)
+class HomeSettingsAdmin(admin.ModelAdmin):
+    """Админ-панель для настроек главной страницы"""
+    
+    # Отображение списка
+    list_display = ['__str__', 'main_page_image']
+    
+    # Поля для редактирования
+    fieldsets = (
+        ('Изображение главной страницы', {
+            'fields': ('main_page_image',),
+            'description': 'Загрузите изображение, которое будет отображаться на главной странице в правом контейнере'
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Запрещаем добавление новых записей (только одна запись)"""
+        if HomeSettings.objects.filter(pk=1).exists():
             return False
         return super().has_add_permission(request)
     
