@@ -22,7 +22,7 @@
                 <div class="col-md-8 text-start">
 
                     <!--кнопки каталога над текстом-->
-                    <div class="d-flex justify-content-start gap-3 mt-0 mb-5 flex-wrap">
+                    <div class="d-flex justify-content-center gap-3 mt-0 mb-5 flex-wrap">
                         {% for category in categories %}
                         <a href="{% url 'catalog:product_list_by_category' category.slug %}" class="btn btn-outline-dark">{{ category.name }}</a>
                         {% endfor %}
