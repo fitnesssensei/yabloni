@@ -38,18 +38,28 @@
                                         </div>
                                         
                                         <!-- Информация о товаре -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <h5 class="card-title mb-1">{{ item.product.name }}</h5>
                                             <p class="text-muted mb-0">{{ item.price }} ₽ за единицу</p>
                                         </div>
                                         
+                                        <!-- Сезон -->
+                                        <div class="col-md-2">
+                                            {% if item.season %}
+                                                <p class="mb-0 fw-bold">{{ item.season }}</p>
+                                            {% else %}
+                                                <p class="mb-0 text-muted">-</p>
+                                            {% endif %}
+                                        </div>
+                                        
                                         <!-- Управление количеством -->
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="d-flex align-items-center justify-content-center justify-content-md-start">
                                                 <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}">
                                                     <input type="hidden" name="update" value="True">
+                                                    <input type="hidden" name="season" value="{{ item.season }}">
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary" 
                                                             {% if item.quantity <= 1 %}disabled{% endif %}>
                                                         <i class="bi bi-dash"></i>
@@ -62,6 +72,7 @@
                                                     {% csrf_token %}
                                                     <input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}">
                                                     <input type="hidden" name="update" value="True">
+                                                    <input type="hidden" name="season" value="{{ item.season }}">
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary">
                                                         <i class="bi bi-plus"></i>
                                                     </button>
@@ -73,7 +84,7 @@
                                         <div class="col-md-3 text-end">
                                             <div class="d-flex flex-column align-items-md-end">
                                                 <h6 class="mb-2">{{ item.total_price }} ₽</h6>
-                                                <a href="{% url 'cart:cart_remove' item.product.id %}" 
+                                                <a href="{% url 'cart:cart_remove' item.product.id item.season %}" 
                                                    class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i> Удалить
                                                 </a>
