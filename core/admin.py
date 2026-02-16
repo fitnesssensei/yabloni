@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.html import format_html
-from .models import EmailSettings, HomeSettings
+from .models import EmailSettings, HomeSettings, OrderInstructionsSettings
 from .signals import send_test_email
 
 
@@ -81,6 +81,32 @@ class HomeSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         """Запрещаем добавление новых записей (только одна запись)"""
         if HomeSettings.objects.filter(pk=1).exists():
+            return False
+        return super().has_add_permission(request)
+    
+    def has_delete_permission(self, request, obj=None):
+        """Запрещаем удаление записи"""
+        return False
+
+
+@admin.register(OrderInstructionsSettings)
+class OrderInstructionsSettingsAdmin(admin.ModelAdmin):
+    """Админ-панель для настроек инструкций заказов"""
+    
+    # Отображение списка
+    list_display = ['__str__']
+    
+    # Поля для редактирования
+    fieldsets = (
+        ('Инструкции для заказов', {
+            'fields': ('order_instructions',),
+            'description': 'Текст инструкций, который будет показан в email уведомлении о заказе. Поддерживает HTML.'
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Запрещаем добавление новых записей (только одна запись)"""
+        if OrderInstructionsSettings.objects.filter(pk=1).exists():
             return False
         return super().has_add_permission(request)
     

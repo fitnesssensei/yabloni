@@ -14,7 +14,7 @@ from django.core.mail import send_mail, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from core.models import EmailSettings
+from core.models import EmailSettings, OrderInstructionsSettings
 
 
 def order_create(request):
@@ -39,6 +39,9 @@ def order_create(request):
             # Получаем настройки email из админки
             email_settings = EmailSettings.load()
             
+            # Получаем настройки инструкций заказов
+            order_instructions_settings = OrderInstructionsSettings.load()
+            
             # Отладка настроек email
             print("="*50)
             print("EMAIL НАСТРОЙКИ (из админки):")
@@ -61,7 +64,7 @@ def order_create(request):
                 # Отправка email
                 subject = f'{email_settings.email_subject_prefix} Заказ №{order.id}'
                 try:
-                    html_message = render_to_string('orders/order/email.html', {'order': order})
+                    html_message = render_to_string('orders/order/email.html', {'order': order, 'order_instructions_settings': order_instructions_settings})
                     print(f"✅ Шаблон отрендерен успешно")
                 except Exception as e:
                     print(f"❌ Ошибка рендеринга шаблона: {e}")
