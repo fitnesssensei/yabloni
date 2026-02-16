@@ -17,13 +17,14 @@ def cart_add(request, product_id):
         cd = form.cleaned_data
         cart.add(product=product,
                  quantity=cd['quantity'],
-                 update_quantity=cd['update'])
+                 update_quantity=cd['update'],
+                 season=cd.get('season', ''))
     return redirect('cart:cart_detail')
 
-def cart_remove(request, product_id):
+def cart_remove(request, product_id, season=''):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
+    cart.remove(product, season=season)
     return redirect('cart:cart_detail')
 
 def cart_detail(request):

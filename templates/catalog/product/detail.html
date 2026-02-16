@@ -136,12 +136,22 @@
             <form action="{% url 'cart:cart_add' product.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="season" value="весна">
                 {% if product.stock > 0 %}
-                    <button type="submit" class="btn btn-success btn-sm">В корзину</button>
+                    <button type="submit" class="btn btn-sm" style="background-color: orange; color: white;">Заказать на весну</button>
                 {% else %}
                     <button type="submit" class="btn btn-secondary btn-sm" disabled>Нет в наличии</button>
                 {% endif %}
             </form>
+            
+            {% if product.stock > 0 %}
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mt-2">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="season" value="осень">
+                <button type="submit" class="btn btn-sm" style="background-color: darkgreen; color: white;">Заказать на осень</button>
+            </form>
+            {% endif %}
         </div>
     </div>
 
