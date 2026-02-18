@@ -34,7 +34,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
     slug = models.SlugField(unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
-    subcategory = models.ForeignKey(Subcategory, on_delete=models.SET_NULL, blank=True, null=True, related_name='products', verbose_name='Подкатегория')
+    subcategories = models.ManyToManyField(Subcategory, blank=True, related_name='products', verbose_name='Подкатегории')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     description = models.TextField(blank=True, verbose_name='Описание')
     available = models.BooleanField(default=True, verbose_name='В наличии')
