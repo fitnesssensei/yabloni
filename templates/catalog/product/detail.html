@@ -35,8 +35,8 @@
                 <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">СОДЕРЖАНИЕ</button>
                 <hr class="my-2">
                 
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Описание</button>
-                <hr class="my-2">
+                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Описание</button>
+                <hr class="my-2">-->
               
                 <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Характеристика сорта</button>
                 <hr class="my-2">
@@ -53,13 +53,13 @@
                 <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Сбор урожая</button>
                 <hr class="my-2">
                 
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Отзыв о сорте</button>
-                <hr class="my-2">
+                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Отзыв о сорте</button>
+                <hr class="my-2">-->
                 
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Часто задаваемые вопросы</button>
-                <hr class="my-2">
+                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Часто задаваемые вопросы</button>
+                <hr class="my-2"> -->
                 
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Задать вопрос</button>
+                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Задать вопрос</button>-->
             </div>
         </div>
         
@@ -100,27 +100,21 @@
                 <p>{{ product.description|linebreaks }}</p>
             </div>
             
-            <!-- Качество -->
+            <!-- Новости -->
+            <h3 class="text-center mb-4">НОВОСТИ</h3>
+            {% for news_item in news %}
             <div class="mb-4">
-                <h5>Качество</h5>
-                <ul class="list-unstyled">
-                    <li>• выращиваем свой районированный для Подмосковья семенной подвой яблони и груши;</li>
-                    <li>• прививаем только 100% соответствующий сорт;</li>
-                    <li>(то есть, может отгружать годовалый саженец уже осенью, тогда как весенняя прививка позволяет отгрузить только через год);• делаем зимнюю прививку, что позволяет выиграть до шести месяцев вегетации </li>
-                    <li>• прививаем высоко (от 30 до 50 см), что ограничивает рост саженца (не вырастает пальмой) и при своевременной и правильной обрезке можно держать высоту дерева до 4 метров</li>
-                    <li>• высота прививки также влияет на закладку плодовых почек.</li>
-                </ul>
+                <h5>{{ news_item.title }}</h5>
+                <p>{{ news_item.content|linebreaks }}</p>
+                {% if news_item.image %}
+                <img src="{{ news_item.image.url }}" class="img-fluid mb-3" alt="{{ news_item.title }}">
+                {% endif %}
             </div>
-            
-            <!-- Авторство -->
+            {% empty %}
             <div class="mb-4">
-                <h5>Авторство</h5>
-                <ul class="list-unstyled">
-                    <li>• подбираем подвой под пожелания заказчика;</li>
-                    <li>• прививаем семейные деревья (по три летних сорта на скелет, три осенних, три зимних);</li>
-                    <li>• ищем, закупаем и прививаем черенки редких сортов.</li>
-                </ul>
+                <p class="small text-muted">Новости скоро добавим.</p>
             </div>
+            {% endfor %}
         </div>
         
         <!-- Правый контейнер: Цена и корзина -->
@@ -162,6 +156,19 @@
                 <p class="mb-1">Сроки отправки :</p>
                 <p class="mb-1">Весна - с 15 мая</p>
                 <p class="mb-1">Осень - с 15 сентября</p>
+            </div>
+            
+            <!-- Раздел Часто задаваемые вопросы -->
+            <div class="faq-section mt-4">
+                <h5>Часто задаваемые вопросы</h5>
+                {% for faq in faqs %}
+                <div class="mb-3">
+                    <strong>{{ faq.question }}</strong>
+                    <p class="mb-1">{{ faq.answer }}</p>
+                </div>
+                {% empty %}
+                <p class="small text-muted">Вопросы скоро добавим.</p>
+                {% endfor %}
             </div>
         </div>
     </div>
