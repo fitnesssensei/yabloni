@@ -37,7 +37,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pjiup5^^4*96p7x89o963p^^9*w5k!y*i9po9yj@n=2nrmp=2v'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -205,3 +205,11 @@ LOGGING = {
 LOGIN_REDIRECT_URL = 'home'  # Куда перенаправлять пользователя после входа
 LOGOUT_REDIRECT_URL = 'home'  # Куда перенаправлять пользователя после выхода
 LOGIN_URL = 'login'  # URL для входа (используется декоратором @login_required)
+
+# Настройки безопасности HTTPS (для продакшена)
+SECURE_SSL_REDIRECT = not DEBUG  # Перенаправление HTTP на HTTPS только в продакшене
+SESSION_COOKIE_SECURE = not DEBUG  # Куки сессий только по HTTPS только в продакшене
+CSRF_COOKIE_SECURE = not DEBUG  # Куки CSRF только по HTTPS только в продакшене
+SECURE_HSTS_SECONDS = 31536000  # HSTS на 1 год
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Включая поддомены
+SECURE_HSTS_PRELOAD = True  # Предварительная загрузка HSTS
