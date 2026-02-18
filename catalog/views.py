@@ -42,7 +42,21 @@ def product_list(request, category_slug=None, subcategory_slug=None):
 
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug, available=True)
-    return render(request, 'catalog/product/detail.html', {'product': product, 'faqs': FAQ.objects.filter(is_published=True), 'news': News.objects.filter(is_published=True).order_by('-created_at')[:2]})
+    
+    # Создаем список кнопок из полей продукта
+    buttons = []
+    for i in range(1, 11):
+        text = getattr(product, f'button{i}_text')
+        content = getattr(product, f'button{i}_content')
+        if text:  # Показываем только кнопки с текстом
+            buttons.append({'text': text, 'content': content, 'id': f'button{i}'})
+    
+    return render(request, 'catalog/product/detail.html', {
+        'product': product, 
+        'faqs': FAQ.objects.filter(is_published=True), 
+        'news': News.objects.filter(is_published=True).order_by('-created_at')[:2],
+        'buttons': buttons
+    })
 
 class HomeView(ListView):
     model = Product

@@ -34,6 +34,26 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
     change_form_template = 'admin/product_change_form.html'
     
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'slug', 'category', 'subcategory', 'price', 'description', 'available', 'stock', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button')
+        }),
+        ('Кнопки в левой колонке', {
+            'fields': (
+                ('button1_text', 'button1_content'),
+                ('button2_text', 'button2_content'),
+                ('button3_text', 'button3_content'),
+                ('button4_text', 'button4_content'),
+                ('button5_text', 'button5_content'),
+                ('button6_text', 'button6_content'),
+                ('button7_text', 'button7_content'),
+                ('button8_text', 'button8_content'),
+                ('button9_text', 'button9_content'),
+                ('button10_text', 'button10_content'),
+            ),
+        }),
+    )
+    
     def get_image_count(self, obj):
         return obj.images.count()
     get_image_count.short_description = 'Кол-во изображений'

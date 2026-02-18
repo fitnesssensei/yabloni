@@ -32,34 +32,15 @@
         <div class="col-md-3">
             <!-- Навигационные кнопки -->
             <div class="navigation-buttons">
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">СОДЕРЖАНИЕ</button>
+                {% for button in buttons %}
+                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;" data-bs-toggle="collapse" data-bs-target="#collapse{{ button.id }}" aria-expanded="false" aria-controls="collapse{{ button.id }}">{{ button.text }}</button>
+                <div class="collapse mb-3" id="collapse{{ button.id }}">
+                    <div class="card card-body">
+                        {{ button.content|linebreaks }}
+                    </div>
+                </div>
                 <hr class="my-2">
-                
-                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Описание</button>
-                <hr class="my-2">-->
-              
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Характеристика сорта</button>
-                <hr class="my-2">
-                
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Правила выращивания</button>
-                <hr class="my-2">
-                
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Подготовка к зиме</button>
-                <hr class="my-2">
-                
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Болезни и вредители</button>
-                <hr class="my-2">
-                
-                <button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Сбор урожая</button>
-                <hr class="my-2">
-                
-                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Отзыв о сорте</button>
-                <hr class="my-2">-->
-                
-                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Часто задаваемые вопросы</button>
-                <hr class="my-2"> -->
-                
-                <!--<button class="btn btn-link w-100 mb-2 text-start text-decoration-none" style="min-width: 172px; color: #000; padding: 0px 0;">Задать вопрос</button>-->
+                {% endfor %}
             </div>
         </div>
         
