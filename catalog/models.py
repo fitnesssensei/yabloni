@@ -48,6 +48,28 @@ class Product(models.Model):
         help_text='Включить/выключить отображение кнопки "Заказать на весну" на странице этого товара')
     enable_autumn_button = models.BooleanField('Показывать кнопку "Заказать на осень"', default=True, 
         help_text='Включить/выключить отображение кнопки "Заказать на осень" на странице этого товара')
+    
+    # Поля для кнопок в левой колонке страницы товара
+    button1_text = models.CharField('Текст кнопки 1', max_length=100, default='СОДЕРЖАНИЕ', blank=True)
+    button1_content = models.TextField('Содержимое кнопки 1', blank=True)
+    button2_text = models.CharField('Текст кнопки 2', max_length=100, default='Характеристика сорта', blank=True)
+    button2_content = models.TextField('Содержимое кнопки 2', blank=True)
+    button3_text = models.CharField('Текст кнопки 3', max_length=100, default='Правила выращивания', blank=True)
+    button3_content = models.TextField('Содержимое кнопки 3', blank=True)
+    button4_text = models.CharField('Текст кнопки 4', max_length=100, default='Подготовка к зиме', blank=True)
+    button4_content = models.TextField('Содержимое кнопки 4', blank=True)
+    button5_text = models.CharField('Текст кнопки 5', max_length=100, default='Болезни и вредители', blank=True)
+    button5_content = models.TextField('Содержимое кнопки 5', blank=True)
+    button6_text = models.CharField('Текст кнопки 6', max_length=100, default='Сбор урожая', blank=True)
+    button6_content = models.TextField('Содержимое кнопки 6', blank=True)
+    button7_text = models.CharField('Текст кнопки 7', max_length=100, blank=True)
+    button7_content = models.TextField('Содержимое кнопки 7', blank=True)
+    button8_text = models.CharField('Текст кнопки 8', max_length=100, blank=True)
+    button8_content = models.TextField('Содержимое кнопки 8', blank=True)
+    button9_text = models.CharField('Текст кнопки 9', max_length=100, blank=True)
+    button9_content = models.TextField('Содержимое кнопки 9', blank=True)
+    button10_text = models.CharField('Текст кнопки 10', max_length=100, blank=True)
+    button10_content = models.TextField('Содержимое кнопки 10', blank=True)
    
     class Meta:
         verbose_name = 'Товар'
