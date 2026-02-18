@@ -9,6 +9,7 @@ from .models import Category, Product, Subcategory
 from cart.forms import CartAddProductForm
 from blog.models import BlogPost, News  # Импортируем модели BlogPost и News
 from core.models import HomeSettings  # Импортируем HomeSettings
+from faq.models import FAQ  # Импортируем модель FAQ
 
 
 def product_list(request, category_slug=None, subcategory_slug=None):
@@ -35,12 +36,13 @@ def product_list(request, category_slug=None, subcategory_slug=None):
         'subcategory': subcategory,
         'categories': categories,
         'subcategories': subcategories,
-        'products': products
+        'products': products,
+        'faqs': FAQ.objects.filter(is_published=True)
     })
 
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug, available=True)
-    return render(request, 'catalog/product/detail.html', {'product': product})
+    return render(request, 'catalog/product/detail.html', {'product': product, 'faqs': FAQ.objects.filter(is_published=True), 'news': News.objects.filter(is_published=True).order_by('-created_at')[:2]})
 
 class HomeView(ListView):
     model = Product
@@ -144,6 +146,7 @@ def product_search(request):
         'categories': categories,
         'query': query,
         'cart_product_form': CartAddProductForm(),
+        'faqs': FAQ.objects.filter(is_published=True)
     }
     
     return render(request, 'catalog/product/search_results.html', context)
