@@ -1,12 +1,12 @@
 # Django Framework
-Django==5.2.7
+Django==6.0.2
 asgiref==3.10.0
 
 # Database
 psycopg2-binary==2.9.11
 
 # Forms and UI
-django-crispy-forms==2.1
+django-crispy-forms==2.5
 crispy-bootstrap5==2025.6
 
 # Image processing
