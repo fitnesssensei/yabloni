@@ -4,6 +4,16 @@ from django.urls import reverse
 from django.utils.html import format_html
 from .models import Category, Product, ProductImage, Subcategory
 from .forms import ProductImageForm
+from django import forms
+
+
+class ProductAdminForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        widgets = {
+            'subcategories': forms.CheckboxSelectMultiple(),
+        }
 
 
 class ProductImageInline(admin.TabularInline):
@@ -27,16 +37,16 @@ class SubcategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'subcategory', 'price', 'available', 'stock', 'enable_spring_button', 'enable_autumn_button', 'get_image_count', 'image_preview']
-    list_filter = ['available', 'category', 'subcategory', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button']
+    form = ProductAdminForm
+    list_display = ['name', 'category', 'get_subcategories', 'price', 'available', 'stock', 'enable_spring_button', 'enable_autumn_button', 'get_image_count', 'image_preview']
+    list_filter = ['available', 'category', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button']
     list_editable = ['price', 'available', 'stock', 'enable_spring_button', 'enable_autumn_button']
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
-    change_form_template = 'admin/product_change_form.html'
     
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'category', 'subcategory', 'price', 'description', 'available', 'stock', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button')
+            'fields': ('name', 'slug', 'category', 'subcategories', 'price', 'description', 'available', 'stock', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button')
         }),
         ('Кнопки в левой колонке', {
             'fields': (
@@ -56,7 +66,9 @@ class ProductAdmin(admin.ModelAdmin):
     
     def get_image_count(self, obj):
         return obj.images.count()
-    get_image_count.short_description = 'Кол-во изображений'
+    def get_subcategories(self, obj):
+        return ", ".join([s.name for s in obj.subcategories.all()])
+    get_subcategories.short_description = 'Подкатегории'
     
     def image_preview(self, obj):
         main_image = obj.get_main_image()
