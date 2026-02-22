@@ -27,3 +27,6 @@ __pycache__/
 
 # Локальная БД (если SQLite)
 db.sqlite3
+
+# История проекта
+README.md
