@@ -12,6 +12,7 @@ media/
 
 # Логи
 debug.log
+logs/
 
 # Python кэш
 __pycache__/
@@ -31,6 +32,7 @@ db.sqlite3
 # История проекта
 README.md
 readme.txt
++design/
 
 # Django 
 secret.key
