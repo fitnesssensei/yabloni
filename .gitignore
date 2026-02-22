@@ -30,3 +30,8 @@ db.sqlite3
 
 # История проекта
 README.md
+readme.txt
+
+# Django 
+secret.key
+
