@@ -92,6 +92,52 @@ yabloni/
 └── debug.log        # Лог отладки
 ```
 
+## .gitignore
+
+Проект использует `.gitignore` для исключения ненужных файлов из Git. Содержимое файла:
+
+```
+# Виртуальное окружение
+venv/
+
+# Собранные статические файлы
+staticfiles/
+
+# Медиафайлы
+media/
+
+# Переменные окружения
+.env
+
+# Логи
+debug.log
+logs/
+
+# Python кэш
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS файлы
+.DS_Store
+
+# IDE файлы (опционально, раскомментируй если используешь)
+.vscode/
+.idea/
+
+# Локальная БД (если SQLite)
+db.sqlite3
+
+# История проекта
+README.md
+readme.txt
++design/
+
+# Django 
+secret.key
+
+```
+
 ### Модели данных
 
 #### Приложение `catalog`
