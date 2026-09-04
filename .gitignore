@@ -14,7 +14,10 @@ media/
 debug.log
 logs/
 
-# Python кэш
+# Ключи
+secret.key
+
+# Кэш Python
 __pycache__/
 *.pyc
 *.pyo
