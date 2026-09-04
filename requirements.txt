@@ -18,6 +18,10 @@ python-dotenv==1.1.1
 # File uploads
 django-multiupload==0.6.1
 
+# PDF generation (WeasyPrint) — для генерации PDF-документов заказов
+# Требует системные библиотеки GTK: brew install pango
+weasyprint==69.0
+
 # Rich text editor (optional)
 django-ckeditor==6.7.0
 
