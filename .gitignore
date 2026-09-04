@@ -1,23 +1,39 @@
-# Виртуальное окружение (не хранить в git!)
+# Виртуальное окружение
 venv/
-
-# Переменные окружения (пароли, ключи)
-.env
-secret.key
-
-# Кэш Python
-__pycache__/
-*.pyc
-
-# Логи и временные файлы
-debug.log
-*.log
-
-# macOS
-.DS_Store
 
 # Собранные статические файлы
 staticfiles/
 
-# Медиа (загруженные пользователями файлы)
+# Медиафайлы
 media/
+
+# Переменные окружения
+.env
+
+# Логи
+debug.log
+logs/
+
+# Python кэш
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS файлы
+.DS_Store
+
+# IDE файлы (опционально, раскомментируй если используешь)
+.vscode/
+.idea/
+
+# Локальная БД (если SQLite)
+db.sqlite3
+
+# История проекта
+README.md
+readme.txt
++design/
+
+# Django 
+secret.key
+
