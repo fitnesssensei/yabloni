@@ -43,13 +43,14 @@ def product_list(request, category_slug=None, subcategory_slug=None):
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug, available=True)
     
-    # Создаем список кнопок из полей продукта
+    # Создаем список кнопок из полей продукта (временно отключено)
+    # buttons = []
+    # for i in range(1, 11):
+    #     text = getattr(product, f'button{i}_text')
+    #     content = getattr(product, f'button{i}_content')
+    #     if text:  # Показываем только кнопки с текстом
+    #         buttons.append({'text': text, 'content': content, 'id': f'button{i}'})
     buttons = []
-    for i in range(1, 11):
-        text = getattr(product, f'button{i}_text')
-        content = getattr(product, f'button{i}_content')
-        if text:  # Показываем только кнопки с текстом
-            buttons.append({'text': text, 'content': content, 'id': f'button{i}'})
     
     return render(request, 'catalog/product/detail.html', {
         'product': product, 
