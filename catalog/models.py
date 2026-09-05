@@ -48,6 +48,12 @@ class Product(models.Model):
         help_text='Включить/выключить отображение кнопки "Заказать на весну" на странице этого товара')
     enable_autumn_button = models.BooleanField('Показывать кнопку "Заказать на осень"', default=True, 
         help_text='Включить/выключить отображение кнопки "Заказать на осень" на странице этого товара')
+
+    # SEO-поля: задаются вручную в админке, если пустые — используются name/description
+    seo_title = models.CharField('SEO Title (заголовок для поисковиков)', max_length=200, blank=True,
+        help_text='Если оставить пустым — будет использовано название товара')
+    seo_description = models.TextField('SEO Description (описание для поисковиков)', blank=True,
+        help_text='Если оставить пустым — сформируется автоматически из названия и описания товара')
     
     # Поля для кнопок в левой колонке страницы товара (временно отключены)
     # button1_text = models.CharField('Текст кнопки 1', max_length=100, default='СОДЕРЖАНИЕ', blank=True)

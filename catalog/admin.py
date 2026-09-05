@@ -48,20 +48,11 @@ class ProductAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('name', 'slug', 'category', 'subcategories', 'price', 'description', 'available', 'stock', 'is_new', 'is_featured', 'enable_spring_button', 'enable_autumn_button')
         }),
-        # ('Кнопки в левой колонке', {
-        #     'fields': (
-        #         ('button1_text', 'button1_content'),
-        #         ('button2_text', 'button2_content'),
-        #         ('button3_text', 'button3_content'),
-        #         ('button4_text', 'button4_content'),
-        #         ('button5_text', 'button5_content'),
-        #         ('button6_text', 'button6_content'),
-        #         ('button7_text', 'button7_content'),
-        #         ('button8_text', 'button8_content'),
-        #         ('button9_text', 'button9_content'),
-        #         ('button10_text', 'button10_content'),
-        #     ),
-        # }),
+        ('SEO (title и description для поисковиков)', {
+            'fields': ('seo_title', 'seo_description'),
+            'description': 'Заполнять не обязательно. Если пусто — используются название и описание товара.',
+            'classes': ('collapse',),
+        }),
     )
     
     def get_image_count(self, obj):
