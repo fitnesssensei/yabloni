@@ -54,7 +54,7 @@ def product_detail(request, id, slug):
     
     return render(request, 'catalog/product/detail.html', {
         'product': product, 
-        'faqs': FAQ.objects.filter(is_published=True), 
+        'faqs': FAQ.get_for_product(product), 
         'news': News.objects.filter(is_published=True).order_by('-created_at')[:2],
         'buttons': buttons
     })

@@ -5,13 +5,13 @@ from .models import FAQ
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
-    list_display = ('question', 'is_published', 'created_at')
-    list_filter = ('is_published', 'created_at')
+    list_display = ('question', 'category', 'subcategory', 'is_published', 'created_at')
+    list_filter = ('is_published', 'category', 'created_at')
     search_fields = ('question', 'answer')
     ordering = ('-created_at',)
     fieldsets = (
         (None, {
-            'fields': ('question', 'answer')
+            'fields': ('question', 'answer', 'category', 'subcategory')
         }),
         ('Настройки публикации', {
             'fields': ('is_published',),
