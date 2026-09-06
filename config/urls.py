@@ -6,9 +6,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
+from django.contrib.sitemaps.views import sitemap
 from catalog.views import HomeView, register
 from django.views.generic import TemplateView
 from . import views
+from .sitemaps import StaticSitemap, CategorySitemap, ProductSitemap, SubcategorySitemap, BlogPostSitemap
 
 
 # Настройка заголовка админ-панели
@@ -45,5 +47,18 @@ urlpatterns = [
     
     # Главная страница
     path('', HomeView.as_view(), name='home'),
+    
+    # SEO: карта сайта и robots.txt
+    path('sitemap.xml', sitemap, {
+        'sitemaps': {
+            'static': StaticSitemap,
+            'categories': CategorySitemap,
+            'subcategories': SubcategorySitemap,
+            'products': ProductSitemap,
+            'blog': BlogPostSitemap,
+        }
+    }, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(
+        template_name='robots.txt', content_type='text/plain'), name='robots'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

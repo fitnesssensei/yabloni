@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /cart/
+Disallow: /orders/
+Disallow: /search/
+Disallow: /account/
+Disallow: /register/
+Disallow: /login/
+
+Sitemap: https://yablonigrushi.ru/sitemap.xml

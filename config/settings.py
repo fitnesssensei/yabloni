@@ -63,7 +63,11 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'reviews',
     'faq',
+    'django.contrib.sitemaps',
 ]
+
+# Домен сайта — используется в robots.txt и sitemap.xml
+SITE_DOMAIN = 'https://yablonigrushi.ru'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
