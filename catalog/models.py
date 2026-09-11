@@ -82,12 +82,31 @@ class Product(models.Model):
         verbose_name_plural = 'Товары'
     
     def get_main_image(self):
-        """Возвращает основное изображение товара или первое доступное"""
-        main_image = self.images.filter(is_main=True).first()
-        if main_image:
-            return main_image.image
-        first_image = self.images.first()
-        return first_image.image if first_image else None
+        """Возвращает основное изображение товара или первое доступное (только если файл — валидное изображение)"""
+        from django.core.files.images import get_image_dimensions
+        from easy_thumbnails.files import get_thumbnailer
+        
+        # Проверяем все изображения товара
+        images = self.images.all()
+        for img in images:
+            try:
+                # Проверяем, что файл действительно является изображением
+                get_image_dimensions(img.image)
+                if img.is_main:
+                    return img.image
+            except Exception:
+                # Пропускаем невалидные файлы
+                continue
+        
+        # Если нет основного, возвращаем первое валидное
+        for img in images:
+            try:
+                get_image_dimensions(img.image)
+                return img.image
+            except Exception:
+                continue
+        
+        return None
    
     # добавил метод :
     def get_absolute_url(self):
@@ -110,3 +129,13 @@ class ProductImage(models.Model):
     
     def __str__(self):
         return f'Изображение для {self.product.name}'
+    
+    @property
+    def is_valid_image(self):
+        """Проверяет, является ли файл валидным изображением"""
+        from django.core.files.images import get_image_dimensions
+        try:
+            get_image_dimensions(self.image)
+            return True
+        except Exception:
+            return False

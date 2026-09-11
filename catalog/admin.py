@@ -19,7 +19,8 @@ class ProductAdminForm(forms.ModelForm):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1  # Оставляем 1 форму для добавления отдельных изображений
-    fields = ['image', 'is_main']
+    fields = ['image', 'is_main', 'is_valid_image']
+    readonly_fields = ['is_valid_image']
     ordering = ['-is_main', 'created']
 
 

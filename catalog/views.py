@@ -29,7 +29,7 @@ def product_list(request, category_slug=None, subcategory_slug=None):
     
     if subcategory_slug:
         subcategory = get_object_or_404(Subcategory, slug=subcategory_slug)
-        products = products.filter(subcategory=subcategory)
+        products = products.filter(subcategories=subcategory)
     
     return render(request, 'catalog/product/list.html', {
         'category': category,

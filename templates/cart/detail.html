@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static thumbnail safe_thumbnails %}
 
 {% block title %}Корзина и оформление заказа{% endblock %}
 
@@ -25,7 +25,7 @@
                                         <!-- Изображение товара -->
                                         <div class="col-md-2 text-center mb-3 mb-md-0">
                                             {% if item.product.get_main_image %}
-                                                <img src="{{ item.product.get_main_image.url }}" 
+                                                <img src="{% safe_thumbnail item.product.get_main_image 'cart' %}" 
                                                      alt="{{ item.product.name }}" 
                                                      class="img-fluid rounded" 
                                                      style="max-width: 100px; height: 100px; object-fit: cover;">

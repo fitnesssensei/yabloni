@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static thumbnail safe_thumbnails %}
 
 {% block title %}{{ product.seo_title|default:product.name }}{% endblock %}
 
@@ -54,7 +54,7 @@
                     <div class="main-image">
                         {% with main_image=product.get_main_image %}
                         <img id="mainImage" 
-                             src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                             src="{% if main_image %}{% safe_thumbnail main_image 'product_detail' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                              class="img-fluid rounded" alt="{{ product.name }}"
                              style="width: 300px; height: 300px; object-fit: cover;">
                         {% endwith %}
@@ -64,10 +64,10 @@
                     {% if product.images.exists %}
                     <div class="thumbnails d-flex flex-column gap-2">
                         {% for img in product.images.all %}
-                        <img src="{{ img.image.url }}" 
+                        <img src="{% safe_thumbnail img.image 'product_thumbnail' %}" 
                              class="thumbnail {% if img.is_main %}active{% endif %}" 
                              alt="{{ product.name }}"
-                             data-src="{{ img.image.url }}"
+                             data-src="{% safe_thumbnail img.image 'product_detail' %}"
                              style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 2px solid #dee2e6; border-radius: 4px;">
                         {% endfor %}
                     </div>

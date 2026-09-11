@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static thumbnail safe_thumbnails %}
 
 {% block title %}Результаты поиска{% endblock %}
 
@@ -49,7 +49,7 @@
                         <!-- Изображение товара -->
                         <div class="text-center p-2">
                             {% with main_image=product.get_main_image %}
-                            <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                            <img src="{% if main_image %}{% safe_thumbnail main_image 'product_list' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                                  class="card-img-top product-img" 
                                  alt="{{ product.name }}"
                                  style="max-height: 200px; width: auto;">

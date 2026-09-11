@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'reviews',
     'faq',
     'django.contrib.sitemaps',
+    'easy_thumbnails',
 ]
 
 # Домен сайта — используется в robots.txt и sitemap.xml
@@ -217,3 +218,19 @@ CSRF_COOKIE_SECURE = not DEBUG  # Куки CSRF только по HTTPS толь
 SECURE_HSTS_SECONDS = 31536000  # HSTS на 1 год
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Включая поддомены
 SECURE_HSTS_PRELOAD = True  # Предварительная загрузка HSTS
+
+# Настройки миниатюр easy-thumbnails
+THUMBNAIL_ALIASES = {
+    '': {
+        'product_list': {'size': (200, 200), 'crop': 'center', 'quality': 85},
+        'product_detail': {'size': (300, 300), 'crop': 'center', 'quality': 90},
+        'product_thumbnail': {'size': (150, 150), 'crop': 'center', 'quality': 85},
+        'cart': {'size': (100, 100), 'crop': 'center', 'quality': 80},
+        'new_product': {'size': (250, 250), 'crop': 'center', 'quality': 85},
+        'blog': {'size': (300, 200), 'crop': 'center', 'quality': 85},
+        'category': {'size': (250, 250), 'crop': 'center', 'quality': 85},
+    },
+}
+
+# Отладка миниатюр (включать только при DEBUG=True)
+THUMBNAIL_DEBUG = DEBUG

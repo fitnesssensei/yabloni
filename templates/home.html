@@ -1,6 +1,6 @@
 <!-- главная страница -->
  {% extends 'base/base.html' %}
-{% load static %}
+{% load static thumbnail safe_thumbnails %}
 
 {% block extra_css %}
 <style>
@@ -17,6 +17,8 @@
             <!-- Логотип с текстом -->
             <div class="row align-items-center">
                 <div class="col-md-4">
+
+                    <!-- сам логотип -->
                     <img src="{% static 'img/logo.png' %}" alt="Логотип" class="img-fluid" style="max-height: 400px; width: auto;">
                 </div>
                 <div class="col-md-8 text-start">
@@ -162,7 +164,7 @@
                         <div class="card">
                             <div class="card-img-wrapper">
                                 {% with main_image=product.get_main_image %}
-                                <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
+                                <img src="{% if main_image %}{% safe_thumbnail main_image 'new_product' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
                                 {% endwith %}
                             </div>
                         </div>
@@ -206,7 +208,7 @@
                 <a href="{% url 'catalog:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">
                     <div class="hit-card">
                         {% with main_image=product.get_main_image %}
-                        <img src="{% if main_image %}{{ main_image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" alt="{{ product.name }}">
+                        <img src="{% if main_image %}{% safe_thumbnail main_image 'product_list' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" alt="{{ product.name }}">
                         {% endwith %}
                         <div class="hit-card-body">
                             <div class="hit-card-info">
@@ -374,7 +376,7 @@
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
                             {% if category.image %}
-                                <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" style="height: 250px; object-fit: cover;">
+                                <img src="{% safe_thumbnail category.image 'category' %}" class="card-img-top" alt="{{ category.name }}" style="height: 250px; object-fit: cover;">
                             {% endif %}
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ category.name }}</h5>
@@ -396,7 +398,7 @@
                     <div class="col-md-3 mb-4">
                         <div class="card h-100">
                             {% if product.main_image %}
-                                <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                <img src="{% safe_thumbnail product.main_image 'product_list' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ product.name }}</h5>
