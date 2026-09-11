@@ -182,27 +182,25 @@
 </div>
 {% endif %}
 
-<!-- JavaScript для галереи изображений -->
+<!-- JavaScript для галереи изображений и отслеживания -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Галерея изображений
     const mainImage = document.getElementById('mainImage');
     const thumbnails = document.querySelectorAll('.thumbnail');
     
     if (thumbnails.length > 0) {
         thumbnails.forEach(thumbnail => {
             thumbnail.addEventListener('click', function() {
-                // Меняем основное изображение
                 const newSrc = this.getAttribute('data-src');
                 mainImage.src = newSrc;
                 
-                // Обновляем активную миниатюру
                 thumbnails.forEach(thumb => {
                     thumb.style.border = '2px solid #dee2e6';
                 });
                 this.style.border = '2px solid #28a745';
             });
             
-            // Добавляем эффект наведения
             thumbnail.addEventListener('mouseenter', function() {
                 if (this.style.border !== '2px solid #28a745') {
                     this.style.border = '2px solid #6c757d';
@@ -216,6 +214,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Отслеживание добавления в корзину
+    const productName = '{{ product.name|escapejs }}';
+    const productPrice = {{ product.price }};
+    
+    document.querySelectorAll('form[action*="cart_add"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const quantityInput = form.querySelector('input[name="quantity"]');
+            const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+            trackAddToCart(productName, productPrice, quantity);
+        });
+    });
 });
 </script>
 

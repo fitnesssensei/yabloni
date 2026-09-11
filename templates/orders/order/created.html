@@ -4,6 +4,23 @@
 {% block title %}Заказ оформлен{% endblock %}
 
 {% block content %}
+<!-- Yandex Metrika E-commerce Tracking -->
+<script>
+    trackPurchase(
+        '{{ order.id }}',
+        {{ order.get_total_cost }},
+        [
+            {% for item in order.items.all %}
+            {
+                'name': '{{ item.product.name|escapejs }}',
+                'price': {{ item.price }},
+                'quantity': {{ item.quantity }}
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    );
+</script>
+
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
