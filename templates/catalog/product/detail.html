@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static thumbnail safe_thumbnails %}
+{% load static thumbnail safe_thumbnails l10n %}
 
 {% block title %}{{ product.seo_title|default:product.name }}{% endblock %}
 
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Отслеживание добавления в корзину
     const productName = '{{ product.name|escapejs }}';
-    const productPrice = {{ product.price }};
+    const productPrice = {{ product.price|unlocalize }};
     
     document.querySelectorAll('form[action*="cart_add"]').forEach(form => {
         form.addEventListener('submit', function(e) {

@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static l10n %}
 
 {% block title %}Заказ оформлен{% endblock %}
 
@@ -8,13 +8,13 @@
 <script>
     trackPurchase(
         '{{ order.id }}',
-        {{ order.get_total_cost }},
+        {{ order.get_total_cost|unlocalize }},
         [
             {% for item in order.items.all %}
             {
                 'name': '{{ item.product.name|escapejs }}',
-                'price': {{ item.price }},
-                'quantity': {{ item.quantity }}
+                'price': {{ item.price|unlocalize }},
+                'quantity': {{ item.quantity|unlocalize }}
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         ]
