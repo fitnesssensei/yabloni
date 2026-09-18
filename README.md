@@ -993,6 +993,13 @@ pip install --upgrade pip
 - Домен задаётся в `config/settings.py` → `SITE_DOMAIN`
 - После деплоя добавить `https://yablonigrushi.ru/sitemap.xml` в Яндекс.Вебмастер и Google Search Console
 
+### 🔁 404 на `/catalog/chereshni/` и 301-редиректы со старых адресов (Сентябрь 2026)
+- **Причина ошибки**: на странице товара кнопки категорий были захардкожены (`'yabloni'`, `'grushi'`, `'chereshni'`), а в базе слаг категории «Черешни» — `chereshnya`. Обращение к `/catalog/chereshni/` давало 404 «No Category matches the given query»
+- **Исправлено**: ссылки берутся из БД — `categories` добавлены в контекст `product_detail` (`catalog/views.py`), шаблон `templates/catalog/product/detail.html` строит кнопки циклом `{% for category_item in categories %}` (как в `home.html` и `catalog/product/list.html`)
+- **Старые адреса**: в начале `catalog/views.py` добавлены словари `CATEGORY_SLUG_REDIRECTS` и `SUBCATEGORY_SLUG_REDIRECTS`; при устаревшем слаге `product_list` отдаёт **301** на актуальный URL (работает и для пары «категория/подкатегория»: `/catalog/chereshni/letnie/` → `/catalog/chereshnya/letnie/`). Если категории больше нет — как и раньше 404
+- **Как добавить редирект**: при переименовании слага в админке вписать пару `'старый-слаг': 'новый-слаг'` в соответствующий словарь
+- **Тесты**: `python manage.py test catalog` — 8 тестов в `catalog/tests.py` (код 301, редирект с подкатегорией, обычный 404, ссылки на странице товара)
+
 
 ### ❓ Привязка вопросов FAQ к категории/подкатегории (Сентябрь 2026)
 - У вопросов FAQ в админке появились необязательные поля «Категория» и «Подкатегория»

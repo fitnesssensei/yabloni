@@ -5,11 +5,52 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.views.generic import ListView
 from django.db.models import Q  # Импортируем Q для сложных запросов
+from django.urls import reverse
 from .models import Category, Product, Subcategory
 from cart.forms import CartAddProductForm
 from blog.models import BlogPost, News  # Импортируем модели BlogPost и News
 from core.models import HomeSettings  # Импортируем HomeSettings
 from faq.models import FAQ  # Импортируем модель FAQ
+
+
+# Устаревшие слаги категорий/подкатегорий → актуальные.
+# Слаг можно переименовать в админке, но старые ссылки (из поисковиков,
+# закладок, соцсетей) должны продолжать работать — поэтому отдаём 301.
+CATEGORY_SLUG_REDIRECTS = {
+    'chereshni': 'chereshnya',  # категория «Черешни»
+}
+
+SUBCATEGORY_SLUG_REDIRECTS = {
+    # 'staryj-slug': 'novyj-slug',
+}
+
+
+def legacy_url(category_slug, subcategory_slug=None):
+    """Собирает URL с актуальными слагами, если категория переименована.
+
+    Возвращает None, если слаг не устарел или актуальной категории нет —
+    тогда работает обычный 404.
+    """
+    actual_category_slug = CATEGORY_SLUG_REDIRECTS.get(category_slug, category_slug)
+    actual_subcategory_slug = (
+        SUBCATEGORY_SLUG_REDIRECTS.get(subcategory_slug, subcategory_slug)
+        if subcategory_slug else None
+    )
+
+    if actual_category_slug == category_slug and actual_subcategory_slug == subcategory_slug:
+        return None  # переименований не было
+
+    if not Category.objects.filter(slug=actual_category_slug).exists():
+        return None
+
+    if actual_subcategory_slug:
+        if not Subcategory.objects.filter(slug=actual_subcategory_slug).exists():
+            # подкатегории больше нет — ведём на страницу категории
+            return reverse('catalog:product_list_by_category', args=[actual_category_slug])
+        return reverse('catalog:product_list_by_category_subcategory',
+                       args=[actual_category_slug, actual_subcategory_slug])
+
+    return reverse('catalog:product_list_by_category', args=[actual_category_slug])
 
 
 def product_list(request, category_slug=None, subcategory_slug=None):
@@ -19,7 +60,14 @@ def product_list(request, category_slug=None, subcategory_slug=None):
     products = Product.objects.filter(available=True)
     
     if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
+        try:
+            category = Category.objects.get(slug=category_slug)
+        except Category.DoesNotExist:
+            # категория переименована → постоянный редирект на актуальный адрес
+            redirect_url = legacy_url(category_slug, subcategory_slug)
+            if redirect_url:
+                return redirect(redirect_url, permanent=True)
+            get_object_or_404(Category, slug=category_slug)  # прежний 404
         category_products = products.filter(category=category)
         # Получаем подкатегории, используемые в товарах этой категории
         subcategories = Subcategory.objects.filter(products__in=category_products).distinct()
@@ -28,7 +76,14 @@ def product_list(request, category_slug=None, subcategory_slug=None):
         subcategories = Subcategory.objects.none()  # Если нет категории, не показываем подкатегории
     
     if subcategory_slug:
-        subcategory = get_object_or_404(Subcategory, slug=subcategory_slug)
+        try:
+            subcategory = Subcategory.objects.get(slug=subcategory_slug)
+        except Subcategory.DoesNotExist:
+            # подкатегория переименована → постоянный редирект на актуальный адрес
+            redirect_url = legacy_url(category_slug, subcategory_slug)
+            if redirect_url:
+                return redirect(redirect_url, permanent=True)
+            get_object_or_404(Subcategory, slug=subcategory_slug)  # прежний 404
         products = products.filter(subcategories=subcategory)
     
     return render(request, 'catalog/product/list.html', {
@@ -54,6 +109,7 @@ def product_detail(request, id, slug):
     
     return render(request, 'catalog/product/detail.html', {
         'product': product, 
+        'categories': Category.objects.all(),
         'faqs': FAQ.get_for_product(product), 
         'news': News.objects.filter(is_published=True).order_by('-created_at')[:2],
         'buttons': buttons
