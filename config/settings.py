@@ -225,6 +225,9 @@ THUMBNAIL_ALIASES = {
         'product_list': {'size': (200, 200), 'crop': 'center', 'quality': 85},
         'product_detail': {'size': (300, 300), 'crop': 'center', 'quality': 90},
         'product_thumbnail': {'size': (150, 150), 'crop': 'center', 'quality': 85},
+        # Крупное фото для мобильной версии: на телефоне фото показывается на всю
+        # ширину экрана, поэтому 150px миниатюра была бы размытой
+        'product_mobile': {'size': (600, 600), 'crop': 'center', 'quality': 85},
         'cart': {'size': (100, 100), 'crop': 'center', 'quality': 80},
         'new_product': {'size': (250, 250), 'crop': 'center', 'quality': 85},
         'blog': {'size': (300, 200), 'crop': 'center', 'quality': 85},

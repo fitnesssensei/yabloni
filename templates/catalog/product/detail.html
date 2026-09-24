@@ -47,11 +47,12 @@
         <!-- Средний контейнер: Описание товара под изображениями -->
         <div class="col-md-5">
 
-            <!-- изображения товара: главное фото, под ним сетка миниатюр по 2 в ряд -->
-            <!-- сетку миниатюр задаёт класс row-cols-2 (2 в ряд);
-                 чтобы было 3 в ряд — поменяйте на row-cols-3 -->
-            <div class="product-gallery">
-                <!-- Основное изображение -->
+            <!-- Фото товара.
+                 • Десктоп: главное фото + сетка фото по 2 в ряд
+                 • Телефон (<768px): лента больших фото со свайпом, миниатюр нет
+                   (класс has-thumbs нужен, чтобы CSS знал: вместо главного фото показываем ленту) -->
+            <div class="product-gallery{% if product.images.exists %} has-thumbs{% endif %}">
+                <!-- Основное (большое) фото — только для десктопа -->
                 <div class="main-image mb-3">
                     {% with main_image=product.get_main_image %}
                     <img id="mainImage" 
@@ -60,15 +61,20 @@
                     {% endwith %}
                 </div>
                 
-                <!-- Миниатюры: сетка по 2 в ряд под главным фото -->
+                <!-- Все фото товара: на десктопе — сетка по 2 в ряд, на телефоне — свайп-лента -->
                 {% if product.images.exists %}
-                <div class="thumbnails row row-cols-2 g-2">
+                <div class="gallery-photos row row-cols-2 g-2">
                     {% for img in product.images.all %}
                     <div class="col">
-                        <img src="{% safe_thumbnail img.image 'product_thumbnail' %}" 
-                             class="thumbnail {% if img.is_main %}active{% endif %}" 
-                             alt="{{ product.name }}"
-                             data-src="{% safe_thumbnail img.image 'product_detail' %}">
+                        <picture>
+                            <!-- телефон получает крупное фото 600px, десктоп — лёгкую миниатюру 150px -->
+                            <source media="(max-width: 767.98px)"
+                                    srcset="{% safe_thumbnail img.image 'product_mobile' %}">
+                            <img src="{% safe_thumbnail img.image 'product_thumbnail' %}" 
+                                 class="thumbnail {% if img.is_main %}active{% endif %}" 
+                                 alt="{{ product.name }}"
+                                 data-src="{% safe_thumbnail img.image 'product_detail' %}">
+                        </picture>
                     </div>
                     {% endfor %}
                 </div>
@@ -185,7 +191,10 @@
 <!-- JavaScript для галереи изображений и отслеживания -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Галерея изображений
+    // Галерея изображений.
+    // На десктопе: клик по миниатюре меняет главное фото и подсвечивает её рамкой.
+    // На телефоне: лента больших фото листается свайпом, рамки там не нужны
+    // (в мобильном CSS они отключены через border: none !important).
     const mainImage = document.getElementById('mainImage');
     const thumbnails = document.querySelectorAll('.thumbnail');
     

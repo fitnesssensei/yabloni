@@ -4,6 +4,7 @@ import shutil
 import tempfile
 from unittest.mock import patch
 
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -83,11 +84,16 @@ class ProductDetailNavTests(TestCase):
 
 @override_settings(MEDIA_ROOT=GALLERY_TEST_MEDIA)
 class ProductGalleryLayoutTests(TestCase):
-    """Галерея товара: главное фото сверху, под ним сетка миниатюр по 2 в ряд.
+    """Фото товара: на десктопе — главное фото + сетка по 2 в ряд,
+    на телефоне (<768px) — лента больших фото со свайпом, без миниатюр.
 
-    Проверяем, что старый «столбик миниатюр справа» (из-за него фото на странице
-    товара выстраивались буквой «Г») больше не используется, а все миниатюры
-    рендерятся не пустыми ссылками (иначе браузер показывает значок «битая картинка»).
+    Проверяем, что:
+    * главное фото идёт ДО сетки фото (по 2 в ряд), а старого «столбика справа»
+      (из-за него фото на странице товара выстраивались буквой «Г») больше нет;
+    * каждое фото отдаётся через <picture>: телефону — крупная версия 600px
+      (для свайп-ленты), десктопу — лёгкая миниатюра 150px;
+    * у галереи есть маркер has-thumbs — по нему мобильный CSS прячет главное фото;
+    * все ссылки не пустые (иначе браузер рисует значок «битая картинка»).
     """
 
     @classmethod
@@ -111,29 +117,48 @@ class ProductGalleryLayoutTests(TestCase):
                 is_main=(index == 0),
             )
 
-    def test_gallery_shows_main_image_above_thumbnail_grid(self):
+    def test_gallery_desktop_grid_and_mobile_swipe_strip(self):
         response = self.client.get(self.product.get_absolute_url())
         self.assertEqual(response.status_code, 200)
 
         # берём только блок галереи: дальше на странице есть другие картинки
         html = response.content.decode()
-        gallery = html[html.index('<div class="product-gallery"'):
+        gallery = html[html.index('<div class="product-gallery'):
                        html.index('<!-- описание товара -->')]
 
-        # главное фото идёт ДО сетки миниатюр, миниатюры — по 2 в ряд
+        # маркер для мобильного CSS: фото есть → на телефоне лента вместо главного фото
+        self.assertIn('class="product-gallery has-thumbs"', gallery)
+
+        # десктоп: главное фото идёт ДО сетки фото, сетка — по 2 в ряд
         self.assertIn('id="mainImage"', gallery)
-        self.assertIn('class="thumbnails row row-cols-2 g-2"', gallery)
+        self.assertIn('class="gallery-photos row row-cols-2 g-2"', gallery)
         self.assertLess(gallery.index('id="mainImage"'),
-                        gallery.index('thumbnails row row-cols-2'))
+                        gallery.index('gallery-photos row row-cols-2'))
         # старого «столбика справа» (буква Г) больше нет
         self.assertNotIn('d-flex flex-column gap-2', gallery)
 
-        # 3 миниатюры отрисованы, у каждой есть data-src, основное фото подсвечено
-        self.assertEqual(len(re.findall(
-            r'<img[^>]+class="thumbnail[^"]*"[^>]+data-src="/media/', gallery)), 3)
+        # каждое фото отдаётся через <picture>: телефону 600px, десктопу 150px
+        self.assertEqual(gallery.count('<picture>'), 3)
+        self.assertEqual(gallery.count('media="(max-width: 767.98px)"'), 3)
+        self.assertEqual(len(re.findall(r'srcset="/media/[^"]*600x600', gallery)), 3)
+        self.assertEqual(len(re.findall(r'(?<!data-)src="/media/[^"]*150x150', gallery)), 3)
+
+        # 3 фото с data-src (для клика на десктопе), одно помечено как основное
+        self.assertEqual(len(re.findall(r'data-src="/media/', gallery)), 3)
         self.assertEqual(len(re.findall(r'class="thumbnail active"', gallery)), 1)
 
-        # картинки отдаёт easy-thumbnails: 1 главное фото + 3 миниатюры, пустых src нет
+        # пустых ссылок нет (иначе браузер покажет «битую картинку»)
         self.assertNotIn('src=""', gallery)
-        self.assertEqual(len(re.findall(r'(?<!data-)src="/media/', gallery)), 4)
+        self.assertNotIn('srcset=""', gallery)
+
+    def test_mobile_css_turns_gallery_into_swipe_strip(self):
+        """В style.css есть мобильные правила: главное фото спрятано, лента без миниатюр."""
+        css = (settings.BASE_DIR / 'static' / 'css' / 'style.css').read_text(encoding='utf-8')
+
+        self.assertIn('@media (max-width: 767.98px)', css)
+        self.assertIn('.product-gallery.has-thumbs .main-image', css)   # прячем главное фото
+        self.assertIn('overflow-x: auto', css)                          # прокрутка вбок
+        self.assertIn('scroll-snap-type: x mandatory', css)             # остановка на фото
+        self.assertIn('flex: 0 0 100%', css)                            # фото на всю ширину
+        self.assertIn('border: none !important', css)                   # без рамки миниатюры
 

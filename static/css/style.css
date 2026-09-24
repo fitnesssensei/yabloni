@@ -553,3 +553,42 @@ main {
 .product-gallery .thumbnail.active {
     border: 2px solid #28a745;
 }
+
+/* ===== Телефон (<768px): лента больших фото со свайпом, миниатюр нет ===== */
+@media (max-width: 767.98px) {
+    /* фото есть → вместо главного фото показываем ленту всех фото */
+    .product-gallery.has-thumbs .main-image {
+        display: none;
+    }
+
+    /* контейнер превращаем в горизонтальную ленту с прокруткой пальцем */
+    .product-gallery .gallery-photos.row {
+        margin-left: 0;              /* сбрасываем отрицательные отступы Bootstrap-сетки */
+        margin-right: 0;
+    }
+    .product-gallery .gallery-photos {
+        display: flex;
+        flex-wrap: nowrap;           /* всё в один ряд */
+        gap: .5rem;
+        overflow-x: auto;            /* прокрутка вбок */
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;  /* магнитная остановка на фото */
+        padding-bottom: .25rem;
+    }
+    /* каждый слайд занимает всю ширину → фото получается большим */
+    .product-gallery .gallery-photos .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0;
+        scroll-snap-align: center;
+    }
+    /* фото на телефоне — крупное, без рамки миниатюры.
+       !important нужен, чтобы клик по фото не рисовал зелёную рамку (её ставит JS инлайном) */
+    .product-gallery .thumbnail {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border: none !important;
+        border-radius: .5rem;
+    }
+}
