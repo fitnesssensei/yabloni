@@ -170,6 +170,7 @@ class ProductGalleryLayoutTests(TestCase):
         self.assertIn('class="product-gallery has-thumbs"', gallery)
 
 
+    def test_style_css_has_mobile_gallery_rules(self):
         """В style.css есть мобильные правила: главное фото спрятано, лента без миниатюр."""
         css = (settings.BASE_DIR / 'static' / 'css' / 'style.css').read_text(encoding='utf-8')
 
@@ -179,4 +180,69 @@ class ProductGalleryLayoutTests(TestCase):
         self.assertIn('scroll-snap-type: x mandatory', css)             # остановка на фото
         self.assertIn('flex: 0 0 100%', css)                            # фото на всю ширину
         self.assertIn('border: none !important', css)                   # без рамки миниатюры
+
+
+class CatalogCardLayoutTests(TestCase):
+    """Карточки товара в каталоге: кнопка «Подробнее» не должна выходить за карточку.
+
+    Раньше кнопка вылезала за границы карточки, и тест следит, чтобы причины не вернулись:
+    * у карточки был жёсткий `height: 300px`, а длинное название товара
+      («Купить саженец яблони Кандиль орловский») в него не влезало — контент уезжал вниз;
+    * у кнопки была фиксированная ширина 150px, а на ширине экрана 768–991px
+      колонка `col-md-3` уже 150px — кнопка вылезала вправо за карточку;
+    * лишний `<br>` после цены добавлял пустую строку и выталкивал кнопку вниз.
+
+    Тест проверяет разметку и правила CSS из шаблона (сам вёрстку браузер считает
+    только визуально, поэтому вручную страницу дополнительно смотрят в браузере).
+    """
+
+    def setUp(self):
+        self.category = Category.objects.create(name='Яблони', slug='yabloni')
+        # длинное название, как у реальных товаров на странице /catalog/
+        self.product = Product.objects.create(
+            name='Купить саженец яблони Кандиль орловский',
+            slug='kandil-orlovskij', category=self.category, price=1000,
+        )
+
+    def _catalog_html(self):
+        """Возвращает HTML страницы каталога и проверяет, что она открывается."""
+        response = self.client.get(reverse('catalog:product_list'))
+        self.assertEqual(response.status_code, 200)
+        return response.content.decode()
+
+    @staticmethod
+    def _rule(html, selector):
+        """Вырезает из HTML тело правила CSS по его селектору (до закрывающей скобки)."""
+        start = html.index(f'{selector} {{')
+        return html[start:html.index('}', start)]
+
+    def test_card_height_is_min_not_fixed(self):
+        """У карточки минимальная высота, а не жёсткие 300px (иначе кнопка вылезает вниз)."""
+        html = self._catalog_html()
+        card_css = self._rule(html, '.product-card')
+        self.assertIn('min-height: 300px', card_css)
+        # жёсткого height нет (минус-вариант min-height не считаем)
+        self.assertIsNone(re.search(r'(?<!min-)height:\s*300px', card_css))
+
+    def test_button_width_is_limited_by_card(self):
+        """Ширина кнопки — 100% карточки, но не больше 150px (иначе вылезает вправо)."""
+        html = self._catalog_html()
+        # правило должно быть привязано к карточке каталога, а не к кнопке вообще
+        button_css = self._rule(html, '.product-card .btn-success')
+        self.assertIn('width: 100% !important', button_css)
+        self.assertIn('max-width: 150px', button_css)
+
+    def test_card_markup_keeps_button_inside_card(self):
+        """Разметка карточки: длинное название, цена и кнопка — внутри одной карточки."""
+        html = self._catalog_html()
+        # карточка — ссылка на всю высоту колонки: все карточки в строке одной высоты
+        self.assertIn('text-decoration-none text-dark d-block h-100', html)
+        self.assertIn('class="card product-card"', html)
+        # длинное название товара отображается
+        self.assertIn(self.product.name, html)
+        # цена выводится отдельной строкой, а не через лишний <br>
+        self.assertIn('class="h5 mb-1 d-block"', html)
+        self.assertNotIn('₽</span><br>', html)
+        # кнопка «Подробнее» внутри карточки
+        self.assertIn('<button class="btn btn-success mt-2">Подробнее</button>', html)
 

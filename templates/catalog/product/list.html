@@ -7,8 +7,10 @@
 
 {% block content %}
 <style>
+/* Карточка товара: минимальная высота вместо жёсткой 300px,
+   чтобы длинное название товара не выталкивало кнопку за пределы карточки */
 .product-card {
-    height: 300px;
+    min-height: 300px;
     display: flex;
     flex-direction: column;
 }
@@ -23,8 +25,12 @@
     justify-content: space-between;
     padding-top: 11px;
 }
-.btn-success {
-    width: 150px !important;
+/* Кнопка «Подробнее» только внутри карточки товара каталога:
+   ширина не больше самой карточки, но не более 150px
+   (глобальное правило .btn-success в style.css оставлено для корзины) */
+.product-card .btn-success {
+    width: 100% !important;
+    max-width: 150px;
 }
 .product-card .d-flex {
     flex-direction: column;
@@ -129,7 +135,9 @@
             <div class="row">
                 {% for product in products %}
                 <div class="col-md-3 mb-4">
-                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                    <!-- d-block и h-100: ссылка растягивается на всю высоту колонки,
+                         поэтому все карточки в строке получают одинаковую высоту -->
+                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark d-block h-100">
                         <div class="card product-card">
                             {% with main_image=product.get_main_image %}
                             <img src="{% if main_image %}{% safe_thumbnail main_image 'product_list' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
@@ -138,7 +146,7 @@
                             <div class="card-body d-flex flex-column">
                                 <div class="text-center">
                                     <h5 class="card-title mb-2">{{ product.name }}</h5>
-                                    <span class="h5 mb-1">{{ product.price }} ₽</span><br>
+                                    <span class="h5 mb-1 d-block">{{ product.price }} ₽</span>
                                     <button class="btn btn-success mt-2">Подробнее</button>
                                 </div>
                             </div>
