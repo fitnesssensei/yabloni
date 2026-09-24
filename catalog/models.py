@@ -81,33 +81,30 @@ class Product(models.Model):
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
     
-    def get_main_image(self):
-        """Возвращает основное изображение товара или первое доступное (только если файл — валидное изображение)"""
+    def get_valid_images(self):
+        """Возвращает изображения товара с существующими и валидными файлами."""
         from django.core.files.images import get_image_dimensions
-        from easy_thumbnails.files import get_thumbnailer
-        
-        # Проверяем все изображения товара
-        images = self.images.all()
-        for img in images:
+
+        valid_images = []
+        for img in self.images.all():
             try:
-                # Проверяем, что файл действительно является изображением
-                get_image_dimensions(img.image)
-                if img.is_main:
-                    return img.image
-            except Exception:
-                # Пропускаем невалидные файлы
+                if get_image_dimensions(img.image):
+                    valid_images.append(img)
+            except (OSError, ValueError):
                 continue
-        
-        # Если нет основного, возвращаем первое валидное
+        return valid_images
+
+
+    def get_main_image(self):
+        """Возвращает основное изображение товара или первое доступное."""
+        images = self.get_valid_images()
+
         for img in images:
-            try:
-                get_image_dimensions(img.image)
+            if img.is_main:
                 return img.image
-            except Exception:
-                continue
-        
-        return None
-   
+
+        return images[0].image if images else None
+
     # добавил метод :
     def get_absolute_url(self):
         return reverse('catalog:product_detail', args=[self.id, self.slug])

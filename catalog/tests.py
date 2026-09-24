@@ -151,7 +151,25 @@ class ProductGalleryLayoutTests(TestCase):
         self.assertNotIn('src=""', gallery)
         self.assertNotIn('srcset=""', gallery)
 
-    def test_mobile_css_turns_gallery_into_swipe_strip(self):
+    def test_broken_image_is_not_rendered_in_gallery(self):
+        broken = ProductImage.objects.create(
+            product=self.product,
+            image=SimpleUploadedFile(
+                'broken.png', b'not an image', content_type='image/png'),
+        )
+        broken.image.delete(save=False)
+
+        response = self.client.get(self.product.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        gallery = html[html.index('<div class="product-gallery'):
+                       html.index('<!-- описание товара -->')]
+        self.assertNotIn('broken.png', gallery)
+        self.assertNotIn('src=""', gallery)
+        self.assertNotIn('srcset=""', gallery)
+        self.assertIn('class="product-gallery has-thumbs"', gallery)
+
+
         """В style.css есть мобильные правила: главное фото спрятано, лента без миниатюр."""
         css = (settings.BASE_DIR / 'static' / 'css' / 'style.css').read_text(encoding='utf-8')
 

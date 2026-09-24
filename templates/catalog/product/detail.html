@@ -51,10 +51,11 @@
                  • Десктоп: главное фото + сетка фото по 2 в ряд
                  • Телефон (<768px): лента больших фото со свайпом, миниатюр нет
                    (класс has-thumbs нужен, чтобы CSS знал: вместо главного фото показываем ленту) -->
-            <div class="product-gallery{% if product.images.exists %} has-thumbs{% endif %}">
+            {% with valid_images=product.get_valid_images main_image=product.get_main_image %}
+            <div class="product-gallery{% if valid_images %} has-thumbs{% endif %}">
                 <!-- Основное (большое) фото — только для десктопа -->
                 <div class="main-image mb-3">
-                    {% with main_image=product.get_main_image %}
+                    {% with main_image=main_image %}
                     <img id="mainImage" 
                          src="{% if main_image %}{% safe_thumbnail main_image 'product_detail' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
                          class="img-fluid rounded" alt="{{ product.name }}">
@@ -62,9 +63,9 @@
                 </div>
                 
                 <!-- Все фото товара: на десктопе — сетка по 2 в ряд, на телефоне — свайп-лента -->
-                {% if product.images.exists %}
+                {% if valid_images %}
                 <div class="gallery-photos row row-cols-2 g-2">
-                    {% for img in product.images.all %}
+                    {% for img in valid_images %}
                     <div class="col">
                         <picture>
                             <!-- телефон получает крупное фото 600px, десктоп — лёгкую миниатюру 150px -->
@@ -80,6 +81,9 @@
                 </div>
                 {% endif %}
             </div>
+            {% endwith %}
+
+
 
             <!-- описание товара -->
             <div class="mb-4">
