@@ -514,3 +514,42 @@ main {
 .custom-footer {
     background-color: #9dab8a !important;
 }
+
+/* ===== Галерея на странице товара =====
+   Главное фото сверху, под ним сетка миниатюр по 2 в ряд.
+   Раньше миниатюры стояли вертикальным столбиком справа (класс flex-column),
+   из-за этого фото на странице товара выстраивались «буквой Г». */
+.product-gallery {
+    position: relative;   /* нужен для относительного позиционирования внутри */
+    max-width: 440px;     /* чтобы галерея не распирала колонку col-md-5 */
+}
+
+/* Главное (большое) фото товара — всегда квадрат, без искажений */
+.product-gallery .main-image img {
+    width: 100%;
+    aspect-ratio: 1 / 1;            /* всегда квадрат, даже если исходник прямоугольный */
+    object-fit: cover;              /* обрезаем по центру, картинку не растягиваем */
+    transition: opacity 0.3s ease;  /* плавная смена при клике по миниатюре */
+}
+
+/* Миниатюры: каждая занимает половину ширины галереи (значит ровно 2 в ряд) */
+.product-gallery .thumbnail {
+    width: 100%;
+    aspect-ratio: 1 / 1;            /* миниатюры тоже квадратные */
+    object-fit: cover;
+    cursor: pointer;                /* по клику меняется главное фото */
+    border: 2px solid #dee2e6;      /* обычная серая рамка */
+    border-radius: 4px;
+    transition: all 0.3s ease;      /* плавный ховер */
+}
+
+/* Миниатюра под курсором — чуть увеличивается и получает тень */
+.product-gallery .thumbnail:hover {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Миниатюра основного фото — зелёная рамка */
+.product-gallery .thumbnail.active {
+    border: 2px solid #28a745;
+}

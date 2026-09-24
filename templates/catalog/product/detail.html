@@ -47,32 +47,32 @@
         <!-- Средний контейнер: Описание товара под изображениями -->
         <div class="col-md-5">
 
-            <!-- изображения товара, с горизонтальным позиционированием -->
-            <div class="product-gallery h-100">
-                <div class="d-flex gap-3">
-                    <!-- Основное изображение -->
-                    <div class="main-image">
-                        {% with main_image=product.get_main_image %}
-                        <img id="mainImage" 
-                             src="{% if main_image %}{% safe_thumbnail main_image 'product_detail' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
-                             class="img-fluid rounded" alt="{{ product.name }}"
-                             style="width: 300px; height: 300px; object-fit: cover;">
-                        {% endwith %}
-                    </div>
-                    
-                    <!-- Миниатюры справа -->
-                    {% if product.images.exists %}
-                    <div class="thumbnails d-flex flex-column gap-2">
-                        {% for img in product.images.all %}
+            <!-- изображения товара: главное фото, под ним сетка миниатюр по 2 в ряд -->
+            <!-- сетку миниатюр задаёт класс row-cols-2 (2 в ряд);
+                 чтобы было 3 в ряд — поменяйте на row-cols-3 -->
+            <div class="product-gallery">
+                <!-- Основное изображение -->
+                <div class="main-image mb-3">
+                    {% with main_image=product.get_main_image %}
+                    <img id="mainImage" 
+                         src="{% if main_image %}{% safe_thumbnail main_image 'product_detail' %}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                         class="img-fluid rounded" alt="{{ product.name }}">
+                    {% endwith %}
+                </div>
+                
+                <!-- Миниатюры: сетка по 2 в ряд под главным фото -->
+                {% if product.images.exists %}
+                <div class="thumbnails row row-cols-2 g-2">
+                    {% for img in product.images.all %}
+                    <div class="col">
                         <img src="{% safe_thumbnail img.image 'product_thumbnail' %}" 
                              class="thumbnail {% if img.is_main %}active{% endif %}" 
                              alt="{{ product.name }}"
-                             data-src="{% safe_thumbnail img.image 'product_detail' %}"
-                             style="width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 2px solid #dee2e6; border-radius: 4px;">
-                        {% endfor %}
+                             data-src="{% safe_thumbnail img.image 'product_detail' %}">
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
+                {% endif %}
             </div>
 
             <!-- описание товара -->
@@ -228,24 +228,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-<style>
-.thumbnail {
-    transition: all 0.3s ease;
-}
-
-.thumbnail:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.main-image img {
-    transition: opacity 0.3s ease;
-}
-
-.product-gallery {
-    position: relative;
-}
-</style>
 
 {% endblock %}

@@ -34,7 +34,8 @@ db.sqlite3
 
 # Дизайн-макеты (локальные)
 +design/
+design/
 
-# Django 
-secret.key
-
+# Патчи (локальные артефакты)
+*.patch
+*.diff
