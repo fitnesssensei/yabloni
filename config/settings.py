@@ -42,7 +42,20 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Хосты (домены), которые обслуживает сайт.
+# Переопределяется в .env: ALLOWED_HOSTS=site.ru,www.site.ru
+# Пустой список в продакшене приводил к ответу 400 на все запросы (роботы не могли
+# открыть ни сайт, ни sitemap.xml), поэтому по умолчанию разрешаем прод-домен сайта
+# и локальные адреса для runserver (при непустом ALLOWED_HOSTS Django не пропускает
+# localhost/127.0.0.1 автоматически, даже если DEBUG = True).
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv(
+        'ALLOWED_HOSTS',
+        'yablonigrushi.ru,www.yablonigrushi.ru,localhost,127.0.0.1,[::1]',
+    ).split(',')
+    if host.strip()
+]
 
 
 # приложения
