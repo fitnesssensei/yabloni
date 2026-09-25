@@ -554,41 +554,21 @@ main {
     border: 2px solid #28a745;
 }
 
-/* ===== Телефон (<768px): лента больших фото со свайпом, миниатюр нет ===== */
+/* ===== Телефон (<768px): сетка фото по 2 в ряд, главного фото нет =====
+   Раньше здесь была свайп-лента с одним большим фото: на телефоне было видно
+   только первое фото и казалось, что фото всего одно. Теперь на телефоне, как
+   и на десктопе, показываем все фото сеткой по 2 в ряд, но без главного фото.
+   Раскладку по 2 в ряд даёт Bootstrap-сетка `row row-cols-2` из шаблона,
+   а внешний вид квадратных фото берётся из общих правил `.product-gallery .thumbnail`. */
 @media (max-width: 767.98px) {
-    /* фото есть → вместо главного фото показываем ленту всех фото */
+    /* главное (большое) фото на телефоне прячем — сразу идут все фото товара */
     .product-gallery.has-thumbs .main-image {
         display: none;
     }
 
-    /* контейнер превращаем в горизонтальную ленту с прокруткой пальцем */
-    .product-gallery .gallery-photos.row {
-        margin-left: 0;              /* сбрасываем отрицательные отступы Bootstrap-сетки */
-        margin-right: 0;
-    }
-    .product-gallery .gallery-photos {
-        display: flex;
-        flex-wrap: nowrap;           /* всё в один ряд */
-        gap: .5rem;
-        overflow-x: auto;            /* прокрутка вбок */
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;  /* магнитная остановка на фото */
-        padding-bottom: .25rem;
-    }
-    /* каждый слайд занимает всю ширину → фото получается большим */
-    .product-gallery .gallery-photos .col {
-        flex: 0 0 100%;
+    /* галерея занимает всю ширину колонки, чтобы 2 фото в ряд были крупными
+       (на десктопе ширина ограничена 440px, чтобы фото не распирало колонку) */
+    .product-gallery {
         max-width: 100%;
-        padding: 0;
-        scroll-snap-align: center;
-    }
-    /* фото на телефоне — крупное, без рамки миниатюры.
-       !important нужен, чтобы клик по фото не рисовал зелёную рамку (её ставит JS инлайном) */
-    .product-gallery .thumbnail {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-        border: none !important;
-        border-radius: .5rem;
     }
 }

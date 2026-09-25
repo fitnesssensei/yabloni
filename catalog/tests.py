@@ -84,14 +84,16 @@ class ProductDetailNavTests(TestCase):
 
 @override_settings(MEDIA_ROOT=GALLERY_TEST_MEDIA)
 class ProductGalleryLayoutTests(TestCase):
-    """Фото товара: на десктопе — главное фото + сетка по 2 в ряд,
-    на телефоне (<768px) — лента больших фото со свайпом, без миниатюр.
+    """Фото товара: главное фото + сетка фото по 2 в ряд.
+
+    На телефоне (<768px) главное фото скрыто, а фото идут той же сеткой по 2 в ряд
+    (свайп-ленту убрали: на телефоне было видно только первое фото).
 
     Проверяем, что:
     * главное фото идёт ДО сетки фото (по 2 в ряд), а старого «столбика справа»
       (из-за него фото на странице товара выстраивались буквой «Г») больше нет;
-    * каждое фото отдаётся через <picture>: телефону — крупная версия 600px
-      (для свайп-ленты), десктопу — лёгкая миниатюра 150px;
+    * каждое фото отдаётся через <picture>: телефону — крупная версия 600px,
+      десктопу — лёгкая миниатюра 150px;
     * у галереи есть маркер has-thumbs — по нему мобильный CSS прячет главное фото;
     * все ссылки не пустые (иначе браузер рисует значок «битая картинка»).
     """
@@ -117,7 +119,7 @@ class ProductGalleryLayoutTests(TestCase):
                 is_main=(index == 0),
             )
 
-    def test_gallery_desktop_grid_and_mobile_swipe_strip(self):
+    def test_gallery_grid_is_two_columns_on_desktop_and_mobile(self):
         response = self.client.get(self.product.get_absolute_url())
         self.assertEqual(response.status_code, 200)
 
@@ -126,10 +128,10 @@ class ProductGalleryLayoutTests(TestCase):
         gallery = html[html.index('<div class="product-gallery'):
                        html.index('<!-- описание товара -->')]
 
-        # маркер для мобильного CSS: фото есть → на телефоне лента вместо главного фото
+        # маркер для мобильного CSS: фото есть → главное фото на телефоне прячем (сетка 2 в ряд)
         self.assertIn('class="product-gallery has-thumbs"', gallery)
 
-        # десктоп: главное фото идёт ДО сетки фото, сетка — по 2 в ряд
+        # главное фото идёт ДО сетки, а сетка — по 2 в ряд и на десктопе, и на телефоне
         self.assertIn('id="mainImage"', gallery)
         self.assertIn('class="gallery-photos row row-cols-2 g-2"', gallery)
         self.assertLess(gallery.index('id="mainImage"'),
@@ -170,16 +172,25 @@ class ProductGalleryLayoutTests(TestCase):
         self.assertIn('class="product-gallery has-thumbs"', gallery)
 
 
-    def test_style_css_has_mobile_gallery_rules(self):
-        """В style.css есть мобильные правила: главное фото спрятано, лента без миниатюр."""
-        css = (settings.BASE_DIR / 'static' / 'css' / 'style.css').read_text(encoding='utf-8')
+    def test_style_css_mobile_gallery_is_two_column_grid(self):
+        """Мобильный CSS: главное фото скрыто, а фото идут сеткой по 2 в ряд.
 
+        Свайп-ленту убрали (на телефоне было видно только первое фото),
+        поэтому в мобильном блоке не должно остаться правил прокрутки вбок.
+        """
+        css = (settings.BASE_DIR / 'static' / 'css' / 'style.css').read_text(encoding='utf-8')
         self.assertIn('@media (max-width: 767.98px)', css)
-        self.assertIn('.product-gallery.has-thumbs .main-image', css)   # прячем главное фото
-        self.assertIn('overflow-x: auto', css)                          # прокрутка вбок
-        self.assertIn('scroll-snap-type: x mandatory', css)             # остановка на фото
-        self.assertIn('flex: 0 0 100%', css)                            # фото на всю ширину
-        self.assertIn('border: none !important', css)                   # без рамки миниатюры
+
+        # берём только мобильный блок (он последний в файле)
+        mobile_css = css[css.index('@media (max-width: 767.98px)'):]
+
+        self.assertIn('.product-gallery.has-thumbs .main-image', mobile_css)  # прячем главное фото
+        self.assertIn('max-width: 100%', mobile_css)  # галерея на всю ширину → 2 фото крупные
+
+        # свайп-ленты больше нет
+        self.assertNotIn('overflow-x', mobile_css)
+        self.assertNotIn('scroll-snap', mobile_css)
+        self.assertNotIn('flex: 0 0 100%', mobile_css)
 
 
 class CatalogCardLayoutTests(TestCase):

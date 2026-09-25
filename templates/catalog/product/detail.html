@@ -49,8 +49,8 @@
 
             <!-- Фото товара.
                  • Десктоп: главное фото + сетка фото по 2 в ряд
-                 • Телефон (<768px): лента больших фото со свайпом, миниатюр нет
-                   (класс has-thumbs нужен, чтобы CSS знал: вместо главного фото показываем ленту) -->
+                 • Телефон (<768px): только сетка фото по 2 в ряд — главного фото нет
+                   (класс has-thumbs нужен, чтобы CSS знал: главное фото на телефоне прячем) -->
             {% with valid_images=product.get_valid_images main_image=product.get_main_image %}
             <div class="product-gallery{% if valid_images %} has-thumbs{% endif %}">
                 <!-- Основное (большое) фото — только для десктопа -->
@@ -62,7 +62,7 @@
                     {% endwith %}
                 </div>
                 
-                <!-- Все фото товара: на десктопе — сетка по 2 в ряд, на телефоне — свайп-лента -->
+                <!-- Все фото товара: сетка по 2 в ряд — и на десктопе, и на телефоне -->
                 {% if valid_images %}
                 <div class="gallery-photos row row-cols-2 g-2">
                     {% for img in valid_images %}
@@ -196,9 +196,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Галерея изображений.
-    // На десктопе: клик по миниатюре меняет главное фото и подсвечивает её рамкой.
-    // На телефоне: лента больших фото листается свайпом, рамки там не нужны
-    // (в мобильном CSS они отключены через border: none !important).
+    // Клик по фото меняет главное фото и подсвечивает это фото рамкой.
+    // На телефоне главное фото скрыто, поэтому клик там просто подсвечивает выбранное фото.
     const mainImage = document.getElementById('mainImage');
     const thumbnails = document.querySelectorAll('.thumbnail');
     
