@@ -572,3 +572,63 @@ main {
         max-width: 100%;
     }
 }
+
+/* ===== Кнопка «наверх» (стрелочка перемотки страницы вверх) =====
+   Разметка лежит в общем шаблоне templates/base/base.html, поэтому кнопка
+   есть на всех страницах сайта. Показывается только после прокрутки вниз:
+   класс .show добавляет/убирает скрипт static/js/main.js.
+   Фон сделан полупрозрачным, чтобы кнопка не перекрывала контент страницы. */
+.back-to-top {
+    position: fixed;        /* всегда в углу экрана, при прокрутке не уезжает */
+    right: 20px;
+    bottom: 20px;
+    width: 48px;            /* размер 48px удобен и для мыши, и для пальца на телефоне */
+    height: 48px;
+    display: flex;
+    align-items: center;    /* иконка стрелки по центру кнопки */
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;     /* круглая кнопка */
+    background-color: rgba(157, 171, 138, 0.6);  /* цвет шапки/подвала сайта (#9dab8a), полупрозрачный */
+    color: #ffffff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1040;          /* выше контента, но ниже модалок Bootstrap (1055) и баннера cookie (9999) */
+    /* По умолчанию кнопка невидима — появляется только после прокрутки страницы вниз */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;   /* скрытую кнопку нельзя случайно нажать или «поймать» тапом */
+    transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.3s ease;
+}
+
+/* Класс .show включает кнопку (ставится скриптом при прокрутке больше 300px) */
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Наведение мышью и фокус с клавиатуры — акцентный оранжевый цвет сайта */
+.back-to-top:hover,
+.back-to-top:focus-visible {
+    background-color: rgba(255, 139, 0, 0.85);
+}
+
+/* Видимый контур для тех, кто ходит по сайту с клавиатуры (Tab) */
+.back-to-top:focus-visible {
+    outline: 2px solid #ff8b00;
+    outline-offset: 2px;
+}
+
+/* Телефон (<768px): кнопка чуть компактнее и ближе к краю экрана */
+@media (max-width: 768px) {
+    .back-to-top {
+        right: 12px;
+        bottom: 12px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+}

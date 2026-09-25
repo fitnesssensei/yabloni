@@ -142,6 +142,12 @@
         </div>
     </div>
     
+    <!-- Кнопка «наверх»: показывается при прокрутке страницы (логика в static/js/main.js,
+         стили .back-to-top в static/css/style.css). Иконка — Bootstrap Icons. -->
+    <button type="button" id="backToTop" class="back-to-top" aria-label="Наверх" title="Наверх">
+        <i class="bi bi-arrow-up" aria-hidden="true"></i>
+    </button>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>
 </body>

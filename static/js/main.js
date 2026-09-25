@@ -59,3 +59,51 @@ document.addEventListener('DOMContentLoaded', function() {
         // Можно добавить логику для повторного показа через время
     });
 });
+
+// ===== Кнопка «наверх» (стрелочка перемотки страницы вверх) =====
+// Разметка кнопки лежит в общем шаблоне templates/base/base.html (id="backToTop"),
+// внешний вид — класс .back-to-top в static/css/style.css.
+// Логика: когда страница прокручена вниз больше чем на 300px — кнопка видна,
+// по клику (или Enter/Space с клавиатуры) страница плавно возвращается в начало.
+document.addEventListener('DOMContentLoaded', function() {
+    const backToTopButton = document.getElementById('backToTop');
+
+    // На страницах без base.html кнопки нет — тогда просто выходим
+    if (!backToTopButton) {
+        return;
+    }
+
+    const SHOW_AFTER_PX = 300; // после скольких пикселей прокрутки показывать кнопку
+    // Если в системе включено «уменьшить движение» — прокручиваем без анимации
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let ticking = false; // защита от лишних пересчётов: не чаще одного раза за кадр
+
+    // Пересчитываем видимость кнопки по текущему положению прокрутки
+    function updateBackToTop() {
+        if (window.scrollY > SHOW_AFTER_PX) {
+            backToTopButton.classList.add('show');
+        } else {
+            backToTopButton.classList.remove('show');
+        }
+        ticking = false;
+    }
+
+    // Слушатель прокрутки: passive — чтобы не тормозить скролл, rAF — чтобы сгладить частоту вызовов
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(updateBackToTop);
+        }
+    }, { passive: true });
+
+    // Возврат в начало страницы по клику по кнопке
+    backToTopButton.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: reduceMotion ? 'auto' : 'smooth'
+        });
+    });
+
+    // Сразу расставляем состояние: страница может открыться уже прокрученной вниз
+    updateBackToTop();
+});
