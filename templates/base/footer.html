@@ -23,6 +23,11 @@
 
 
             
+            <!-- Внимание! Блок «Контакты / Мы в соцсетях» ниже выключен и целиком лежит внутри
+                 одного HTML-комментария. Внутри него нельзя ставить закрывающую последовательность
+                 раньше его конца: иначе комментарий оборвётся раньше времени, стоящие ниже </div>
+                 и </footer> попадут в комментарий, подвал останется незакрытым, а баннер cookie и
+                 кнопка «наверх» окажутся внутри .row подвала — Bootstrap растянет их на всю ширину. -->
             <!--<div class="col-md-3">
                 <h5>Контакты</h5>
                 <p>Телефон: +7 (XXX) XXX-XX-XX</p>
@@ -35,14 +40,14 @@
                 </div>
                 <div class="social-links mt-3">
                     <a href="#" class="text-white me-2"><i class="fab fa-vk" style="font-size: 1.2rem;"></i></a>
-                -->
-                    <!--             иконки соцсетей 
+                    иконки соцсетей 
                     <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
                     <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="text-white me-2"><i class="bi bi-telegram"></i></a>
                     
                 </div>
             </div>
+            -->
         </div>
     </div>
-</footer>-->
+</footer>

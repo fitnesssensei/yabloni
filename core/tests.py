@@ -7,7 +7,9 @@ JS-раннера в проекте нет, поэтому поведение с
 такого не ловит).
 """
 import re
+from html.parser import HTMLParser
 
+from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
@@ -28,6 +30,16 @@ PAGES_WITH_BASE_TEMPLATE = (
 # id и класс кнопки из templates/base/base.html
 BUTTON_ID = 'backToTop'
 BUTTON_CLASS = 'back-to-top'
+
+# id баннера согласия на cookies (тоже из templates/base/base.html): он обязан лежать
+# прямо в <body>, иначе из-за незакрытого тега уедет в подвал
+COOKIE_BANNER_ID = 'cookieBanner'
+
+# Шаблоны макета сайта: их незаметно ломает закрытие HTML-комментария раньше времени
+LAYOUT_TEMPLATES = ('base/base.html', 'base/header.html', 'base/footer.html')
+
+# Теги макета, которые обязаны открываться и закрываться одинаковое число раз
+PAIRED_LAYOUT_TAGS = ('div', 'footer')
 
 # Порог прокрутки (px) из static/js/main.js, после которого кнопка появляется
 SHOW_AFTER_PX = 300
@@ -96,6 +108,91 @@ def has_declaration(css_text, declaration, value):
     """Есть ли в тексте CSS объявление вида `declaration: value` (пробелы и регистр не важны)."""
     pattern = re.escape(declaration) + r'\s*:\s*' + re.escape(value)
     return re.search(pattern, css_text, flags=re.IGNORECASE) is not None
+
+
+def read_template_file(relative_path):
+    """Возвращает текст шаблона по пути относительно папки templates/ (например, 'base/footer.html')."""
+    with open(settings.BASE_DIR / 'templates' / relative_path, encoding='utf-8') as template_file:
+        return template_file.read()
+
+
+def strip_html_comments(html_text):
+    """Убирает HTML-комментарии так же, как это делает браузер.
+
+    Возвращает кортеж (текст без комментариев, все_ли_комментарии_закрыты).
+    Важно: комментарий закрывается ПЕРВОЙ последовательностью «-->», а вложенный «<!--»
+    внутри комментария — обычный текст. Поэтому «-->», поставленный раньше конца
+    выключенного блока, выкидывает следующие за ним реальные теги (</div>, </footer>)
+    внутрь комментария — и макет ломается незаметно.
+    """
+    parts = []
+    position = 0
+    while True:
+        comment_start = html_text.find('<!--', position)
+        if comment_start == -1:
+            parts.append(html_text[position:])
+            return ''.join(parts), True
+        parts.append(html_text[position:comment_start])
+        comment_end = html_text.find('-->', comment_start + 4)
+        if comment_end == -1:
+            # Комментарий не закрыт: по правилам HTML браузер считает комментарием остаток файла
+            return ''.join(parts), False
+        position = comment_end + 3
+
+
+class AncestorChainParser(HTMLParser):
+    """Разбирает HTML и запоминает цепочку предков элемента с нужным id.
+
+    Разбор идёт стандартным html.parser: он обрабатывает комментарии и вложенность так же,
+    как браузер, поэтому теги, «съеденные» комментарием, в цепочке не появятся.
+    """
+
+    # Теги без закрывающей пары: в стек их класть нельзя
+    VOID_TAGS = frozenset({
+        'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+        'link', 'meta', 'param', 'source', 'track', 'wbr',
+    })
+
+    def __init__(self, element_id):
+        super().__init__(convert_charrefs=True)
+        self.element_id = element_id
+        self.stack = []        # открытые теги: пары (имя тега, описание для сообщения)
+        self.ancestors = None  # цепочка предков найденного элемента
+
+    @staticmethod
+    def describe(tag, attrs):
+        """Описание тега для сообщения об ошибке: 'div.row', 'footer.custom-footer'."""
+        attributes = dict(attrs)
+        description = tag
+        if attributes.get('id'):
+            description += f"#{attributes['id']}"
+        if attributes.get('class'):
+            description += '.' + '.'.join(attributes['class'].split())
+        return description
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.VOID_TAGS:
+            return
+        if dict(attrs).get('id') == self.element_id and self.ancestors is None:
+            self.ancestors = [description for _, description in self.stack]
+        self.stack.append((tag, self.describe(tag, attrs)))
+
+    def handle_endtag(self, tag):
+        # Закрываем ближайший открытый тег с таким именем — так же поступает браузер
+        for index in range(len(self.stack) - 1, -1, -1):
+            if self.stack[index][0] == tag:
+                del self.stack[index:]
+                return
+
+
+def get_ancestor_chain(html_text, element_id):
+    """Возвращает цепочку предков элемента (от внешнего к внутреннему), например ['html', 'body'].
+
+    Если элемента на странице нет, возвращает None.
+    """
+    parser = AncestorChainParser(element_id)
+    parser.feed(html_text)
+    return parser.ancestors
 
 
 class BackToTopMarkupTests(TestCase):
@@ -254,3 +351,81 @@ class BackToTopScriptTests(SimpleTestCase):
     def test_state_is_set_on_page_load(self):
         """Состояние кнопки расставляется сразу: страница может открыться уже прокрученной."""
         self.assertRegex(self.main_js, r'\n\s*updateBackToTop\(\);')
+
+
+class BaseTemplateStructureTests(TestCase):
+    """Структура страницы: подвал закрыт, а кнопка «наверх» и баннер cookie — прямые потомки <body>.
+
+    Регрессия: в templates/base/footer.html закрывающая последовательность комментария
+    стояла раньше конца выключенного блока, поэтому </div>, </div> и </footer> попадали
+    внутрь комментария. Подвал оставался незакрытым, и вся разметка после него (баннер
+    cookie и кнопка «наверх») оказывалась внутри .row подвала. Bootstrap по правилу
+    `.row > *` давал таким элементам width: 100%, и кнопка превращалась в прямоугольник
+    во всю ширину экрана в самом низу страницы.
+    """
+
+    def setUp(self):
+        # Главная страница отвечает 200 даже на пустой базе — БД для проверки не нужна
+        self.content = self.client.get(reverse('home')).content.decode('utf-8')
+
+    def test_back_to_top_button_is_direct_child_of_body(self):
+        """Кнопка «наверх» лежит прямо в <body>: предки — только html и body."""
+        self.assertEqual(
+            get_ancestor_chain(self.content, BUTTON_ID), ['html', 'body'],
+            'Кнопка «наверх» вложена не в <body>. Проверьте закрывающие теги в шаблонах '
+            'макета: незакрытый тег утаскивает разметку внутрь .row подвала, а Bootstrap '
+            'по правилу `.row > *` растягивает такие элементы на всю ширину экрана.',
+        )
+
+    def test_cookie_banner_is_direct_child_of_body(self):
+        """Баннер согласия на cookies тоже лежит прямо в <body>."""
+        self.assertEqual(
+            get_ancestor_chain(self.content, COOKIE_BANNER_ID), ['html', 'body'],
+            'Баннер cookie оказался внутри другой разметки — значит подвал или другой '
+            'контейнер в шаблоне не закрыт.',
+        )
+
+    def test_footer_is_closed_before_button_markup(self):
+        """Тег </footer> есть на странице и стоит раньше кнопки «наверх»."""
+        footer_end = self.content.find('</footer>')
+        self.assertGreater(footer_end, -1, 'На странице нет закрывающего тега </footer>.')
+        self.assertLess(
+            footer_end, self.content.find(f'id="{BUTTON_ID}"'),
+            'Кнопка «наверх» идёт в разметке раньше </footer>: подвал не закрыт.',
+        )
+
+
+class HtmlCommentsGuardTests(SimpleTestCase):
+    """Сторож битых HTML-комментариев в шаблонах макета.
+
+    Комментарий в HTML закрывается первой последовательностью «-->». Если поставить её
+    раньше конца выключенного блока, следующие за ней реальные теги попадают внутрь
+    комментария и макет ломается незаметно (именно так сломалась кнопка «наверх»).
+    Поэтому теги считаем в шаблонах БЕЗ комментариев.
+    """
+
+    def test_html_comments_are_closed(self):
+        """В шаблонах макета нет незакрытых HTML-комментариев."""
+        for template_name in LAYOUT_TEMPLATES:
+            with self.subTest(template=template_name):
+                _, comments_closed = strip_html_comments(read_template_file(template_name))
+                self.assertTrue(
+                    comments_closed,
+                    f'В {template_name} HTML-комментарий не закрыт до конца файла: '
+                    'всё, что ниже, браузер считает текстом комментария.',
+                )
+
+    def test_paired_tags_are_balanced(self):
+        """Теги div и footer в шаблонах макета открыты и закрыты одинаковое число раз."""
+        for template_name in LAYOUT_TEMPLATES:
+            template_without_comments, _ = strip_html_comments(read_template_file(template_name))
+            for tag in PAIRED_LAYOUT_TAGS:
+                with self.subTest(template=template_name, tag=tag):
+                    opens = len(re.findall(rf'<{tag}[\s>]', template_without_comments))
+                    closes = len(re.findall(rf'</{tag}>', template_without_comments))
+                    self.assertEqual(
+                        opens, closes,
+                        f'В {template_name} тег <{tag}> открыт {opens} раз, а закрыт {closes}. '
+                        'Скорее всего HTML-комментарий закрывается раньше выключенного блока '
+                        'и «съедает» закрывающие теги.',
+                    )
