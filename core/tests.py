@@ -31,6 +31,11 @@ PAGES_WITH_BASE_TEMPLATE = (
 BUTTON_ID = 'backToTop'
 BUTTON_CLASS = 'back-to-top'
 
+# Постоянный фон кнопки «наверх»: акцентный оранжевый сайта #ff8b00 и его прозрачность.
+# Прозрачность меньше 1, поэтому кнопка не перекрывает контент страницы.
+BUTTON_BACKGROUND_RGB = ('255', '139', '0')
+BUTTON_BACKGROUND_ALPHA = '0.85'
+
 # id баннера согласия на cookies (тоже из templates/base/base.html): он обязан лежать
 # прямо в <body>, иначе из-за незакрытого тега уедет в подвал
 COOKIE_BANNER_ID = 'cookieBanner'
@@ -260,13 +265,28 @@ class BackToTopStyleTests(SimpleTestCase):
         self.assertTrue(has_declaration(self.button_rule, 'visibility', 'hidden'))
         self.assertTrue(has_declaration(self.button_rule, 'pointer-events', 'none'))
 
-    def test_button_background_is_semitransparent(self):
-        """Фон кнопки — полупрозрачный цвет шапки/подвала сайта (#9dab8a)."""
+    def test_button_background_is_accent_orange(self):
+        """Фон кнопки — акцентный оранжевый сайта #ff8b00 (тот же цвет, что был при наведении)."""
         match = re.search(r'background-color\s*:\s*rgba\(([^)]*)\)', self.button_rule)
         self.assertIsNotNone(match, 'У кнопки нет полупрозрачного rgba-фона.')
         parts = [part.strip() for part in match.group(1).split(',')]
-        self.assertEqual(parts[:3], ['157', '171', '138'])  # #9dab8a
-        self.assertLess(float(parts[3]), 1)                 # alpha < 1 — полупрозрачность
+        self.assertEqual(parts[:3], list(BUTTON_BACKGROUND_RGB))  # #ff8b00
+        self.assertLess(float(parts[3]), 1)                       # alpha < 1 — полупрозрачность
+        self.assertEqual(parts[3], BUTTON_BACKGROUND_ALPHA)
+
+    def test_hover_does_not_change_button_color(self):
+        """Кнопка всегда одного цвета: правило :hover не задаёт другой фон (или его нет вовсе)."""
+        hover_blocks = re.findall(r'\.back-to-top:hover[^{]*\{([^}]*)\}', self.style_css)
+        for block in hover_blocks:
+            match = re.search(r'background-color\s*:\s*rgba\(([^)]*)\)', block)
+            if match is None:
+                continue
+            parts = [part.strip() for part in match.group(1).split(',')]
+            self.assertEqual(
+                parts,
+                list(BUTTON_BACKGROUND_RGB) + [BUTTON_BACKGROUND_ALPHA],
+                'Фон кнопки при наведении отличается от постоянного оранжевого.',
+            )
 
     def test_icon_color_is_dark_not_white(self):
         """Стрелка тёмная: белая на светлом полупрозрачном фоне давала контраст ≈1.6:1."""
