@@ -5,7 +5,7 @@ Django-based e-commerce платформа для продажи саженце�
 ## 📋 Обзор проекта
 
 Проект представляет собой современный интернет-магазин с каталогом товаров, корзиной покупок, системой заказов и блогом. Разработан с использованием фреймворка Django 5.2.7 с адаптивным дизайном на Bootstrap 5.
-Всегда смотри : /Users/rustamismagilov/Desktop/yabloni2/.clinerules !!!
+Всегда смотри : /Users/rustamismagilov/Desktop/yabloni2/.clinerules и /Users/rustamismagilov/Desktop/yabloni2/.cline !!!
 
 ## 🛠 Технологический стек
 
