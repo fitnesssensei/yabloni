@@ -6,6 +6,9 @@ JS-раннера в проекте нет, поэтому поведение с
 регулярные выражения — если логику уберут или сломают, тест упадёт (проверка подстроки
 такого не ловит).
 """
+import copy
+import logging
+import logging.config
 import re
 from html.parser import HTMLParser
 from unittest.mock import patch
@@ -656,6 +659,24 @@ class EmailSettingsAdminActionTests(TestCase):
                 default_from_email='shop@yandex.ru',
             )
         self.changelist_url = reverse('admin:core_emailsettings_changelist')
+        self.change_url = reverse(
+            'admin:core_emailsettings_change', args=[self.email_settings.pk]
+        )
+
+    def change_form_data(self, **overrides):
+        """Данные формы настроек для POST в админке (пустой пароль = не менять)."""
+        data = {
+            'email_host': 'smtp.yandex.ru',
+            'email_port': '465',
+            'email_use_ssl': 'on',
+            'email_host_user': 'shop@yandex.ru',
+            'email_host_password': '',
+            'default_from_email': 'shop@yandex.ru',
+            'email_subject_prefix': '[Яблони и Груши]',
+            'email_enabled': 'on',
+        }
+        data.update(overrides)
+        return data
 
     def test_changelist_page_opens_without_error(self):
         """Список настроек email открывается без ошибки (раньше отдавал 500).
@@ -667,13 +688,30 @@ class EmailSettingsAdminActionTests(TestCase):
         self.assertContains(response, 'Включено')
 
     def test_password_field_is_masked_in_admin(self):
-        """Пароль приложения показывается в админке маской, а не открытым текстом."""
-        change_url = reverse(
-            'admin:core_emailsettings_change', args=[self.email_settings.pk]
-        )
-        response = self.client.get(change_url)
+        """Пароль показывается маской, и его значения нет в HTML страницы настроек."""
+        response = self.client.get(self.change_url)
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'type="password"')
+        # Значение пароля в разметку не подставляется
+        self.assertNotContains(response, 'app-password')
+
+    def test_saving_with_empty_password_keeps_saved_one(self):
+        """Пустое поле пароля не затирает сохранённый пароль."""
+        response = self.client.post(self.change_url, self.change_form_data(), follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.email_settings.refresh_from_db()
+        self.assertEqual(self.email_settings.email_host_password, 'app-password')
+
+    def test_saving_new_password_updates_it(self):
+        """Новый пароль из формы сохраняется в настройках."""
+        data = self.change_form_data(email_host_password='new-app-password')
+        response = self.client.post(self.change_url, data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.email_settings.refresh_from_db()
+        self.assertEqual(self.email_settings.email_host_password, 'new-app-password')
 
     def post_action(self, **extra_data):
         """Отправляет POST на changelist с выбранным экшеном и выбранной записью."""
@@ -824,5 +862,26 @@ class EmailSettingsValidationTests(TestCase):
         """Кривой формат адреса отправителя — ошибка."""
         errors = self.assert_invalid(email_host_user='shop')
         self.assertIn('email_host_user', errors)
+
+
+class LoggingConfigTests(SimpleTestCase):
+    """Настройки логирования приложений из config/settings.py.
+
+    В LOGGING были только handlers и не было секции loggers, поэтому уровень
+    логгеров приложений оставался корневым (WARNING): info-сообщения (например,
+    «письмо о заказе отправлено») в лог сервера не попадали вообще.
+    """
+
+    def test_app_loggers_write_info_to_console(self):
+        """Логгеры orders и core настроены на INFO с выводом в консоль."""
+        # Применяем те же настройки, что и при старте проекта
+        logging.config.dictConfig(copy.deepcopy(settings.LOGGING))
+
+        for logger_name in ('orders', 'core'):
+            with self.subTest(logger=logger_name):
+                logger = logging.getLogger(logger_name)
+                self.assertEqual(logger.getEffectiveLevel(), logging.INFO)
+                self.assertTrue(logger.handlers, 'У логгера нет обработчиков')
+                self.assertIsInstance(logger.handlers[0], logging.StreamHandler)
 
 

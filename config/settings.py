@@ -196,10 +196,31 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name}: {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    # Без этой секции уровень логгеров приложений остаётся корневым (WARNING),
+    # и сообщения уровня info (например, «письмо о заказе отправлено») теряются
+    'loggers': {
+        'orders': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'core': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
         },
     },
 }

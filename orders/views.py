@@ -2,9 +2,7 @@ import logging
 
 from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
-from django.urls import reverse
 from django.shortcuts import get_object_or_404
-from django.conf import settings
 from django.http import HttpResponse
 import weasyprint
 
@@ -28,6 +26,16 @@ logger = logging.getLogger(__name__)
 ORDER_EMAIL_TEMPLATE = 'orders/order/email.html'
 
 
+def orders_with_items():
+    """
+    QuerySet заказов с предзагруженными позициями, товарами и их изображениями.
+
+    Без prefetch шаблоны (письмо и страница «Спасибо») делают по дополнительному
+    запросу на каждую позицию — классический N+1.
+    """
+    return Order.objects.prefetch_related('items__product__images')
+
+
 def send_order_email(order):
     """
     Отправляет клиенту письмо о новом заказе.
@@ -36,7 +44,17 @@ def send_order_email(order):
     выпускаем: неотправленное письмо не должно ломать оформление заказа, но
     причина обязательно попадает в лог.
     """
-    email_settings = EmailSettings.load()
+    # Настройки читаем через load() (get_or_create): при гонке первых заказов он
+    # может бросить IntegrityError, а падать уже после сохранения заказа нельзя
+    try:
+        email_settings = EmailSettings.load()
+        order_instructions_settings = OrderInstructionsSettings.load()
+        # Перечитываем заказ с предзагрузкой позиций: в шаблоне письма по каждой
+        # позиции берётся товар, без prefetch это N+1
+        order = orders_with_items().get(pk=order.id)
+    except Exception:
+        logger.exception('Не удалось подготовить письмо о заказе №%s', order.id)
+        return False, 'Не удалось подготовить письмо о заказе.'
 
     if not email_settings.email_enabled:
         return False, 'Отправка email отключена в настройках админки.'
@@ -50,7 +68,6 @@ def send_order_email(order):
 
     subject = f'{email_settings.email_subject_prefix} Заказ №{order.id}'
     from_email = email_settings.get_default_from_email()
-    order_instructions_settings = OrderInstructionsSettings.load()
 
     try:
         html_message = render_to_string(
@@ -77,23 +94,28 @@ def send_order_email(order):
             fail_silently=False,
             connection=connection,
         )
-    except Exception as error:
+    except Exception:
+        # Email клиента в лог не пишем (персональные данные): номера заказа
+        # достаточно, чтобы найти его в админке; текст ошибки SMTP нужен для разбора
         logger.exception(
-            'Не отправлено письмо о заказе №%s на %s (%s:%s): %s',
+            'Не отправлено письмо о заказе №%s (%s:%s)',
             order.id,
-            order.email,
             email_settings.email_host,
             email_settings.email_port,
-            error,
         )
-        return False, f'Ошибка отправки письма: {error}'
+        return False, 'Ошибка отправки письма — подробности в логе сервера.'
 
-    return True, f'Письмо о заказе №{order.id} отправлено на {order.email}.'
+    return True, f'Письмо о заказе №{order.id} отправлено клиенту.'
 
 
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
+        # Пустая корзина на POST — это повторная отправка формы (F5, двойной клик)
+        # или прямой POST в обход страницы: заказ без позиций создавать нельзя
+        if not len(cart):
+            return redirect('cart:cart_detail')
+
         form = OrderCreateForm(request.POST)
         if form.is_valid():
             # Заказ и его позиции сохраняем одной транзакцией: если что-то упадёт,
@@ -116,15 +138,42 @@ def order_create(request):
                 logger.info(reason)
             else:
                 logger.warning('Письмо о заказе №%s не отправлено: %s', order.id, reason)
+            # Результат отправки нужен странице «Спасибо» уже после редиректа,
+            # поэтому запоминаем его в сессии
+            request.session['order_email_sent'] = sent
 
             # Очистка корзины
             cart.clear()
             # Сохранение заказа в сессии
             request.session['order_id'] = order.id
-            return render(request, 'orders/order/created.html', {'order': order})
+            # PRG (redirect after POST): перезагрузка страницы не создаст заказ второй раз
+            return redirect('orders:order_created')
     else:
         form = OrderCreateForm()
     return render(request, 'cart/detail.html', {'order_form': form})
+
+
+def order_created(request):
+    """
+    Страница «Спасибо за заказ» — шаг redirect-after-POST.
+
+    Заказ берём по номеру из сессии: обновление страницы показывает тот же самый
+    заказ, а не создаёт новый.
+    """
+    order_id = request.session.get('order_id')
+    if not order_id:
+        # Заказа в этой сессии нет — показывать «спасибо» не за что, идём в корзину
+        return redirect('cart:cart_detail')
+    order = get_object_or_404(orders_with_items(), id=order_id)
+    return render(
+        request,
+        'orders/order/created.html',
+        {
+            'order': order,
+            # Если письмо не ушло, страница не должна обещать его отправку
+            'email_sent': request.session.get('order_email_sent', False),
+        },
+    )
 
 
 @staff_member_required
