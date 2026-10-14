@@ -13,6 +13,7 @@ from unittest.mock import patch
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles import finders
+from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
@@ -657,6 +658,15 @@ class EmailSettingsAdminActionTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Включено')
 
+    def test_password_field_is_masked_in_admin(self):
+        """Пароль приложения показывается в админке маской, а не открытым текстом."""
+        change_url = reverse(
+            'admin:core_emailsettings_change', args=[self.email_settings.pk]
+        )
+        response = self.client.get(change_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'type="password"')
+
     def post_action(self, **extra_data):
         """Отправляет POST на changelist с выбранным экшеном и выбранной записью."""
         data = {
@@ -699,5 +709,112 @@ class EmailSettingsAdminActionTests(TestCase):
             )
         self.assertEqual(response.status_code, 200)
         send_test_email_mock.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Валидация настроек email (core.EmailSettings.clean)
+# ---------------------------------------------------------------------------
+
+def make_email_settings(**overrides):
+    """Собирает настройки email в памяти (без сохранения) с рабочими значениями."""
+    values = {
+        'email_host': 'smtp.yandex.ru',
+        'email_port': 465,
+        'email_use_ssl': True,
+        'email_use_tls': False,
+        'email_host_user': 'shop@yandex.ru',
+        'email_host_password': 'app-password',
+        'default_from_email': 'shop@yandex.ru',
+        'email_enabled': True,
+    }
+    values.update(overrides)
+    return EmailSettings(**values)
+
+
+class EmailSettingsValidationTests(TestCase):
+    """Проверки настроек email перед сохранением в админке.
+
+    Ловим именно те ошибки, из-за которых письма не отправляются: одновременно
+    включённые SSL и TLS, порт не под тип шифрования, пустые логин или пароль,
+    «От кого» не совпадает с адресом отправителя, кривой формат адреса.
+    """
+
+    def assert_invalid(self, **overrides):
+        """Ожидаем ошибку полной проверки и возвращаем словарь ошибок по полям."""
+        with self.assertRaises(ValidationError) as caught:
+            make_email_settings(**overrides).full_clean()
+        return caught.exception.error_dict
+
+    def assert_valid(self, **overrides):
+        """Ожидаем, что настройки проходят полную проверку без ошибок."""
+        make_email_settings(**overrides).full_clean()
+
+    def test_valid_ssl_settings_pass(self):
+        """465 + SSL + совпадающий «От кого» — корректные настройки."""
+        self.assert_valid()
+
+    def test_valid_starttls_settings_pass(self):
+        """587 + TLS — корректная пара для STARTTLS."""
+        self.assert_valid(email_port=587, email_use_ssl=False, email_use_tls=True)
+
+    def test_ssl_and_tls_together_are_invalid(self):
+        """Одновременно включённые SSL и TLS сохранить нельзя."""
+        errors = self.assert_invalid(email_use_tls=True)
+        self.assertIn('email_use_tls', errors)
+
+    def test_ssl_with_starttls_port_is_invalid(self):
+        """SSL на порту 587 (STARTTLS) — ошибка."""
+        errors = self.assert_invalid(email_port=587)
+        self.assertIn('email_port', errors)
+
+    def test_tls_with_ssl_port_is_invalid(self):
+        """TLS на порту 465 (неявный SSL) — ошибка."""
+        errors = self.assert_invalid(
+            email_port=465, email_use_ssl=False, email_use_tls=True
+        )
+        self.assertIn('email_port', errors)
+
+    def test_enabled_without_sender_email_is_invalid(self):
+        """Включённая отправка без email отправителя — ошибка."""
+        errors = self.assert_invalid(email_host_user='')
+        self.assertIn('email_host_user', errors)
+
+    def test_enabled_without_password_is_invalid(self):
+        """Включённая отправка без пароля приложения — ошибка."""
+        errors = self.assert_invalid(email_host_password='')
+        self.assertIn('email_host_password', errors)
+
+    def test_disabled_settings_may_have_empty_credentials(self):
+        """Пустые логин и пароль не сохранить даже при выключенной отправке.
+
+        У этих полей blank=False, поэтому ошибку выдаёт уже сам Django — зато
+        запись настроек не может оказаться без учётных данных.
+        """
+        errors = self.assert_invalid(
+            email_enabled=False, email_host_user='', email_host_password=''
+        )
+        self.assertIn('email_host_user', errors)
+        self.assertIn('email_host_password', errors)
+
+    def test_from_email_with_display_name_is_valid(self):
+        """«От кого» с отображаемым именем — допустимый формат."""
+        self.assert_valid(default_from_email='Яблони и Груши <shop@yandex.ru>')
+
+    def test_from_email_of_another_address_is_invalid(self):
+        """«От кого» с чужим адресом — ошибка (SMTP-сервер отклонит письмо)."""
+        errors = self.assert_invalid(default_from_email='other@yandex.ru')
+        self.assertIn('default_from_email', errors)
+
+    def test_from_address_strips_display_name(self):
+        """get_from_address возвращает адрес без отображаемого имени."""
+        email_settings = make_email_settings(
+            default_from_email='Яблони и Груши <shop@yandex.ru>'
+        )
+        self.assertEqual(email_settings.get_from_address(), 'shop@yandex.ru')
+
+    def test_sender_email_format_is_validated(self):
+        """Кривой формат адреса отправителя — ошибка."""
+        errors = self.assert_invalid(email_host_user='shop')
+        self.assertIn('email_host_user', errors)
 
 

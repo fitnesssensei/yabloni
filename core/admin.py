@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.html import format_html
@@ -63,6 +64,15 @@ class EmailSettingsAdmin(admin.ModelAdmin):
             else:
                 self.message_user(request, message, messages.ERROR)
     
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Показываем пароль приложения маской, а не открытым текстом."""
+        if db_field.name == 'email_host_password':
+            kwargs['widget'] = forms.PasswordInput(
+                render_value=True,
+                attrs={'autocomplete': 'new-password'},
+            )
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
     def has_add_permission(self, request):
         """Запрещаем добавление новых записей (только одна запись)"""
         if EmailSettings.objects.filter(pk=1).exists():

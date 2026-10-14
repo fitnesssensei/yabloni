@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 from django.db import models
 
 
@@ -92,6 +94,79 @@ class EmailSettings(SingletonModel):
     def get_default_from_email(self):
         """Возвращает email отправителя"""
         return self.default_from_email or self.email_host_user
+
+    def get_from_address(self):
+        """
+        Возвращает адрес из «От кого» без отображаемого имени.
+
+        В поле можно писать и просто адрес, и вариант с именем:
+        «Яблони и Груши <shop@yandex.ru>» → «shop@yandex.ru».
+        """
+        value = (self.default_from_email or '').strip()
+        if value.endswith('>') and '<' in value:
+            return value[value.rindex('<') + 1:-1].strip()
+        return value
+
+    def clean(self):
+        """
+        Проверяет настройки email перед сохранением в админке.
+
+        Ловит ровно те причины, по которым письма не отправляются: одновременно
+        включённые SSL и TLS (Django бросает ValueError при создании соединения),
+        несовпадение порта и типа шифрования и «От кого» не совпадает с адресом
+        отправителя — такой конверт SMTP-сервер отклоняет (у Яндекса это 553).
+        """
+        super().clean()
+        errors = {}
+
+        # SSL и TLS взаимоисключающие: Django бросает ValueError в get_connection
+        if self.email_use_ssl and self.email_use_tls:
+            errors['email_use_tls'] = ValidationError(
+                'Нельзя одновременно включить SSL и TLS. Оставьте что-то одно: '
+                '465 + SSL или 587 + TLS.',
+                code='ssl_tls_conflict',
+            )
+
+        # Порт 587 (и 25) работает по STARTTLS — это TLS, а не SSL
+        if self.email_use_ssl and self.email_port in (25, 587):
+            errors['email_port'] = ValidationError(
+                f'Порт {self.email_port} работает по STARTTLS: включите TLS и '
+                'выключите SSL либо укажите порт 465.',
+                code='ssl_wrong_port',
+            )
+
+        # Порт 465 — неявный SSL: с TLS соединение не поднимется
+        if self.email_use_tls and self.email_port == 465:
+            errors['email_port'] = ValidationError(
+                'Порт 465 требует SSL, а не TLS: включите SSL либо укажите порт 587.',
+                code='tls_wrong_port',
+            )
+
+        # «От кого» должно совпадать с логином, иначе SMTP-сервер отклонит письмо
+        # (у Яндекса это ошибка 553). Приятный бонус: «пустое» здесь уже не пройдёт
+        # на уровне полей, у email_host_user и email_host_password задан blank=False.
+        if self.email_host_user and self.default_from_email:
+            if self.get_from_address().lower() != self.email_host_user.strip().lower():
+                errors['default_from_email'] = ValidationError(
+                    'Адрес «От кого» должен совпадать с Email отправителя, иначе '
+                    'SMTP-сервер отклонит письмо. Можно добавить отображаемое имя: '
+                    'Яблони и Груши <shop@yandex.ru>.',
+                    code='from_email_mismatch',
+                )
+
+        # Формат адреса проверяем прямо здесь, а не валидатором в поле: валидатор
+        # в поле потребовал бы миграцию, а clean() вызывается формой админки
+        if self.email_host_user:
+            try:
+                EmailValidator()(self.email_host_user)
+            except ValidationError:
+                errors['email_host_user'] = ValidationError(
+                    'Укажите полный email, например shop@yandex.ru.',
+                    code='invalid_sender_email',
+                )
+
+        if errors:
+            raise ValidationError(errors)
 
 
 class HomeSettings(SingletonModel):
