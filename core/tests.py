@@ -8,11 +8,15 @@ JS-раннера в проекте нет, поэтому поведение с
 """
 import re
 from html.parser import HTMLParser
+from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
+
+from core.models import EmailSettings
+from core.signals import send_test_email
 
 # Страницы, которые наследуют base/base.html и должны отдавать кнопку «наверх».
 # Берём только статические страницы и списки: они отвечают 200 даже на пустой базе.
@@ -449,3 +453,151 @@ class HtmlCommentsGuardTests(SimpleTestCase):
                         'Скорее всего HTML-комментарий закрывается раньше выключенного блока '
                         'и «съедает» закрывающие теги.',
                     )
+
+# ---------------------------------------------------------------------------
+# Настройки email из админки (модель core.EmailSettings)
+# ---------------------------------------------------------------------------
+
+# Состояние EMAIL_* «как на сервере, где в .env нет переменных EMAIL_*»: логин и
+# пароль пустые. Этот же словарь используется как override_settings — тогда
+# post_save-сигнал update_email_settings, срабатывающий при создании записи в
+# тесте, не «протечёт» изменёнными значениями в остальные тесты процесса.
+EMPTY_EMAIL_SETTINGS = {
+    'EMAIL_HOST': 'smtp.yandex.ru',
+    'EMAIL_PORT': 465,
+    'EMAIL_USE_SSL': True,
+    'EMAIL_USE_TLS': False,
+    'EMAIL_HOST_USER': '',
+    'EMAIL_HOST_PASSWORD': '',
+    'DEFAULT_FROM_EMAIL': '',
+    'SERVER_EMAIL': '',
+}
+
+
+class SendTestEmailTests(TestCase):
+    """Тестовое письмо из админки обязано брать настройки из БД, а не из settings.
+
+    На сервере переменных EMAIL_* в .env нет (settings.EMAIL_HOST_USER пустой), а
+    сигнал update_email_settings обновляет settings только в том процессе, который
+    обработал сохранение в админке. Поэтому тест-письмо обязано работать через
+    get_connection с параметрами из EmailSettings — иначе падает с ошибкой
+    аутентификации SMTP (или работает лишь иногда, сразу после сохранения).
+    """
+
+    def create_email_settings(self, **overrides):
+        """Создаёт единственную запись настроек email (сохраняется под pk=1)."""
+        values = {
+            'email_host_user': 'shop@yandex.ru',
+            'email_host_password': 'app-password',
+            'default_from_email': 'shop@yandex.ru',
+        }
+        values.update(overrides)
+        return EmailSettings.objects.create(**values)
+
+    def send_test_email_with_empty_settings(self, to_email=None, **email_settings_values):
+        """Создаёт настройки в БД и шлёт тест-письмо, пока EMAIL_* в settings пустые.
+
+        override_settings подключён контекстным менеджером внутри теста, а не
+        декоратором класса: запись в БД вызывает post_save-сигнал
+        update_email_settings, который меняет settings, и это обязано откатиться в
+        конце блока — при декораторе класса мутация «течёт» в следующие тесты.
+
+        Патчим и get_connection, и send_mail: в тестовом окружении Django подменяет
+        EMAIL_BACKEND на locmem, поэтому реальное SMTP-соединение не собирается —
+        параметры подключения проверяем по аргументам вызова.
+        """
+        with override_settings(**EMPTY_EMAIL_SETTINGS):
+            self.assertEqual(settings.EMAIL_HOST_USER, '')
+            self.assertEqual(settings.EMAIL_HOST_PASSWORD, '')
+            self.create_email_settings(**email_settings_values)
+            with patch('core.signals.get_connection') as get_connection_mock:
+                with patch('core.signals.send_mail') as send_mail_mock:
+                    success, message = send_test_email(to_email)
+        return success, message, send_mail_mock, get_connection_mock
+
+    def test_credentials_are_taken_from_database(self):
+        """Логин/пароль/сервер берутся из БД, хотя в settings они пустые."""
+        success, message, _, get_connection_mock = self.send_test_email_with_empty_settings()
+        self.assertTrue(success, message)
+        kwargs = get_connection_mock.call_args.kwargs
+        self.assertEqual(kwargs['host'], 'smtp.yandex.ru')
+        self.assertEqual(kwargs['port'], 465)
+        self.assertEqual(kwargs['username'], 'shop@yandex.ru')
+        self.assertEqual(kwargs['password'], 'app-password')
+        self.assertTrue(kwargs['use_ssl'])
+        self.assertFalse(kwargs['use_tls'])
+
+    def test_default_recipient_is_sender_email(self):
+        """Без аргумента письмо уходит на адрес отправителя."""
+        success, _, send_mail_mock, _ = self.send_test_email_with_empty_settings()
+        self.assertTrue(success)
+        kwargs = send_mail_mock.call_args.kwargs
+        self.assertEqual(kwargs['recipient_list'], ['shop@yandex.ru'])
+        self.assertEqual(kwargs['from_email'], 'shop@yandex.ru')
+
+    def test_explicit_recipient_is_used(self):
+        """Переданный адрес получателя попадает в recipient_list и в сообщение."""
+        success, message, send_mail_mock, _ = self.send_test_email_with_empty_settings(
+            to_email='client@example.com'
+        )
+        self.assertTrue(success, message)
+        self.assertEqual(
+            send_mail_mock.call_args.kwargs['recipient_list'], ['client@example.com']
+        )
+        self.assertIn('client@example.com', message)
+
+    def test_disabled_sending_returns_error_and_does_not_send(self):
+        """При выключенной отправке письмо не уходит, возвращается причина."""
+        success, message, send_mail_mock, _ = self.send_test_email_with_empty_settings(
+            email_enabled=False
+        )
+        self.assertFalse(success)
+        self.assertIn('отключена', message)
+        send_mail_mock.assert_not_called()
+
+    def test_missing_settings_row_returns_error(self):
+        """Без записи в БД возвращается понятная ошибка, а не исключение."""
+        with patch('core.signals.send_mail') as send_mail_mock:
+            success, message = send_test_email()
+        self.assertFalse(success)
+        self.assertIn('Настройки email не найдены', message)
+        send_mail_mock.assert_not_called()
+
+    def test_missing_sender_email_returns_error(self):
+        """Пустой email отправителя — явная ошибка, без попытки отправки."""
+        success, message, send_mail_mock, _ = self.send_test_email_with_empty_settings(
+            email_host_user=''
+        )
+        self.assertFalse(success)
+        self.assertIn('Не указан email отправителя', message)
+        send_mail_mock.assert_not_called()
+
+    def test_missing_password_returns_error(self):
+        """Пустой пароль приложения — явная ошибка, без попытки отправки."""
+        success, message, send_mail_mock, _ = self.send_test_email_with_empty_settings(
+            email_host_password=''
+        )
+        self.assertFalse(success)
+        self.assertIn('Не указан пароль приложения', message)
+        send_mail_mock.assert_not_called()
+
+    def test_ssl_and_tls_together_return_error_not_exception(self):
+        """Одновременно включённые SSL и TLS: возвращаем причину, а не падаем.
+
+        Настоящий SMTP-бэкенд Django в такой комбинации бросает ValueError
+        («EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive»). В тестах
+        EMAIL_BACKEND подменён на locmem и эту проверку не выполняет, поэтому
+        поведение SMTP-бэкенда воспроизводим через side_effect.
+        """
+        with override_settings(**EMPTY_EMAIL_SETTINGS):
+            self.create_email_settings(email_use_ssl=True, email_use_tls=True)
+            with patch(
+                'core.signals.get_connection',
+                side_effect=ValueError('EMAIL_USE_TLS/EMAIL_USE_SSL are mutually exclusive'),
+            ):
+                with patch('core.signals.send_mail') as send_mail_mock:
+                    success, message = send_test_email()
+        self.assertFalse(success)
+        self.assertIn('Не удалось создать SMTP-соединение', message)
+        send_mail_mock.assert_not_called()
+

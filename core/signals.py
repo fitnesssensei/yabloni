@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import get_connection, send_mail
 from .models import EmailSettings
 
 
@@ -31,6 +31,26 @@ def get_email_settings():
         return None
 
 
+def build_email_connection(email_settings):
+    """
+    Создаёт SMTP-соединение по настройкам из БД (то есть из админки).
+
+    Почему не settings.EMAIL_*: сигнал update_email_settings меняет settings
+    только в том процессе, который обработал сохранение в админке. На других
+    воркерах и после перезапуска сервера там пустые логин и пароль (в .env
+    переменных EMAIL_* нет), поэтому письмо падало бы с ошибкой аутентификации.
+    """
+    return get_connection(
+        host=email_settings.email_host,
+        port=email_settings.email_port,
+        username=email_settings.email_host_user,
+        password=email_settings.email_host_password,
+        use_ssl=email_settings.email_use_ssl,
+        use_tls=email_settings.email_use_tls,
+        fail_silently=False,
+    )
+
+
 def send_test_email(to_email=None):
     """
     Отправляет тестовое письмо для проверки настроек.
@@ -52,6 +72,13 @@ def send_test_email(to_email=None):
     # Email для тестирования
     test_email = to_email or email_settings.email_host_user
     
+    # Соединение собираем из значений БД: на сервере settings.EMAIL_HOST_USER пустой
+    try:
+        connection = build_email_connection(email_settings)
+    except Exception as e:
+        # Например, одновременно включены SSL и TLS — Django бросает ValueError
+        return False, f"Не удалось создать SMTP-соединение: {str(e)}"
+    
     try:
         send_mail(
             subject=f'{email_settings.email_subject_prefix} Тестовое письмо',
@@ -59,6 +86,7 @@ def send_test_email(to_email=None):
             from_email=email_settings.get_default_from_email(),
             recipient_list=[test_email],
             fail_silently=False,
+            connection=connection,
         )
         return True, f"Тестовое письмо успешно отправлено на {test_email}"
     except Exception as e:
