@@ -11,6 +11,7 @@ from html.parser import HTMLParser
 from unittest.mock import patch
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.staticfiles import finders
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
@@ -600,4 +601,103 @@ class SendTestEmailTests(TestCase):
         self.assertFalse(success)
         self.assertIn('Не удалось создать SMTP-соединение', message)
         send_mail_mock.assert_not_called()
+
+    def test_explicit_settings_object_is_used(self):
+        """Переданная запись настроек используется вместо записи из БД."""
+        with override_settings(**EMPTY_EMAIL_SETTINGS):
+            email_settings = self.create_email_settings()
+            # Меняем объект только в памяти: функция обязана взять именно его
+            email_settings.email_host = 'smtp.example.org'
+            email_settings.email_host_user = 'other@example.org'
+            with patch('core.signals.get_email_settings') as get_email_settings_mock:
+                with patch('core.signals.get_connection') as get_connection_mock:
+                    with patch('core.signals.send_mail') as send_mail_mock:
+                        success, message = send_test_email(email_settings=email_settings)
+        self.assertTrue(success, message)
+        # Запись из БД не запрашиваем, раз объект настроек передали явно
+        get_email_settings_mock.assert_not_called()
+        kwargs = get_connection_mock.call_args.kwargs
+        self.assertEqual(kwargs['host'], 'smtp.example.org')
+        self.assertEqual(kwargs['username'], 'other@example.org')
+        self.assertEqual(
+            send_mail_mock.call_args.kwargs['recipient_list'], ['other@example.org']
+        )
+
+
+class EmailSettingsAdminActionTests(TestCase):
+    """Экшн «Отправить тестовое письмо» в админке настроек email.
+
+    Экшн обязан использовать выбранную запись настроек (а не настройки процесса) и
+    показывать результат отправки сообщением в админке.
+    """
+
+    def setUp(self):
+        # Без прав суперпользователя админка не отдаст changelist и экшены
+        user_model = get_user_model()
+        self.user = user_model.objects.create_superuser(
+            username='root', email='root@example.org', password='secret-password'
+        )
+        self.client.force_login(self.user)
+        # override_settings нужен, чтобы post_save-сигнал update_email_settings
+        # не изменил настоящие settings процесса и не «протёк» в другие тесты
+        with override_settings(**EMPTY_EMAIL_SETTINGS):
+            self.email_settings = EmailSettings.objects.create(
+                email_host_user='shop@yandex.ru',
+                email_host_password='app-password',
+                default_from_email='shop@yandex.ru',
+            )
+        self.changelist_url = reverse('admin:core_emailsettings_changelist')
+
+    def test_changelist_page_opens_without_error(self):
+        """Список настроек email открывается без ошибки (раньше отдавал 500).
+
+        Причина была в email_status: format_html без аргументов бросает TypeError.
+        """
+        response = self.client.get(self.changelist_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Включено')
+
+    def post_action(self, **extra_data):
+        """Отправляет POST на changelist с выбранным экшеном и выбранной записью."""
+        data = {
+            'action': 'send_test_email_action',
+            'index': '0',
+            'select_across': '0',
+            '_selected_action': [str(self.email_settings.pk)],
+        }
+        data.update(extra_data)
+        return self.client.post(self.changelist_url, data, follow=True)
+
+    def test_action_uses_selected_settings_object(self):
+        """Тест-письмо отправляется с настройками выбранной записи."""
+        with patch(
+            'core.admin.send_test_email',
+            return_value=(True, 'Тестовое письмо успешно отправлено на shop@yandex.ru'),
+        ) as send_test_email_mock:
+            response = self.post_action()
+        called_settings = send_test_email_mock.call_args.kwargs['email_settings']
+        self.assertEqual(called_settings.pk, self.email_settings.pk)
+        self.assertEqual(called_settings.email_host_user, 'shop@yandex.ru')
+        self.assertContains(response, 'успешно отправлено')
+
+    def test_action_shows_error_message_when_sending_fails(self):
+        """При ошибке отправки в админке показывается сообщение об ошибке."""
+        with patch(
+            'core.admin.send_test_email',
+            return_value=(False, 'Ошибка отправки: 535 Authentication failed'),
+        ):
+            response = self.post_action()
+        self.assertContains(response, 'Ошибка отправки: 535 Authentication failed')
+
+    def test_action_does_not_send_without_selection(self):
+        """Без выбранной записи экшн не пытается ничего отправлять."""
+        with patch('core.admin.send_test_email') as send_test_email_mock:
+            response = self.client.post(
+                self.changelist_url,
+                {'action': 'send_test_email_action', 'index': '0', 'select_across': '0'},
+                follow=True,
+            )
+        self.assertEqual(response.status_code, 200)
+        send_test_email_mock.assert_not_called()
+
 

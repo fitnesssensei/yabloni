@@ -51,11 +51,16 @@ def build_email_connection(email_settings):
     )
 
 
-def send_test_email(to_email=None):
+def send_test_email(to_email=None, email_settings=None):
     """
     Отправляет тестовое письмо для проверки настроек.
+
+    to_email — адрес получателя (по умолчанию адрес отправителя из настроек).
+    email_settings — конкретная запись настроек (например, выбранная в админке);
+    если не передана, берётся единственная запись настроек из БД.
     """
-    email_settings = get_email_settings()
+    if email_settings is None:
+        email_settings = get_email_settings()
     
     if not email_settings:
         return False, "Настройки email не найдены. Сначала настройте email в админке."

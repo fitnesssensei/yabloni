@@ -36,17 +36,28 @@ class EmailSettingsAdmin(admin.ModelAdmin):
     )
     
     def email_status(self, obj):
-        """Отображение статуса email"""
+        """Отображение статуса email.
+
+        format_html в Django 4+ требует хотя бы один аргумент, иначе TypeError —
+        без него падал весь список настроек в админке (страница отдавала 500).
+        """
         if obj.email_enabled:
-            return format_html('<span style="color: green;">✓ Включено</span>')
-        return format_html('<span style="color: red;">✗ Отключено</span>')
+            return format_html('<span style="color: {};">✓ Включено</span>', 'green')
+        return format_html('<span style="color: {};">✗ Отключено</span>', 'red')
     email_status.short_description = 'Статус'
     
     @admin.action(description='Отправить тестовое письмо')
     def send_test_email_action(self, request, queryset):
-        """Action для отправки тестового письма"""
+        """
+        Action для отправки тестового письма.
+
+        Берём настройки именно из выбранной записи, а не из settings процесса: в
+        .env переменных EMAIL_* нет, поэтому в settings логин и пароль пустые, и
+        письмо падало бы с ошибкой аутентификации SMTP. Получатель — адрес
+        отправителя из этой же записи.
+        """
         for settings_obj in queryset:
-            success, message = send_test_email()
+            success, message = send_test_email(email_settings=settings_obj)
             if success:
                 self.message_user(request, message, messages.SUCCESS)
             else:
