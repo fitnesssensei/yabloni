@@ -18,7 +18,7 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
 from core.models import EmailSettings
-from core.signals import send_test_email
+from core.signals import DEFAULT_EMAIL_TIMEOUT, send_test_email
 
 # Страницы, которые наследуют base/base.html и должны отдавать кнопку «наверх».
 # Берём только статические страницы и списки: они отвечают 200 даже на пустой базе.
@@ -528,6 +528,14 @@ class SendTestEmailTests(TestCase):
         self.assertEqual(kwargs['password'], 'app-password')
         self.assertTrue(kwargs['use_ssl'])
         self.assertFalse(kwargs['use_tls'])
+
+    def test_connection_has_timeout(self):
+        """У SMTP-соединения есть таймаут: зависший сервер не держал бы запрос."""
+        success, message, _, get_connection_mock = self.send_test_email_with_empty_settings()
+        self.assertTrue(success, message)
+        self.assertEqual(
+            get_connection_mock.call_args.kwargs['timeout'], DEFAULT_EMAIL_TIMEOUT
+        )
 
     def test_default_recipient_is_sender_email(self):
         """Без аргумента письмо уходит на адрес отправителя."""

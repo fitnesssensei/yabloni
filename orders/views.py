@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse
@@ -10,100 +12,110 @@ from .models import Order, OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart
 
-from django.core.mail import send_mail, get_connection
+from django.core.mail import send_mail
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 from core.models import EmailSettings, OrderInstructionsSettings
+from core.signals import build_email_connection
+
+# Логгер приложения: причина неотправленного письма должна быть видна в логах
+# сервера, а не только в консоли разработчика
+logger = logging.getLogger(__name__)
+
+# Шаблон письма клиенту о новом заказе
+ORDER_EMAIL_TEMPLATE = 'orders/order/email.html'
+
+
+def send_order_email(order):
+    """
+    Отправляет клиенту письмо о новом заказе.
+
+    Возвращает (True, пояснение) или (False, причина). Исключения наружу не
+    выпускаем: неотправленное письмо не должно ломать оформление заказа, но
+    причина обязательно попадает в лог.
+    """
+    email_settings = EmailSettings.load()
+
+    if not email_settings.email_enabled:
+        return False, 'Отправка email отключена в настройках админки.'
+
+    if not email_settings.email_host_user or not email_settings.email_host_password:
+        # Именно так выглядит состояние «настройки ещё не заполнены»: отправлять нечем
+        return False, (
+            'В настройках email не заполнены email отправителя или пароль '
+            'приложения — письмо отправить невозможно.'
+        )
+
+    subject = f'{email_settings.email_subject_prefix} Заказ №{order.id}'
+    from_email = email_settings.get_default_from_email()
+    order_instructions_settings = OrderInstructionsSettings.load()
+
+    try:
+        html_message = render_to_string(
+            ORDER_EMAIL_TEMPLATE,
+            {
+                'order': order,
+                'order_instructions_settings': order_instructions_settings,
+            },
+        )
+    except Exception:
+        logger.exception('Не отрендерился шаблон письма о заказе №%s', order.id)
+        html_message = f'Заказ №{order.id} оформлен'
+
+    plain_message = strip_tags(html_message)
+
+    try:
+        connection = build_email_connection(email_settings)
+        send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email=from_email,
+            recipient_list=[order.email],
+            html_message=html_message,
+            fail_silently=False,
+            connection=connection,
+        )
+    except Exception as error:
+        logger.exception(
+            'Не отправлено письмо о заказе №%s на %s (%s:%s): %s',
+            order.id,
+            order.email,
+            email_settings.email_host,
+            email_settings.email_port,
+            error,
+        )
+        return False, f'Ошибка отправки письма: {error}'
+
+    return True, f'Письмо о заказе №{order.id} отправлено на {order.email}.'
 
 
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
-        print(f"\n{'='*50}")
-        print(f"📥 POST запрос получен!")
-        print(f"   Данные: {request.POST}")
-        print(f"{'='*50}\n")
         form = OrderCreateForm(request.POST)
         if form.is_valid():
-            order = form.save()
-            for item in cart:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item['product'],
-                    price=item['price'],
-                    quantity=item['quantity'],
-                    season=item['season']
-                )
-            
-            # Получаем настройки email из админки
-            email_settings = EmailSettings.load()
-            
-            # Получаем настройки инструкций заказов
-            order_instructions_settings = OrderInstructionsSettings.load()
-            
-            # Отладка настроек email
-            print("="*50)
-            print("EMAIL НАСТРОЙКИ (из админки):")
-            if email_settings:
-                print(f"  EMAIL_HOST: {email_settings.email_host}")
-                print(f"  EMAIL_PORT: {email_settings.email_port}")
-                print(f"  EMAIL_USE_SSL: {email_settings.email_use_ssl}")
-                print(f"  EMAIL_HOST_USER: {email_settings.email_host_user}")
-                print(f"  EMAIL_HOST_PASSWORD: {'*' * len(email_settings.email_host_password) if email_settings.email_host_password else 'НЕ УСТАНОВЛЕН'}")
-                print(f"  DEFAULT_FROM_EMAIL: {email_settings.get_default_from_email()}")
-                print(f"  EMAIL_ENABLED: {email_settings.email_enabled}")
-            else:
-                print("  Настройки email не найдены в админке!")
-            print("="*50)
-            
-            # Проверяем, включена ли отправка email
-            if not email_settings or not email_settings.email_enabled:
-                print("❌ Отправка email отключена в настройках админки")
-            else:
-                # Отправка email
-                subject = f'{email_settings.email_subject_prefix} Заказ №{order.id}'
-                try:
-                    html_message = render_to_string('orders/order/email.html', {'order': order, 'order_instructions_settings': order_instructions_settings})
-                    print(f"✅ Шаблон отрендерен успешно")
-                except Exception as e:
-                    print(f"❌ Ошибка рендеринга шаблона: {e}")
-                    html_message = f"Заказ №{order.id} оформлен"
-                
-                plain_message = strip_tags(html_message)
-                from_email = email_settings.get_default_from_email()
-                to = order.email
-
-                print(f"📧 Попытка отправить письмо:")
-                print(f"   От: {from_email}")
-                print(f"   Кому: {to}")
-                print(f"   Тема: {subject}")
-
-                try:
-                    # Создаем SMTP соединение с настройками из админки
-                    connection = get_connection(
-                        host=email_settings.email_host,
-                        port=email_settings.email_port,
-                        username=email_settings.email_host_user,
-                        password=email_settings.email_host_password,
-                        use_ssl=email_settings.email_use_ssl,
-                        use_tls=email_settings.email_use_tls,
+            # Заказ и его позиции сохраняем одной транзакцией: если что-то упадёт,
+            # в базе не останется «полузаказа» без позиций
+            with transaction.atomic():
+                order = form.save()
+                for item in cart:
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item['product'],
+                        price=item['price'],
+                        quantity=item['quantity'],
+                        season=item['season']
                     )
-                    
-                    send_mail(
-                        subject,
-                        plain_message,
-                        from_email,
-                        [to],
-                        html_message=html_message,
-                        fail_silently=False,
-                        connection=connection,
-                    )
-                    print(f"✅ Письмо отправлено! Результат: отправлено")
-                except Exception as e:
-                    print(f"❌ Ошибка отправки письма: {e}")
-                    import traceback
-                    traceback.print_exc()
+
+            # Письмо уходит уже после сохранения заказа: сбой отправки не должен
+            # ломать оформление, а его причина попадает в лог
+            sent, reason = send_order_email(order)
+            if sent:
+                logger.info(reason)
+            else:
+                logger.warning('Письмо о заказе №%s не отправлено: %s', order.id, reason)
 
             # Очистка корзины
             cart.clear()

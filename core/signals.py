@@ -4,6 +4,9 @@ from django.conf import settings
 from django.core.mail import get_connection, send_mail
 from .models import EmailSettings
 
+# Сколько секунд ждать SMTP-сервер, если в настройках Django EMAIL_TIMEOUT не задан
+DEFAULT_EMAIL_TIMEOUT = 10
+
 
 @receiver(post_save, sender=EmailSettings)
 def update_email_settings(sender, instance, **kwargs):
@@ -47,6 +50,9 @@ def build_email_connection(email_settings):
         password=email_settings.email_host_password,
         use_ssl=email_settings.email_use_ssl,
         use_tls=email_settings.email_use_tls,
+        # Ждём SMTP не бесконечно: без таймаута зависший сервер держал бы страницу
+        # оформления заказа открытой (в Django EMAIL_TIMEOUT по умолчанию None)
+        timeout=settings.EMAIL_TIMEOUT or DEFAULT_EMAIL_TIMEOUT,
         fail_silently=False,
     )
 
